@@ -45,8 +45,8 @@ public class JobSearchService {
 
 	private JobSearchDAO jobSearchDao;
 
-	private static String passCode = "19754";
-	private static String key = "IFuttOxoRG";
+	private static String passCode = "pass";
+	private static String key = "key";
 	private static String localIP = "127.0.0.1";
 	private static String CB_API_KEY = "WDHV5C05WLC5PSQMN6TQ";
 	private static final String MAPS_API_KEY = "AIzaSyCfvk1pQI4gVpVe3Q_PX9_6eKc6n8e4E1k";
