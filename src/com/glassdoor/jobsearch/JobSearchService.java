@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -78,6 +79,16 @@ public class JobSearchService {
 			"NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA",
 			"RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI",
 			"WY" };
+
+	public List<JobDetails> getAllJobsFromDB() {
+
+		return jobSearchDao.getJobetailsFromDB();
+	}
+
+	public JobDetails getJobForId(String jobId) {
+
+		return jobSearchDao.getJobDetailsForSearch(jobId);
+	}
 
 	public List<JobDetails> getJobDataFromGlassdoor(String jobTitle, String city)
 			throws IOException {
@@ -281,10 +292,11 @@ public class JobSearchService {
 			ParserConfigurationException, SAXException,
 			XPathExpressionException {
 		System.out.println(details.getJobRefID());
+		String jobRefId = details.getJobRefID() != null?URLEncoder.encode(details.getJobRefID(), "UTF-8"):"";
 		StringBuilder urlString = new StringBuilder(
 				"http://api.careerbuilder.com/v1/job?");
 		urlString.append("DeveloperKey=" + CB_API_KEY);
-		urlString.append("&DID=" + details.getJobRefID());
+		urlString.append("&DID=" + jobRefId);
 		urlString.append("&HostSite=US");
 		URL url = new URL(urlString.toString());
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -369,28 +381,30 @@ public class JobSearchService {
 		if (grsp != null) {
 			System.out.println("getNearByLocation" + grsp.getStatus());
 			if (grsp.getStatus().equals("OK")) {
+				System.out.println(grsp.getResults().length);
 				if (grsp.getResults().length == 0) {
 					jobDetails.setLatitude(null);
 					jobDetails.setLongitude(null);
 					return;
 				}
 				int relevantCount = 0;
+				HashSet set = new HashSet();
 				for (GMapResult result : grsp.getResults()) {
-
-					if ((result.getVicinity().contains(jobDetails.getCity()) || result
-							.getVicinity()
-							.contains(jobDetails.getCompanyName()))
-							&& (result.getName().contains(jobDetails
-									.getCompanyName()))) {
+					System.out.println(result.getName());
+					System.out.println(jobDetails.getCompanyName());
+					if (result.getName().toLowerCase().contains(
+							jobDetails.getCompanyName().toLowerCase())
+							|| jobDetails.getCompanyName().toLowerCase()
+									.contains(result.getName().toLowerCase())) {
 						address = result.getVicinity();
-						System.out.println("valid address" + address);
+						set.add(address);
 						latlong = result.getGeometry().getLocation().getLat()
 								.toString()
 								+ ","
 								+ result.getGeometry().getLocation().getLng()
 										.toString();
-						relevantCount++;
-
+						relevantCount = set.size();
+						
 						jobDetails.setLatitude(Double.valueOf(result
 								.getGeometry().getLocation().getLat()));
 						jobDetails.setLongitude(Double.valueOf(result
@@ -408,12 +422,10 @@ public class JobSearchService {
 				}
 
 				System.out.println("address is :" + address);
+				System.out.println();
 
 				if (!address.equals("") && !latlong.equals("")) {
-					if (address.split(",").length == 1) {
-						jobDetails.setLatitude(null);
-						jobDetails.setLongitude(null);
-					} else if (address.split(",").length < 2) {
+					if (address.split(",").length < 2) {
 						GoogleResponse resp = convertFromLatLong(latlong);
 						System.out.println("convertFromLatLong"
 								+ resp.getStatus());
@@ -471,7 +483,7 @@ public class JobSearchService {
 				+ MAPS_API_KEY);
 		// Open the Connection
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
+		System.out.println(conn);
 		InputStream in = conn.getInputStream();
 		ObjectMapper mapper = new ObjectMapper();
 		GMapResponse response = (GMapResponse) mapper.readValue(in,
@@ -503,7 +515,7 @@ public class JobSearchService {
 		URL url = new URL(GEOCODE_URL + "?latlng="
 				+ URLEncoder.encode(latlongString, "UTF-8") + "&sensor=false");
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
+		System.out.println("connection" + conn);
 		InputStream in = conn.getInputStream();
 		ObjectMapper mapper = new ObjectMapper();
 		GoogleResponse response = (GoogleResponse) mapper.readValue(in,
@@ -521,6 +533,7 @@ public class JobSearchService {
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 		InputStream in = conn.getInputStream();
+		System.out.println("connection" + conn);
 		ObjectMapper mapper = new ObjectMapper();
 		GoogleResponse response = (GoogleResponse) mapper.readValue(in,
 				GoogleResponse.class);
@@ -548,14 +561,15 @@ public class JobSearchService {
 				if (jobDetails.getSource().equals("CareerBuilder")
 						&& !(jobDetails.getJobRefID() == null || jobDetails
 								.getJobRefID() == "")) {
-
+					callCBJobRefURL(jobDetails);
 				}
-				callCBJobRefURL(jobDetails);
+				
 				if (jobDetails.getLatitude() != null
 						|| jobDetails.getLongitude() != null) {
 					latlong = jobDetails.getLatitude().toString() + ","
 							+ jobDetails.getLongitude().toString();
 				}
+				System.out.println("latlong1"+latlong);
 				if (latlong.equals("")) {
 					// Get the lat-long of the City
 					GoogleResponse res = getLocationLatLong(jobDetails

@@ -1,13 +1,10 @@
 package com.glassdoor.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Restrictions;
 
 import com.glassdoor.databean.HibernateUtil;
 import com.glassdoor.databean.JobDetails;
@@ -31,6 +28,19 @@ public class JobSearchDAO {
 
 	}
 
+	public List<JobDetails> getJobetailsFromDB() {
+		HibernateUtil util = HibernateUtil.getInstance();
+		JobDetails details = null;
+		@SuppressWarnings("static-access")
+		Session session = util.getSessionFactory().openSession();
+		@SuppressWarnings("unchecked")
+		List<JobDetails> results = session.createQuery(
+				"from JobDetails").list();
+		session.close();
+		return results;
+
+	}
+	
 	public void insertJobDetails(List<JobDetails> jobdetails){
 
 		HibernateUtil util = HibernateUtil.getInstance();
@@ -42,8 +52,8 @@ public class JobSearchDAO {
 			try {
 
 				JobDetails job = (JobDetails) jobdetails.get(i);
-				 /* System.out.println("object no. "+i +"1 "+ job.getJobId() + "2 "
-				  + job.getCompanyName() + "3 " + job.getCity()+ " 4"+job.getZipCode()+"5 "+job.getCountry());*/
+				 System.out.println("object no. "+i +"1 "+ job.getJobId() + "2 "
+				  + job.getCompanyName() + "3 " + job.getCity()+ " 4"+job.getZipCode()+"5 "+job.getCountry());
 				 
 				session.saveOrUpdate(job);
 				if (i % 20 == 0) { // 20, same as the JDBC batch size
@@ -88,7 +98,7 @@ public class JobSearchDAO {
 		Session session = util.getSessionFactory().openSession();
 		@SuppressWarnings("unchecked")
 		List<JobDetails> results = session.createQuery(
-				"from JobDetails where  city = 'San Francisco' and (latitude is null OR longitude is null) ")
+				"from JobDetails where jobId = '1075101096'")
 				.list();
 		if (!(results == null || results.size() == 0)) {
 			details = results;

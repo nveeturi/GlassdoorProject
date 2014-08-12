@@ -1,6 +1,7 @@
 package com.glassdoor.controller;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,88 +21,103 @@ import com.glassdoor.databean.JobDetails;
 import com.glassdoor.jobsearch.JobSearchService;
 
 @RestController
-public class HomeController { 
+public class HomeController {
 	@Autowired
-	private  JobSearchService jobService;
-	/*** 
-	 * ������ ���������/pages/index.jsp������ 
-	 * @return 
-	 */  
-	@RequestMapping("index")  
-	public ModelAndView index(){  
-		//������������������������������������������������������������������������������home������  
-		ModelAndView mav = new ModelAndView("/index");  
-		return mav;  
-	}  
+	private JobSearchService jobService;
 
-	@RequestMapping(value="/search",method=RequestMethod.GET)
-	public ModelAndView search(String keyword,String location){
+	/***
+	 * @return
+	 */
+	@RequestMapping("index")
+	public ModelAndView index() {
+		ModelAndView mav = new ModelAndView("/index");
+		return mav;
+	}
+
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public ModelAndView search(String keyword, String location) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		
+
 		List<JobDetails> jobdetails = null;
 		try {
-			location = (location == null || location.trim().equals(""))?"Pittsburgh":location;
-			jobdetails = jobService.getJobDataFromGlassdoor(keyword, location);
-		
-		//jobService.saveJobDetails(jobdetails);
-		//jobService.updateLocationFromCB();
-		//jobService.updateLocationInfo();
-		//jobService.updateLocationFromJobLink();
+			location = (location == null || location.trim().equals("")) ? "Pittsburgh"
+					: location;
 
-		
+			jobdetails = jobService.getJobDataFromGlassdoor(
+					URLEncoder.encode(keyword, "UTF-8"),
+					URLEncoder.encode(location, "UTF-8"));
+
+			jobService.saveJobDetails(jobdetails);
+			// jobService.updateLocationFromCB();
+			// jobService.updateLocationInfo();
+			// jobService.updateLocationFromJobLink();
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		mav.addObject("keyword",keyword);
+		mav.addObject("keyword", keyword);
 		mav.addObject("location", location);
 		mav.addObject("joblist", jobdetails);
 		return mav;
 	}
-	
-	@RequestMapping(value = "/find/{keyword}/{location}", method = RequestMethod.GET)  
-	 public @ResponseBody String getGlassdoorJobs(@PathVariable String keyword, @PathVariable String location) {  
-	  String result="Hello "+keyword+" location"+location+"!!!";    
-	  return result;  
-	 }  
-	
-	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
-	public void updateLocation() {
-			try {
-				jobService.updateLocationInfo();
-			} catch (XPathExpressionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+	@RequestMapping(value = "/find/{keyword}/{location}", method = RequestMethod.GET)
+	public @ResponseBody
+	String getGlassdoorJobs(@PathVariable String keyword,
+			@PathVariable String location) {
+		String result = "Hello " + keyword + " location" + location + "!!!";
+		return result;
 	}
 
+	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
+	public void updateLocation() {
+		try {
+			jobService.updateLocationInfo();
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
-	@RequestMapping("jobs")  
-	public ModelAndView jobs(){  
-		ModelAndView mav = new ModelAndView("/jobs");  
-		return mav;  
-	}  
-	
-	@RequestMapping("map")  
-	public ModelAndView map(){  
-		ModelAndView mav = new ModelAndView("map");  
-		return mav;  
-	}  
-	
-	@RequestMapping("test")  
-	public ModelAndView test(){  
-		ModelAndView mav = new ModelAndView("test");  
-		return mav;  
+	@RequestMapping(value = "/getJobsData", method = RequestMethod.GET)
+	public List<JobDetails> getAllJobsFromDB() {
+		return jobService.getAllJobsFromDB();
+
+	}
+
+	@RequestMapping(value = "/getJobsData/{jobId}", method = RequestMethod.GET)
+	public JobDetails getJobForId(@PathVariable String jobId) {
+
+		return jobService.getJobForId(jobId);
+
+	}
+
+	@RequestMapping("jobs")
+	public ModelAndView jobs() {
+		ModelAndView mav = new ModelAndView("/jobs");
+		return mav;
+	}
+
+	@RequestMapping("map")
+	public ModelAndView map() {
+		ModelAndView mav = new ModelAndView("map");
+		return mav;
+	}
+
+	@RequestMapping("test")
+	public ModelAndView test() {
+		ModelAndView mav = new ModelAndView("test");
+		return mav;
 	}
 
 	public void setJobService(JobSearchService jobService) {
 		this.jobService = jobService;
-	} 
-}  
-
+	}
+}
