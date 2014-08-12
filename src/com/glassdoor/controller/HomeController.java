@@ -2,6 +2,7 @@ package com.glassdoor.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,20 +35,21 @@ public class HomeController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location) {
 		ModelAndView mav = new ModelAndView("/jobs");
 
 		List<JobDetails> jobdetails = null;
 		try {
-			location = (location == null || location.trim().equals("")) ? "Pittsburgh"
-					: location;
-
-			jobdetails = jobService.getJobDataFromGlassdoor(
-					URLEncoder.encode(keyword, "UTF-8"),
-					URLEncoder.encode(location, "UTF-8"));
-
-			jobService.saveJobDetails(jobdetails);
+			String locationEncode = (location == null || location.trim().equals("")) ? "Pittsburgh"
+					: URLEncoder.encode(location, "UTF-8");
+			
+			String keywordEncode = (keyword == null || keyword.trim().equals("")) ? "": URLEncoder.encode(keyword, "UTF-8");
+			
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,locationEncode);
+			System.out.println(jobdetails);
+			jobService.matchLatLongFromJobList(jobdetails);
+			//jobService.saveJobDetails(jobdetails);
 			// jobService.updateLocationFromCB();
 			// jobService.updateLocationInfo();
 			// jobService.updateLocationFromJobLink();
@@ -94,9 +96,14 @@ public class HomeController {
 
 	@RequestMapping(value = "/getJobsData/{jobId}", method = RequestMethod.GET)
 	public JobDetails getJobForId(@PathVariable String jobId) {
-
 		return jobService.getJobForId(jobId);
 
+	}
+
+	@RequestMapping(value = "/getJobsData/list/{ids}", method = RequestMethod.GET)
+	public List<JobDetails> getJobs(@PathVariable("ids") String jobIds) {
+		System.out.println("ids"+jobIds);
+		return jobService.getJobDataForIds(jobIds);
 	}
 
 	@RequestMapping("jobs")

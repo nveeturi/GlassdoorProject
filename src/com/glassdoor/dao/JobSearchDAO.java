@@ -107,5 +107,48 @@ public class JobSearchDAO {
 		return details;
 
 	}
+	
+	public List<JobDetails> getJobsForIds(String jobIds) {
+		
+		HibernateUtil util = HibernateUtil.getInstance();
+		List<JobDetails> details = null;
+		@SuppressWarnings("static-access")
+		Session session = util.getSessionFactory().openSession();
+		System.out.println("jobIds"+jobIds);
+		@SuppressWarnings("unchecked")
+		List<JobDetails> results = session.createQuery(
+				"from JobDetails where jobId IN ("+jobIds+")")
+				.list();
+		if (!(results == null || results.size() == 0)) {
+			details = results;
+		}
+		session.close();
+		return details;
+
+	}
+	public List<JobDetails> getLatLong(List<JobDetails> details) {
+		//get all the job id in details list
+		StringBuffer jobIds = new StringBuffer();
+		
+		for(JobDetails i:details){
+			jobIds.append(i.getJobId()+",");
+		}
+		jobIds.deleteCharAt(jobIds.length()-1);
+		
+		//get all the lat long record from database
+		HibernateUtil util = HibernateUtil.getInstance();
+		List<JobDetails> latlongs = null;
+		@SuppressWarnings("static-access")
+		Session session = util.getSessionFactory().openSession();
+		@SuppressWarnings("unchecked")
+		List<JobDetails> results = session.createQuery(
+				"from JobDetails where latitude is not null AND longitude is not null AND jobId IN ("+jobIds+")")
+				.list();
+		session.close();
+		
+		return results;
+		
+		
+	}
 
 }

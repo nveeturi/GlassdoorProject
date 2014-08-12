@@ -16,22 +16,22 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic,400italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>  
 	<!-- Global CSS -->
-	<link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">   
-	<link rel="stylesheet" href="assets/css/screen.css" />
+	<link rel="stylesheet" href="../assets/plugins/bootstrap/css/bootstrap.min.css">   
+	<link rel="stylesheet" href="../assets/css/screen.css" />
 	<!-- Plugins CSS -->  
-	<link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="assets/plugins/animate-css/animate.min.css">
+	<link rel="stylesheet" href="../assets/plugins/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="../assets/plugins/animate-css/animate.min.css">
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
-    <link rel="stylesheet" href="assets/css/MarkerCluster.css" />
-	<link rel="stylesheet" href="assets/css/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="../assets/css/MarkerCluster.css" />
+	<link rel="stylesheet" href="../assets/css/MarkerCluster.Default.css" />
     <!-- Theme CSS -->  
-    <link id="theme-style" rel="stylesheet" href="assets/css/styles.css"/>
+    <link id="theme-style" rel="stylesheet" href="../assets/css/styles.css"/>
     
     <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
-    <script type="text/javascript" src="assets/js/leaflet.markercluster-src.js"></script>
-    <script type="text/javascript" src="assets/js/main.js"></script> 
-    <script type="text/javascript" src="assets/js/jobs.js"></script>   
-    <script type="text/javascript" src="assets/js/geojson-sample.js"></script>
+    <script type="text/javascript" src="./assets/js/leaflet.markercluster-src.js"></script>
+    <script type="text/javascript" src="./assets/js/main.js"></script> 
+    <script type="text/javascript" src="./assets/js/jobs.js"></script>   
+    <script type="text/javascript" src="./assets/js/geojson-sample.js"></script>
 	
     
 </head> 
@@ -43,7 +43,7 @@
 			<div class="container">
 				<h1 class="logo pull-left">
 					<a href="index.jsp"> 
-						<img src = "assets/images/companies/glassdoor.png">
+						<img src = "../assets/images/companies/glassdoor.png">
 						<span class="logo-title">glassdoor</span>
 					</a>
 				</h1>
@@ -61,7 +61,7 @@
 					<!--//navbar-header-->
 					<div class="navbar-collapse collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav">
-							<li class="nav-item"><a href="index.jsp">Jobs</a></li>
+							<li class="nav-item"><a href="index">Jobs</a></li>
 							<li class="nav-item"><a href="tour.html">Companies</a></li>
 							<li class="nav-item"><a href="pricing.html">Salaries</a></li>
 							<li class="nav-item"><a href="blog.html">Interviews</a></li>
@@ -86,18 +86,18 @@
         <div class="blog container">
              <div class="container text-center jobsearch">
              <div class="row">
-            	<form class="signup-form">
+            	<form class="signup-form" action="search" method="post">
 						&nbsp;&nbsp;&nbsp;
 						<div class="row">
 						  <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
 						    <div class="form-group">
-						      <input type="text" class="form-control" value="software engineer">
+						      <input type="text" class="form-control" name="keyword"  value="${keyword }">
 						    </div><!-- /input-group -->
 						  </div><!-- /.col-lg-4 -->
 				
 						  <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
 						    <div class="form-group">
-						      <input type="text" class="form-control" value="San Francisco, CA">
+						      <input type="text" class="form-control" name="location" value="${location }">
 						    </div><!-- /input-group -->
 						  </div><!-- /.col-lg-4 -->
 						  
@@ -124,9 +124,6 @@
        
                     	<h3 class="title-green">Refine Search</h3>
                     	
-	<c:forEach items="${joblist}" var="job">
-		${job.city} <br />
-	</c:forEach>
                     	<hr/>
                         <h3 class="title">Distance</h3>
                         <div class="btn-group">
@@ -229,12 +226,12 @@
                         <li>
                         	<div class="row">
 						    	<div class="col-lg-2">
-							      <img class="img-responsive" src="assets/images/companies/opentable.png" alt="" />
+							      <img class="img-responsive" src="../assets/images/companies/opentable.png" alt="" />
 							    </div>
 							    <div class="col-lg-10">
 							        <ul class="list-unstyled">
 							        	<li><h4><a href="#">${job.jobTitle}</a></h4></li>
-							        	<li>${job.city}&nbsp;<a href="#"><span class="glyphicon glyphicon-map-marker"></span></a></li>
+							        	<li><b>${job.companyName} - ${job.city}</b>&nbsp;<a href="#"><span class="glyphicon glyphicon-map-marker"></span></a></li>
 							        	<li class="digest">${job.jobDescription}...<a href="#">details</a></li>
 							        	<li class="digest"><a href="#">Overview</a> | <a href="#">Reviews</a> | <a href="#">Salaries</a></li>
 							        </ul>

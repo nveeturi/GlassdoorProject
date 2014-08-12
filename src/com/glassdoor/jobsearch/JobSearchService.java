@@ -42,12 +42,20 @@ import com.glassdoor.databean.JobListing;
 import com.glassdoor.databean.Location;
 import com.google.gson.Gson;
 
+/**
+ * The class contains all the services that are required to get the job data
+ * from Glassdoor. This also contains the services to update the database with
+ * geo-location data.
+ * 
+ * @author nveeturi
+ * 
+ */
 public class JobSearchService {
 
 	private JobSearchDAO jobSearchDao;
 
-	private static String passCode = "pass";
-	private static String key = "key";
+	private static String passCode = "19754";
+	private static String key = "IFuttOxoRG";
 	private static String localIP = "127.0.0.1";
 	private static String CB_API_KEY = "WDHV5C05WLC5PSQMN6TQ";
 	private static final String MAPS_API_KEY = "AIzaSyCfvk1pQI4gVpVe3Q_PX9_6eKc6n8e4E1k";
@@ -87,6 +95,7 @@ public class JobSearchService {
 
 	public JobDetails getJobForId(String jobId) {
 
+		System.out.println("ids");
 		return jobSearchDao.getJobDetailsForSearch(jobId);
 	}
 
@@ -139,8 +148,11 @@ public class JobSearchService {
 				}
 				jobdetail.setJobTitle(job.getJobTitle());
 				String[] location = job.getLocation().split(",");
-				jobdetail.setCity(location[0]);
-				jobdetail.setState(location[1]);
+				if(location.length == 2){
+					jobdetail.setCity(location[0]);
+					jobdetail.setState(location[1]);
+				}
+				
 				jobdetail.setCompanyName(job.getEmployer().getName());
 				jobdetail.setJobId(job.getJobListingId());
 				prevJobId = job.getJobListingId();
@@ -292,7 +304,8 @@ public class JobSearchService {
 			ParserConfigurationException, SAXException,
 			XPathExpressionException {
 		System.out.println(details.getJobRefID());
-		String jobRefId = details.getJobRefID() != null?URLEncoder.encode(details.getJobRefID(), "UTF-8"):"";
+		String jobRefId = details.getJobRefID() != null ? URLEncoder.encode(
+				details.getJobRefID(), "UTF-8") : "";
 		StringBuilder urlString = new StringBuilder(
 				"http://api.careerbuilder.com/v1/job?");
 		urlString.append("DeveloperKey=" + CB_API_KEY);
@@ -392,8 +405,10 @@ public class JobSearchService {
 				for (GMapResult result : grsp.getResults()) {
 					System.out.println(result.getName());
 					System.out.println(jobDetails.getCompanyName());
-					if (result.getName().toLowerCase().contains(
-							jobDetails.getCompanyName().toLowerCase())
+					if (result
+							.getName()
+							.toLowerCase()
+							.contains(jobDetails.getCompanyName().toLowerCase())
 							|| jobDetails.getCompanyName().toLowerCase()
 									.contains(result.getName().toLowerCase())) {
 						address = result.getVicinity();
@@ -404,7 +419,7 @@ public class JobSearchService {
 								+ result.getGeometry().getLocation().getLng()
 										.toString();
 						relevantCount = set.size();
-						
+
 						jobDetails.setLatitude(Double.valueOf(result
 								.getGeometry().getLocation().getLat()));
 						jobDetails.setLongitude(Double.valueOf(result
@@ -422,7 +437,6 @@ public class JobSearchService {
 				}
 
 				System.out.println("address is :" + address);
-				System.out.println();
 
 				if (!address.equals("") && !latlong.equals("")) {
 					if (address.split(",").length < 2) {
@@ -542,6 +556,17 @@ public class JobSearchService {
 
 	}
 
+	/**
+	 * This is the main service that will update the geo-location data in the
+	 * database. This service fetches all the job data from database and calls
+	 * different service methods that makes Career Builder API call and uses
+	 * Places API data to update the street location data and the lat/long
+	 * information.
+	 * 
+	 * @throws XPathExpressionException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 */
 	public void updateLocationInfo() throws XPathExpressionException,
 			ParserConfigurationException, SAXException {
 
@@ -563,13 +588,13 @@ public class JobSearchService {
 								.getJobRefID() == "")) {
 					callCBJobRefURL(jobDetails);
 				}
-				
+
 				if (jobDetails.getLatitude() != null
 						|| jobDetails.getLongitude() != null) {
 					latlong = jobDetails.getLatitude().toString() + ","
 							+ jobDetails.getLongitude().toString();
 				}
-				System.out.println("latlong1"+latlong);
+				System.out.println("latlong1" + latlong);
 				if (latlong.equals("")) {
 					// Get the lat-long of the City
 					GoogleResponse res = getLocationLatLong(jobDetails
@@ -585,8 +610,16 @@ public class JobSearchService {
 				System.out.println(latlong);
 				// Call the nearby search Google Places API with the company
 				// name and latlong
+				if (!latlong.equals("")) {
+					setValidAddress(latlong, jobDetails);
+				}
 
-				setValidAddress(latlong, jobDetails);
+				if (latlong.equals("")
+						&& !(jobDetails.getJobLink() == null || jobDetails
+								.getJobLink().equals(""))) {
+					updateLocationFromJobLink(jobDetails);
+				}
+
 			} catch (IOException e) {
 				System.out.println(e.getLocalizedMessage());
 				continue;
@@ -613,58 +646,54 @@ public class JobSearchService {
 
 	}
 
-	public void updateLocationFromJobLink() {
-		List<JobDetails> details = null;
+	public void updateLocationFromJobLink(JobDetails jobDetails) {
 		try {
 			// STEP 4: Execute a query
-			details = jobSearchDao.getJobDetailsWithNoLocation();
 			org.jsoup.nodes.Document doc = null;
 			boolean flag = false;
 			// STEP 5: Extract data from result set
 			String link = "";
-			for (JobDetails jobDetails : details) {
-				System.out.println(jobDetails.getJobLink());
-				link = jobDetails.getJobLink();
-				try {
-					doc = Jsoup.connect(link).ignoreContentType(true)
-							.timeout(0).get();
-				} catch (HttpStatusException hp) {
-					flag = true;
-				} catch (SSLHandshakeException e) {
-					flag = true;
-				} catch (MalformedURLException e) {
-					flag = true;
-				} catch (SSLProtocolException e) {
-					flag = true;
-				} catch (Exception e) {
-					flag = true;
-				}
-				if (flag) {
-					flag = false;
-					continue;
-				}
-				Elements elements = doc.body().select("*");
+			System.out.println(jobDetails.getJobLink());
+			link = jobDetails.getJobLink();
+			try {
+				doc = Jsoup.connect(link).ignoreContentType(true).timeout(0)
+						.get();
+			} catch (HttpStatusException hp) {
+				flag = true;
+			} catch (SSLHandshakeException e) {
+				flag = true;
+			} catch (MalformedURLException e) {
+				flag = true;
+			} catch (SSLProtocolException e) {
+				flag = true;
+			} catch (Exception e) {
+				flag = true;
+			}
+			if (flag) {
+				System.out.println("Error occured");
+				flag = false;
+				return;
+				// continue;
+			}
+			Elements elements = doc.body().select("*");
 
-				for (Element x : elements) {
-					// System.out.println(x.ownText());
-					String text = x.ownText();
-					String[] words = text.split("\\s+");
-					for (String word : words) {
-						if (Arrays.asList(US_STATES).contains(word)
-								|| Arrays.asList(StateCodes).contains(word)) {
-							System.out.println("Address found");
-							System.out.println(text);
-							return;
-						} else {
-							System.out
-									.println("-------------Address not found");
-						}
+			for (Element x : elements) {
+				// System.out.println(x.ownText());
+				String text = x.ownText();
+				String[] words = text.split("\\s+");
+				for (String word : words) {
+					if (Arrays.asList(US_STATES).contains(word)
+							|| Arrays.asList(StateCodes).contains(word)) {
+						System.out.println("Address found");
+						System.out.println(text);
+						return;
+					} else {
+						System.out.println("-------------Address not found");
 					}
 				}
-
-				// STEP 6: Clean-up environment
-
 			}
+
+			// STEP 6: Clean-up environment
 
 		} catch (Exception e) {
 			// Handle errors for Class.forName
@@ -678,5 +707,23 @@ public class JobSearchService {
 
 	public void setJobSearchDao(JobSearchDAO jobSearchDao) {
 		this.jobSearchDao = jobSearchDao;
+	}
+
+	public List<JobDetails> getJobDataForIds(String jobIds) {
+
+		return jobSearchDao.getJobsForIds(jobIds);
+	}
+	
+	public void matchLatLongFromJobList(List<JobDetails> details) {
+		List<JobDetails> JobListWithLatLong = jobSearchDao.getLatLong(details);
+		// match lat long to job details list
+		for (JobDetails i : details) {
+			for (JobDetails j : JobListWithLatLong) {
+				if (i.getJobId().equals(j.getJobId())) {
+					i.setLatitude(j.getLatitude());
+					i.setLongitude(j.getLongitude());
+				}
+			}
+		}
 	}
 }

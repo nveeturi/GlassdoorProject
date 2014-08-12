@@ -64,7 +64,7 @@
 					<!--//navbar-header-->
 					<div class="navbar-collapse collapse" id="navbar-collapse">
 						<ul class="nav navbar-nav">
-							<li class="nav-item"><a href="jobs.html">Jobs</a></li>
+							<li class="nav-item"><a href="index/jobs">Jobs</a></li>
 							<li class="nav-item"><a href="tour.html">Companies</a></li>
 							<li class="nav-item"><a href="pricing.html">Salaries</a></li>
 							<li class="nav-item"><a href="blog.html">Interviews</a></li>
@@ -95,7 +95,7 @@
 
 			<div class="signup">
 				<div class="container text-center">
-					<form class="signup-form" action="search.html" method="post">
+					<form class="signup-form" action="index/search" method="post">
 						&nbsp;&nbsp;&nbsp;
 						<div class="row">
 						  <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">

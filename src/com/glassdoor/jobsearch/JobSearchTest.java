@@ -16,7 +16,7 @@ public class JobSearchTest {
 			//jobService.saveJobDetails(jobdetails);
 			//jobService.updateLocationFromCB();
 			//jobService.updateLocationInfo();
-			jobService.updateLocationFromJobLink();
+			jobService.updateLocationFromJobLink(null);
 		
 		} //catch (IOException e) {
 			// TODO Auto-generated catch block
