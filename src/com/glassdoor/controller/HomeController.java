@@ -1,21 +1,16 @@
 package com.glassdoor.controller;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
@@ -79,7 +74,7 @@ public class HomeController {
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
 	public ModelAndView fill(int distance, int commuteTime, String commuteType) { 
 		ModelAndView mav = new ModelAndView("/jobs");
-		ArrayList<JobDetails> newJobs = jobService.refineSearch(jobdetails, distance, commuteTime, commuteType);//filter
+		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, distance, commuteTime, commuteType);//filter
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}
