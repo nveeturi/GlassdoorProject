@@ -64,6 +64,7 @@ public class HomeController {
 		return mav;
 	}
 
+	
 	@RequestMapping(value = "/find/{keyword}/{location}", method = RequestMethod.GET)
 	public @ResponseBody
 	String getGlassdoorJobs(@PathVariable String keyword,

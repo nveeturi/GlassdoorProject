@@ -160,6 +160,7 @@ public class JobSearchService {
 				jobdetail.setSource(job.getSource());
 				jobdetail.setCountry("USA");
 				jobdetail.setJobDescription(job.getDescriptionFragment());
+				jobdetail.setStreetName1(job.getLocation());
 				jobResult.add(jobdetail);
 
 			}

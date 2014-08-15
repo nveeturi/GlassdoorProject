@@ -4124,11 +4124,11 @@ label {
 	margin-bottom:0px
 }
 .widget .widget-title {
-	font-size:20px;
-	margin-bottom:30px !important
+	font-size:25px;
+	margin-bottom:20px !important
 }
 .sidebar .widget {
-	margin-bottom:30px
+	margin-bottom:20px
 }
 .sidebar .widget .widget-content {
 	background-color:rgba(0,0,0,0.05);
@@ -5370,14 +5370,14 @@ h4.agency-row-subtitle,h4.agency-row-subtitle a {
 	opacity:0.7
 }
 .infobox {
-	background-color:#39b54a;
-	-webkit-box-shadow:0px 2px 2px 0px rgba(0,0,0,0.2);
-	-moz-box-shadow:0px 2px 2px 0px rgba(0,0,0,0.2);
-	box-shadow:0px 2px 2px 0px rgba(0,0,0,0.2);
-	height:191px;
-	padding:0px;
-	position:relative;
-	width:200px
+	background-color: #39b54a;
+	box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+	height: 101px;
+	moz-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+	padding: 0px;
+	position: relative;
+	webkit-box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.2);
+	width: 200px;
 }
 .infobox:after {
 	border:6px solid transparent;
@@ -5394,48 +5394,58 @@ h4.agency-row-subtitle,h4.agency-row-subtitle a {
 .infobox-header {
 	background-color:#39b54a;
 	color:#fff;
-	padding:8px 15px
+	padding:8px 15px;
+	height:61px;
+}
+.infobox-footer {
+	background-color:#fff;
+	color:#39b54a;
+	width:100%;
+	padding:8px 15px;
+	height:80px;
 }
 .infobox-picture {
-	height:140px;
-	float:left;
-	overflow:hidden;
-	position:relative;
-	width:100%
+	float: left;
+	height: 40px;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	border: 2px solid #39b54a;
 }
 .infobox-picture a {
-	height:140px
+	height: 40px;
 }
 .infobox-picture img {
 	width:100%
 }
-h3.infobox-title,h3.infobox-title a {
-	color:#fff;
+h3.infobox-title, h3.infobox-title a {
+	color: #fff;
 	font-size:14px;
 	font-weight:bold;
 	margin:0px 0px 5px 0px !important;
 	padding:0px
 }
-h4.infobox-subtitle,h4.infobox-subtitle a {
-	color:rgba(255,255,255,0.8);
+h4.infobox-subtitle, h4.infobox-subtitle a {
+	color: rgba(255,255,255,0.8);
 	font-size:11px;
 	font-weight:normal;
 	margin:0px
 }
 .infobox-price {
-	background-color:rgba(255,255,255,0.85);
-	bottom:0px;
-	color:#39b54a;
-	font-size:12px;
-	font-weight:bold;
-	left:0px;
-	line-height:23px;
-	padding:4px 0px;
-	position:absolute;
-	right:0px;
-	text-align:center;
-	z-index:2
+	background-color: rgba(255,255,255,0.85);
+	color: #39b54a;
+	font-size: 12px;
+	font-weight: bold;
+	left: 0px;
+	line-height: 23px;
+	padding: 4px 0px;
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	text-align: center;
+	z-index: 2;
 }
+
 .clusterer {
 	background-color:#fff;
 	border:2px solid #39b54a;
@@ -6175,7 +6185,7 @@ h3.feature-title {
 	padding:17px 6px 20px 6px
 }
 h2,.block-content h3,.block-content h3,.widget .widget-title {
-	font-size:25px
+	font-size:20px
 }
 .agent-small-content {
 	padding-bottom:25px

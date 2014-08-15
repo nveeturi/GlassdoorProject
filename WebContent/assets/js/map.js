@@ -17,7 +17,7 @@
 				disableClickEvent: false,
 				openAllInfoboxes: false,
 				pixelOffsetX     : -100,
-				pixelOffsetY     : -255
+				pixelOffsetY     : -155
 			});
 
 			if (options.styles !== undefined) {
