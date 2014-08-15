@@ -18,6 +18,53 @@ public class JobDetails {
 	private String source;
 	private String jobSourceLink;
 	private String jobDescription;
+	private Double distance;
+	private int driveTime;
+	public int getDriveTime() {
+		return driveTime;
+	}
+
+	public void setDriveTime(int driveTime) {
+		this.driveTime = driveTime;
+	}
+
+	private int walkTime;
+	private int transitTime;
+	private int bikeTime;
+
+	public Double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(Double distance) {
+		this.distance = distance;
+	}
+
+	
+
+	public int getWalkTime() {
+		return walkTime;
+	}
+
+	public void setWalkTime(int walkTime) {
+		this.walkTime = walkTime;
+	}
+
+	public int getTransitTime() {
+		return transitTime;
+	}
+
+	public void setTransitTime(int transitTime) {
+		this.transitTime = transitTime;
+	}
+
+	public int getBikeTime() {
+		return bikeTime;
+	}
+
+	public void setBikeTime(int bikeTime) {
+		this.bikeTime = bikeTime;
+	}
 	//private String pageNumber;
 	private Integer totalPages;
 	

@@ -82,7 +82,7 @@
 						<li><a href="#">Interviews</a></li>
 					</ul><!-- /.header-nav -->
                     <div class="form-search-wrapper col-sm-3">
-                        <form method="post" action="?" class="form-horizontal form-search">
+                        <form method="post" action="search" class="form-horizontal form-search">
                             <div class="form-group has-feedback no-margin">
                                 <input type="text" class="form-control" placeholder="Search">
 
@@ -113,12 +113,12 @@
                                         <div class="sidebar-inner">
                                             <div class="widget">
         <div class="widget-content">
-        <form method="post" action="?">
+        <form method="post" action="sort">
             <div class="row">
                 <div class="form-group col-sm-12">
                     <label>Sort By</label>
                     <div class="select-wrapper">
-                    	<select id="sort-by" class="form-control">
+                    	<select id="sort-by" name="criteria" class="form-control">
 							<option value="Distance">Distance</option>
 							<option value="Commute Time">Commute Time</option>
 						</select>
@@ -129,7 +129,7 @@
             </div><!-- /.row -->
 
             <div class="form-group">
-                <input type="text" value="Sort" class="btn btn-block btn-primary btn-inversed">
+                <input type="submit" value="Sort" class="btn btn-block btn-primary btn-inversed"/>
             </div><!-- /.form-group -->
         </form>
     </div><!-- /.widget-content -->
@@ -138,12 +138,12 @@
 <div class="widget">
         <h3 class="widget-title">Filter</h3>
         <div class="widget-content">
-        <form method="post" action="?">
+        <form method="post" action="filter" >
             <div class="row">
                 <div class="form-group col-sm-12">
                     <label>Distance</label>
                     <div class="select-wrapper">
-                    	<select id="filter-distance" class="form-control">
+                    	<select id="filter-distance" name = "distance" class="form-control">
 							<option value="Within 5 miles">Within 5 miles</option>
 							<option value="Within 10 miles">Within 10 miles</option>
 							<option value="Within 20 miles">Within 20 miles</option>
@@ -156,7 +156,7 @@
                     <label>Commute Time</label>
                     
                     <div class="select-wrapper">
-                    	<select id="filter-distance" class="form-control">
+                    	<select id="filter-distance" name = "commuteTime" class="form-control">
 							<option value="&lt; 10 min">&lt; 10 min</option>
 							<option value="&lt; 30 min">&lt; 30 min</option>
 							<option value="&lt; 60 min">&lt; 60 min</option>
@@ -168,7 +168,7 @@
                     <label>via</label>
                     
                     <div class="select-wrapper">
-                    	<select id="filter-distance" class="form-control">
+                    	<select id="filter-distance" name = "commuteType" class="form-control">
 							<option value="Drive">Drive</option>
 							<option value="Public Transit">Public Transit</option>
 							<option value="Walk">Walk</option>
@@ -181,7 +181,7 @@
             </div><!-- /.row -->
 
             <div class="form-group">
-                <input type="text" value="Filter" class="btn btn-block btn-primary btn-inversed">
+                <input type="submit" value="Filter" class="btn btn-block btn-primary btn-inversed">
             </div><!-- /.form-group -->
         </form>
     </div><!-- /.widget-content -->
@@ -191,7 +191,6 @@
                             </div><!-- /.row -->
                             <div id="blanket" style="display:none;"></div>
 							<div id="popUpDiv" style="display:none;">
-						    
 						    	<a href="#" onclick="popup('popUpDiv')" >Close</a>
 							</div>	
                             <div class="col-lg-5 col-sm-5" style="float:right">

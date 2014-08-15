@@ -3,6 +3,7 @@ package com.glassdoor.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import com.glassdoor.jobsearch.JobSearchService;
 public class HomeController {
 	@Autowired
 	private JobSearchService jobService;
-
+	List<JobDetails> jobdetails = null;
 	/***
 	 * @return
 	 */
@@ -42,7 +43,7 @@ public class HomeController {
 		if(pageCount == null){
 			pageCount = "1";
 		}
-		List<JobDetails> jobdetails = null;
+		
 		try {
 			String locationEncode = (location == null || location.trim()
 					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
@@ -55,6 +56,7 @@ public class HomeController {
 					locationEncode,false,Integer.parseInt(pageCount),25);
 			System.out.println(jobdetails);
 			jobService.matchLatLongFromJobList(jobdetails);
+			jobService.updateCommuteTimeAndDistance(jobdetails);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -63,6 +65,22 @@ public class HomeController {
 		mav.addObject("keyword", keyword);
 		mav.addObject("location", location);
 		mav.addObject("joblist", jobdetails);
+		return mav;
+	}
+	
+	@RequestMapping(value = "sort", method = RequestMethod.POST) 
+	public ModelAndView sort(String criteria) { 
+		ModelAndView mav = new ModelAndView("/jobs");
+		jobService.sortJobList(jobdetails,criteria);//distance or commute time
+		mav.addObject("joblist", jobdetails);
+		return mav;
+	}
+	
+	@RequestMapping(value ="filter", method = RequestMethod.POST) 
+	public ModelAndView fill(int distance, int commuteTime, String commuteType) { 
+		ModelAndView mav = new ModelAndView("/jobs");
+		ArrayList<JobDetails> newJobs = jobService.refineSearch(jobdetails, distance, commuteTime, commuteType);//filter
+		mav.addObject("joblist", newJobs);
 		return mav;
 	}
 
@@ -82,6 +100,7 @@ public class HomeController {
 		}
 	}
 
+	
 	@RequestMapping(value = "/updateJobData/{keyword}/{location}", method = RequestMethod.GET)
 	public void updateJobData(@PathVariable String keyword,
 			@PathVariable String location) {

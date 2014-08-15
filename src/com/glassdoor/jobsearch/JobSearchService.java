@@ -11,8 +11,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLProtocolException;
@@ -55,7 +58,6 @@ public class JobSearchService {
 
 	private JobSearchDAO jobSearchDao;
 
-	
 	public List<JobDetails> getAllJobsFromDB() {
 
 		return jobSearchDao.getJobetailsFromDB();
@@ -379,13 +381,13 @@ public class JobSearchService {
 				int relevantCount = 0;
 				HashSet set = new HashSet();
 				for (GMapResult result : grsp.getResults()) {
-					
+
 					String resultCoName = removeSpecialChar(result.getName());
-					String jobCompany = removeSpecialChar(jobDetails.getCompanyName());
-					if ((resultCoName
-							.toLowerCase()
-							.contains(jobCompany.toLowerCase()) || jobCompany.toLowerCase()
-							.contains(resultCoName.toLowerCase()))
+					String jobCompany = removeSpecialChar(jobDetails
+							.getCompanyName());
+					if ((resultCoName.toLowerCase().contains(
+							jobCompany.toLowerCase()) || jobCompany
+							.toLowerCase().contains(resultCoName.toLowerCase()))
 							&& result.getVicinity().contains(
 									jobDetails.getCity())) {
 						address = result.getVicinity();
@@ -443,9 +445,9 @@ public class JobSearchService {
 
 	private String removeSpecialChar(String input) {
 		input = input.replaceAll("[^a-zA-Z0-9]+", "");
-		
+
 		return input;
-		
+
 	}
 
 	private void setAddressDetails(String formattedAddress,
@@ -462,8 +464,7 @@ public class JobSearchService {
 				streetNm2 = splitAddress[1].trim();
 				city = splitAddress[2].trim();
 				stateZip = splitAddress[3].trim().split("\\s");
-			}
-			else if (splitAddress.length == 4){
+			} else if (splitAddress.length == 4) {
 				city = splitAddress[1].trim();
 				stateZip = splitAddress[2].trim().split("\\s");
 			}
@@ -669,7 +670,8 @@ public class JobSearchService {
 				String[] words = text.split("\\s+");
 				for (String word : words) {
 					if (Arrays.asList(Constants.US_STATES).contains(word)
-							|| Arrays.asList(Constants.StateCodes).contains(word)) {
+							|| Arrays.asList(Constants.StateCodes).contains(
+									word)) {
 						System.out.println("Address found");
 						System.out.println(text);
 						return;
@@ -711,5 +713,121 @@ public class JobSearchService {
 				}
 			}
 		}
+	}
+
+	public void updateCommuteTimeAndDistance(List<JobDetails> details) {
+		// double curLat = 40.4435386;
+		// double curLong = -79.94435829999998;
+		double curLat = 47.649677;
+		double curLong = -122.357569;
+		double desLat = 47.646757;
+		double desLong = -122.361152;
+		// 47.646757,-122.361152
+		for (JobDetails i : details) {
+			if (i.getLatitude() != null && i.getLongitude() != null) {
+				// get distance
+				double distance = caculateDistance(curLat, curLong,
+						i.getLatitude(), i.getLongitude());
+
+				// // commute time by drive
+				// // int busTime = caculateCommuteTime("drive", curLat,
+				// curLong,
+				// // i.getLatitude(), i.getLongitude());
+				// int busTime = caculateCommuteTime("drive", curLat, curLong,
+				// desLat, desLong);
+				//
+				// // commute time by walk
+				// int walkTime = caculateCommuteTime("walk", curLat, curLong,
+				// i.getLatitude(), i.getLongitude());
+				//
+				// // commute time by bus
+				// int transitTime = caculateCommuteTime("transit", curLat,
+				// curLong, i.getLatitude(), i.getLongitude());
+				//
+				// // commute time by bike
+				// int bikeTime = caculateCommuteTime("bike", curLat, curLong,
+				// i.getLatitude(), i.getLongitude());
+
+				i.setDistance(distance);
+
+				Random r = new Random();
+				i.setDriveTime(r.nextInt(10000));
+				i.setBikeTime(r.nextInt(10000));
+				i.setTransitTime(r.nextInt(10000));
+				i.setWalkTime(r.nextInt(10000));
+
+				// i.setDriveTime(busTime);
+				// i.setBikeTime(bikeTime);
+				// i.setTransitTime(transitTime);
+				// i.setWalkTime(walkTime);
+
+			}
+		}
+
+	}
+
+	private double caculateDistance(double initialLat, double initialLong,
+			double finalLat, double finalLong) {
+		double latDiff = finalLat - initialLat;
+		double longDiff = finalLong - initialLong;
+		double earthRadius = 6371; // In Km
+
+		double distance = 2
+				* earthRadius
+				* Math.asin(Math.sqrt(Math.pow(Math.sin(latDiff / 2.0), 2)
+						+ Math.cos(initialLat) * Math.cos(finalLat)
+						* Math.pow(Math.sin(longDiff / 2), 2)));
+
+		return distance;
+	}
+
+	public void sortJobList(List<JobDetails> jobdetails, String criteria) {
+		if (criteria.equals("distance")) {
+			Collections.sort(jobdetails, DistanceComparator);
+		} else if (criteria.equals("commute time")) {
+			Collections.sort(jobdetails, CommuteTimecomparator);
+		}
+
+	}
+
+	private static Comparator<JobDetails> DistanceComparator = new Comparator<JobDetails>() {
+		public int compare(JobDetails j1, JobDetails j2) {
+			return (int) (j1.getDistance() - j2.getDistance());
+		}
+	};
+	private static Comparator<JobDetails> CommuteTimecomparator = new Comparator<JobDetails>() {
+		public int compare(JobDetails j1, JobDetails j2) {
+			return j1.getTransitTime() - j2.getTransitTime();
+		}
+	};
+
+	public ArrayList<JobDetails> refineSearch(List<JobDetails> jobdetails,
+			int distance, int commuteTime, String commuteType) {
+		ArrayList<JobDetails> newJob = (ArrayList<JobDetails>) jobdetails;
+		for (int i = 0; i < newJob.size(); i++) {
+			if (newJob.get(i).getDistance() > distance) {
+				newJob.remove(i);
+			}
+			switch (commuteType) {
+			case "bus":
+				if (newJob.get(i).getTransitTime() > commuteTime) {
+					newJob.remove(i);
+				}
+			case "drive":
+				if (newJob.get(i).getDriveTime() > commuteTime) {
+					newJob.remove(i);
+				}
+			case "walk":
+				if (newJob.get(i).getWalkTime() > commuteTime) {
+					newJob.remove(i);
+				}
+			case "bike":
+				if (newJob.get(i).getBikeTime() > commuteTime) {
+					newJob.remove(i);
+				}
+			}
+		}
+		return newJob;
+
 	}
 }
