@@ -1,6 +1,7 @@
 package com.glassdoor.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
@@ -36,23 +37,24 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "search", method = RequestMethod.POST)
-	public ModelAndView search(String keyword, String location) {
+	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
-
+		if(pageCount == null){
+			pageCount = "1";
+		}
 		List<JobDetails> jobdetails = null;
 		try {
-			String locationEncode = (location == null || location.trim().equals("")) ? "Pittsburgh"
-					: URLEncoder.encode(location, "UTF-8");
-			
-			String keywordEncode = (keyword == null || keyword.trim().equals("")) ? "": URLEncoder.encode(keyword, "UTF-8");
-			
-			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,locationEncode);
+			String locationEncode = (location == null || location.trim()
+					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
+					"UTF-8");
+
+			String keywordEncode = (keyword == null || keyword.trim()
+					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode,false,Integer.parseInt(pageCount),25);
 			System.out.println(jobdetails);
 			jobService.matchLatLongFromJobList(jobdetails);
-			//jobService.saveJobDetails(jobdetails);
-			// jobService.updateLocationFromCB();
-			// jobService.updateLocationInfo();
-			// jobService.updateLocationFromJobLink();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -62,14 +64,6 @@ public class HomeController {
 		mav.addObject("location", location);
 		mav.addObject("joblist", jobdetails);
 		return mav;
-	}
-
-	@RequestMapping(value = "/find/{keyword}/{location}", method = RequestMethod.GET)
-	public @ResponseBody
-	String getGlassdoorJobs(@PathVariable String keyword,
-			@PathVariable String location) {
-		String result = "Hello " + keyword + " location" + location + "!!!";
-		return result;
 	}
 
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
@@ -88,6 +82,27 @@ public class HomeController {
 		}
 	}
 
+	@RequestMapping(value = "/updateJobData/{keyword}/{location}", method = RequestMethod.GET)
+	public void updateJobData(@PathVariable String keyword,
+			@PathVariable String location) {
+		List<JobDetails> jobdetails = null;
+		try {
+			String locationEncode = (location == null || location.trim()
+					.equals("")) ? "San Francisco" : URLEncoder.encode(
+					location, "UTF-8");
+
+			String keywordEncode = (keyword == null || keyword.trim()
+					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode, locationEncode,
+					true, 1, 50);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(jobdetails);
+		jobService.saveJobDetails(jobdetails);
+	}
+
 	@RequestMapping(value = "/getJobsData", method = RequestMethod.GET)
 	public List<JobDetails> getAllJobsFromDB() {
 		return jobService.getAllJobsFromDB();
@@ -102,7 +117,7 @@ public class HomeController {
 
 	@RequestMapping(value = "/getJobsData/list/{ids}", method = RequestMethod.GET)
 	public List<JobDetails> getJobs(@PathVariable("ids") String jobIds) {
-		System.out.println("ids"+jobIds);
+		System.out.println("ids" + jobIds);
 		return jobService.getJobDataForIds(jobIds);
 	}
 

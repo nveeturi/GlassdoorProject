@@ -98,7 +98,7 @@ public class JobSearchDAO {
 		Session session = util.getSessionFactory().openSession();
 		@SuppressWarnings("unchecked")
 		List<JobDetails> results = session.createQuery(
-				"from JobDetails where jobId = '1075101096'")
+				"from JobDetails where latitude is null OR longitude is  null")
 				.list();
 		if (!(results == null || results.size() == 0)) {
 			details = results;
