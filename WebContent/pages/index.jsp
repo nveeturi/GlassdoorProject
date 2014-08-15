@@ -1,559 +1,192 @@
-<%@ page language="java" contentType="text/html; charset=US-ASCII"
-	pageEncoding="US-ASCII"%>
-	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html>
-<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
-<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
-<!--[if !IE]><!-->
-<html lang="en">
-<!--<![endif]-->
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<!doctype html>
+
+<html>
 <head>
-<title>Glassdoor: an inside look at jobs & companies</title>
-<!-- Meta -->
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="">
-<meta name="author" content="">
-<link rel="shortcut icon" href="favicon.ico">
-<link
-	href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic,400italic'
-	rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700'
-	rel='stylesheet' type='text/css'>
-<!-- Global CSS -->
-<link rel="stylesheet"
-	href="assets/plugins/bootstrap/css/bootstrap.min.css">
-<!-- Plugins CSS -->
-<link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.css">
-<link rel="stylesheet" href="assets/plugins/animate-css/animate.min.css">
-<!-- Theme CSS -->
-<link id="theme-style" rel="stylesheet" href="assets/css/styles.css">
-<link id="theme-style" rel="stylesheet" href="assets/css/login.css">
-<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" type="text/css" href="assets/libraries/font-awesome/css/font-awesome.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="assets/libraries/jquery-bxslider/jquery.bxslider.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="assets/libraries/flexslider/flexslider.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="assets/css/realocation.css" media="screen, projection" id="css-main">
+
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
+
+    <title>
+        Glassdoor | Get Hired. Love Your Job
+    </title>
 </head>
 
-<body class="home-page">
+<body class="header-light map-navigation-light footer-light">
 
-<div class="wrapper">
-		<!-- ******HEADER****** -->
-		<header id="header" class="header">
-			<div class="container">
-				<h1 class="logo pull-left">
-					<a href="index.jsp"> 
-						<img src = "assets/images/companies/glassdoor.png">
-						<span class="logo-title">glassdoor</span>
-					</a>
-				</h1>
-				
-				<!--//logo-->
-				<nav id="main-nav" class="main-nav navbar-right" role="navigation">
-					<div class="navbar-header">
-						<button class="navbar-toggle" type="button" data-toggle="collapse"
-							data-target="#navbar-collapse">
-							<span class="sr-only">Toggle navigation</span> <span
-								class="icon-bar"></span> <span class="icon-bar"></span> <span
-								class="icon-bar"></span>
-						</button>
-						<!--//nav-toggle-->
-					</div>
-					<!--//navbar-header-->
-					<div class="navbar-collapse collapse" id="navbar-collapse">
-						<ul class="nav navbar-nav">
-							<li class="nav-item"><a href="index/jobs">Jobs</a></li>
-							<li class="nav-item"><a href="tour.html">Companies</a></li>
-							<li class="nav-item"><a href="pricing.html">Salaries</a></li>
-							<li class="nav-item"><a href="blog.html">Interviews</a></li>
-							<li class="nav-item"><a href="map.html">Map</a></li>
-							<li class="nav-item nav-item-cta last">
-								<button id='modal-launcher' class="btn" data-toggle="modal" data-target="#login-modal">Login</button>
-							</li>
-						</ul>
-						<!--//nav-->
-					</div>
-					<!--//navabr-collapse-->
+<div id="wrapper">
+    <div id="header-wrapper">
+        <div id="header">
+    <div id="header-inner">
+        <div class="header-bar">
+            <div class="container">
+                <ul class="header-bar-nav nav nav-register">
+    <li><a href="login.html">Login</a></li>
+    <li><a href="register.html">Register</a></li>
+    <li><a href="renew-password.html">Renew Password</a></li>
+</ul>            </div><!-- /.container -->
+        </div><!-- /.header-bar -->
 
-					<div class="fixed-container"></div>
-				</nav>
-				<!--//main-nav-->
-			</div>
-			<!--//container-->
-		</header>
-		<!--//header-->
+        <div class="header-top">
+            <div class="container">
+                <div class="header-identity">
+                    <a href="index.html" class="header-identity-target">
+                        <span class="header-icon"><i class="fa fa-home"></i></span>
+                        <span class="header-title">glassdoor</span><!-- /.header-title -->
+                        <span class="header-slogan">Get Hired. <br> Love Your Job.</span><!-- /.header-slogan -->
+                    </a><!-- /.header-identity-target-->
+                </div><!-- /.header-identity -->
 
-		<!-- ******PROMO****** -->
-		<section id="promo" class="promo section">
-			<div class="container intro">
-				<h2 class="title">Get Hired. Love Your Job.</h2>
-				<p class="summary">Brand new Map job matching function enables easier job hunting</p>
-			</div>
-			<!--//intro-->
+                <div class="header-actions pull-right">
+					<strong style="color: #39b54a"> Map - Job Matching </strong> Feature <br /> 
+					Enables Easier Job Hunting
+				</div><!-- /.header-actions -->
 
-			<div class="signup">
-				<div class="container text-center">
-					<form class="signup-form" action="index/search" method="post">
-						&nbsp;&nbsp;&nbsp;
-						<div class="row">
-						  <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-						    <div class="form-group">
-						      <input type="text" name="keyword" class="form-control" placeholder="Job Title, Keywords, or Company">
-						    </div><!-- /input-group -->
-						  </div><!-- /.col-lg-4 -->
-				
-						  <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-						    <div class="form-group">
-						      <input type="text" name="location" class="form-control" placeholder="Location">
-						    </div><!-- /input-group -->
-						  </div><!-- /.col-lg-4 -->
-						  
-						  <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-						  	<div class="col-lg-4 btn-group">
-						  		<button type="submit" class="btn btn-cta btn-cta-primary">Search</button>
-						  	</div>
-						  	<div class="col-lg-8 btn-group">
-						  		<button type="submit" class="btn btn-cta btn-cta-primary">Show Nearby Jobs</button>
-						  	</div>
-						  </div><!-- /.col-lg-4 -->
-						  
-						  </div><!-- /.row -->
-					</form>
-					<!--//signup-form-->	
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".header-navigation">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div><!-- /.container -->
+        </div><!-- .header-top -->
+
+        <div class="header-navigation">
+            <div class="container">
+                <div class="row">
+                	<!-- menu -->
+                    <ul class="header-nav nav nav-pills">
+					    <li><a href="#">Home</a></li>
+						<li><a href="#">Jobs</a></li>
+						<li><a href="index/map">Map</a></li>
+						<li><a href="#">Companies</a></li>
+						<li><a href="#">Salaries</a></li>
+						<li><a href="#">Interviews</a></li>
+					</ul><!-- /.header-nav -->
 					
-					
-							
-				</div>
-				<!--//contianer-->
-				<br /> <br />
+					<!-- search bar -->
+                    <div class="form-search-wrapper col-sm-3">
+                        <form method="post" action="?" class="form-horizontal form-search">
+                            <div class="form-group has-feedback no-margin">
+                                <input type="text" class="form-control" placeholder="Quick Search">
 
-				<div class="container">
-					<h3 class="title text-center">Job Catetory</h3>
-					<br />
-					<div class="col-lg-4">
-						<div class="recommand">
-							<ul class="list-unstyled" style="padding-left: 10px;">
-								<li class="link"><a href="#"><i class="fa fa-caret-right">&nbsp;</i>IT</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Human Resource</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Healthcare</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Education</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Finance</a></li>
-							</ul>
-						</div>
-					</div>
-					
-					<div class="col-lg-4">
-						<div class="recommand">
-							<ul class="list-unstyled" style="padding-left: 10px">
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Customer Service</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Sales</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Warehouse</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Accounting</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Construction</a></li>
-							</ul>
-						</div>
-					</div>
-					
-					<div class="col-lg-4">
-						<div class="recommand">
-							<ul class="list-unstyled" style="padding-left: 10px">
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Data Entry</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Insurance</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Driver</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Maintenance</a></li>
-								<li><a href="#"><i class="fa fa-caret-right">&nbsp;</i>Nursing</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<!--//recommand-->			
-			</div>
-			<!--//signup-->		
-		</section>
-		<!--//promo-->
+                                <span class="form-control-feedback">
+                                    <i class="fa fa-search"></i>
+                                </span><!-- /.form-control-feedback -->
+                            </div><!-- /.form-group -->
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.container -->
+        </div><!-- /.header-navigation -->
+    </div><!-- /.header-inner -->
+</div><!-- /#header -->    </div><!-- /#header-wrapper -->
+<div id="main-wrapper">
+    <div id="main">
+        <div id="main-inner">
 
-
-		<!-- ******WHY****** -->
-		<section id="why" class="why section">
-			<div class="container">
-				<h2 class="title text-center"><span ><a href="#why"><i class="glyphicon glyphicon-bullhorn"></i></a></span></h2>
-				<h2 class="title text-center">See What Employees Are Saying</h2>
-				<p class="intro text-center">all posted anonymously by employees and job seekers</p>
-				
-				<ul class="nav nav-tabs" role="tablist">
-				  <li class="active"><a href="#CompanyReviews" role="tab" data-toggle="tab">Company Reviews</a></li>
-				  <li><a href="#Salaries" role="tab" data-toggle="tab">Salaries</a></li>
-				  <li><a href="#Interviews" role="tab" data-toggle="tab">Interviews</a></li>
-				</ul>
-				
-				<div class="tab-content">
-					<div class="tab-pane active" id = "CompanyReviews">
-						<div class="testimonials row col-lg-8">
-							
-							<div class="item col-lg-6">
-								<div class="quote-box">
-									<blockquote class="quote">
-									<div class="row">
-										<div class="col-lg-3"><img class="img-responsive" src="assets/images/companies/expedia.png" alt=""/></div>
-										<div class="col-lg-9 title">Expedia</div>
-									</div>
-									<a href="#">Excellent work environment and opportunity for GLOBAL advancement!</a><br/>
-									<b>Pros - </b>Training was comprehensive; excellent pay and benefits; many different opportunity areas for advancement. If you are...
-									</blockquote>
-									<!--//quote-->
-									<p class="details">
-										<span class="name">Sales Agent</span> <span class="title">reviewed 16 days ago</span>
-									</p>
-									<i class="fa fa-quote-right"></i>
-								</div>
-								<!--//quote-box-->
-							</div>
-							<!--//item-->
-							
-							<div class="item col-lg-6">
-								<div class="quote-box">
-									<blockquote class="quote">
-									<div class="row">
-										<div class="col-lg-3"><img class="img-responsive" src="assets/images/companies/morgan-stanley.png" alt=""/></div>
-										<div class="title">Morgan Stanley</div>
-									</div>
-									<a href="#">decent place to work</a><br/>
-									<b>Pros - </b>good experience for someone starting out in their career
-									</blockquote>
-									<!--//quote-->
-									<p class="details">
-										<span class="name">Employee</span> <span class="title">reviewed 12 days ago</span>
-									</p>
-									<i class="fa fa-quote-right"></i>
-								</div>
-								<!--//quote-box-->
-							</div>
-							<!--//item-->
-							 
-						</div>
-						
-						<div class="testimonials row col-lg-8">
-							
-							<div class="item col-lg-6">
-								<div class="quote-box">
-									<blockquote class="quote">
-									<div class="row">
-										<div class="col-lg-3"><img class="img-responsive" src="assets/images/companies/juniper.png" alt=""/></div>
-										<div class="col-lg-9 title">Juniper Networks</div>
-									</div>
-									<a href="#">Great company, but stop the layoffs!!</a><br/>
-									<b>Pros - </b>Good company.. Good technology. Higher leadership team is doing a great job. The new CEO knows what hes doing. Great...
-									</blockquote>
-									<!--//quote-->
-									<p class="details">
-										<span class="name">Hardware Engineer</span> <span class="title">reviewed 19 days ago</span>
-									</p>
-									<i class="fa fa-quote-right"></i>
-								</div>
-								<!--//quote-box-->
-							</div>
-							<!--//item-->
-							
-							<div class="item col-lg-6">
-								<div class="quote-box">
-									<blockquote class="quote">
-									<div class="row">
-										<div class="col-lg-3"><img class="img-responsive" src="assets/images/companies/vmware.png" alt=""/></div>
-										<div class="title">VMware</div>
-									</div>
-									<a href="#">Human Resources</a><br/>
-									<b>Pros - </b>Great team and work/life balance! Competitive compensation.
-									</blockquote>
-									<!--//quote-->
-									<p class="details">
-										<span class="name">Employee</span> <span class="title">reviewed 2 days ago</span>
-									</p>
-									<i class="fa fa-quote-right"></i>
-								</div>
-								<!--//quote-box-->
-							</div>
-							<!--//item-->
-						</div>
-					</div>
-					
-					<div class = "row tab-pane" id = "Salaries">
-					<div class="benefits col-lg-8">
-						<div class="item clearfix">
-							<div class="panel panel-default">
-								<div class="panel-body row">
-									<div class="col-lg-1"><img class="img-responsive" src="assets/images/companies/ibm.png" alt=""/></div>
-									<div class="col-lg-9"><a href="#">IBM Advisory Software Engineer</a></div>
-								  	<div class="col-lg-2" style="text-align:right">$109,000</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body row">
-									<div class="col-lg-10"><a href="#">GE Engineer</a></div>
-								  	<div class="col-lg-2" style="text-align:right">$69,000</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body row">
-									<div class="col-lg-10"><a href="#">KPMG Audit Associate</a></div>
-								  	<div class="col-lg-2" style="text-align:right">$54,000</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body row">
-									<div class="col-lg-10"><a href="#">Exxon Mobil Engineer</a></div>
-								  	<div class="col-lg-2" style="text-align:right">$97,000</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body row">
-									<div class="col-lg-10"><a href="#">Capgemini Manager</a></div>
-								  	<div class="col-lg-2" style="text-align:right">$121,000</div>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body row">
-									<div class="col-lg-10"><a href="#">Expedia Program Manager</a></div>
-								  	<div class="col-lg-2" style="text-align:right">$91,000</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					</div>
-				
-					<div class = "row tab-pane" id = "Interviews">
-						<div class="benefits col-lg-8">
-							<div class="item clearfix">
-								<div class="icon col-lg-2">
-									<img class="img-responsive" src="assets/images/companies/google.png" alt=""/>
-								</div>
-								<!--//icon-->
-								<div class="content col-lg-6">
-									<h3 class="title">Interviewing at Google</h3>
-									<p class="desc">
-										A classic Google process - two phone interviews, then five 1:1 on-site interviews...
-										<a href="#">Read Interview</a>
-									</p>
-								</div>
-								<div class="content col-lg-4">
-									<p class="desc">
-										<b>Interview Question:</b><br/>
-										All questions were from the expected area.<br/>
-										<a href="#">Answer This Question</a>
-									</p>
-								</div>
-								<!--//content-->
-							</div>
-							<!--//item-->
-							<div class="item clearfix">
-								<div class="icon col-lg-2">
-									<img class="img-responsive" src="assets/images/companies/pnc.png" alt=""/>
-								</div>
-								<!--//icon-->
-								<div class="content col-lg-6">
-									<h3 class="title">Interviewing at PNC Financial Services Group</h3>
-									<p class="desc">
-										Five interviews. Hiring and interview process was fairly easy. Very conversational...
-										<a href="#">Read Interview</a>
-									</p>
-								</div>
-								<div class="content col-lg-4">
-									<p class="desc">
-										<b>Interview Question:</b><br/>
-										No difficult or unexpected question.<br/>
-										<a href="#">Answer This Question</a>
-									</p>
-								</div>
-								<!--//content-->
-							</div>
-							<!--//item-->
-							<div class="item clearfix">
-								<div class="icon col-lg-2">
-									<img class="img-responsive" src="assets/images/companies/emc.png" alt=""/>
-								</div>
-								<!--//icon-->
-								<div class="content col-lg-6">
-									<h3 class="title">Interviewing at EMC</h3>
-									<p class="desc">
-										I was initially contacted by a third-party recruiter. He found my resume and profile...
-										<a href="#">Read Interview</a>
-									</p>
-								</div>
-								<div class="content col-lg-4">
-									<p class="desc">
-										<b>Interview Question:</b><br/>
-										I was handed a piece of paper with three...<br/>
-										<a href="#">Answer This Question</a>
-									</p>
-								</div>
-								<!--//content-->
-							</div>
-							<!--//item-->	
-					</div>
-				<!--//row-->
-				</div>
-			</div>
-			<!--//container-->
-		</section>
-		<!--//why-->
-
-		
-
-	</div>
-	<!--//wrapper-->
-
-	<!-- ******FOOTER****** -->
-	<footer class="footer">
-		<div class="footer-content">
-			<div class="container">
+<!-- MAP -->
+<div class="block-content no-padding">
+    <div class="block-content-inner">
+        <div class="map-wrapper">
+            <div id="map" data-style="2"></div><!-- /#map -->
+            
+            <div class="container">
 				<div class="row">
-					<div class="footer-col col-md-5 col-sm-7 col-sm-12 about">
-						<div class="footer-col-inner">
-							<h3 class="title">About Us</h3>
-							<p>Glassdoor is your free inside look at jobs and companies. 
-							Salary details, company reviews, and interview questions &#8212; 
-							all posted anonymously by employees and job seekers.</p>
-							
+					<div class="col-sm-4 col-sm-offset-8 col-md-3 col-md-offset-9 map-navigation-positioning">
+						<div class="map-navigation-wrapper">
+							<div class="map-navigation">
+								<form action="index/search" method="post" class="clearfix">
+									<div class="form-group col-sm-12">
+										<label>Keyword</label>
+										<input type="text" name="keyword" class="form-control" placeholder="Job Title">
+									</div><!-- /.form-group -->
+									
+									<div class="form-group col-sm-12">
+										<label>Location</label>
+										<input type="text" name="location" class="form-control" placeholder="Location">
+									</div><!-- /.form-group -->
 
-						</div>
-						<!--//footer-col-inner-->
-					</div>
-					<!--//foooter-col-->
-					<div class="footer-col col-md-3 col-sm-4 col-md-offset-1 links">
-						<div class="footer-col-inner">
-							<ul class="list-unstyled">
-								<li><a href="#"><i class="fa fa-caret-right"></i>Employers</a></li>
-								<li><a href="#"><i class="fa fa-caret-right"></i>Careers</a></li>
-								<li><a href="#"><i class="fa fa-caret-right"></i>API</a></li>
-								<li><a href="#"><i class="fa fa-caret-right"></i>Blog</a></li>
-								<li><a href="#"><i class="fa fa-caret-right"></i>Feedback</a></li>
-								<li><a href="#"><i class="fa fa-caret-right"></i>Help</a></li>
-								<li><a href="#"><i class="fa fa-caret-right"></i>Post a Job</a></li>
-							</ul>
-						</div>
-						<!--//footer-col-inner-->
-					</div>
-					<!--//foooter-col-->
-					<div class="footer-col col-md-3 col-sm-12 contact">
-						<div class="footer-col-inner">
-							<h3 class="title">Get in touch</h3>
-							<div class="row">
-								<p class="tel col-md-12 col-sm-4">
-									<i class="fa fa-phone"></i>0800 123 4567
-								</p>
-								<p class="email col-md-12 col-sm-4">
-									<i class="fa fa-envelope"></i><a href="#">support@website.com</a>
-								</p>
-								<p class="email col-md-12 col-sm-4">
-									<i class="fa fa-comment"></i><a href="#">Live Chat</a>
-								</p>
+									<div class="form-group col-sm-12">
+										<input type="submit" class="btn btn-primary btn-inversed btn-block" value="Find Jobs">
+									</div>
+									<!-- /.form-group -->
+								</form>
 							</div>
+							<!-- /.map-navigation -->
 						</div>
-						<!--//footer-col-inner-->
+						<!-- /.map-navigation-wrapper -->
 					</div>
-					<!--//foooter-col-->
+					<!-- /.col-sm-3 -->
 				</div>
-				<!--//row-->
+				<!-- /.row -->
 			</div>
-			<!--//container-->
-		</div>
-		<!--//footer-content-->
-		<div class="bottom-bar">
-			<div class="container">
-				<div class="row">
-					<small class="copyright col-md-6 col-sm-6 col-xs-12">Copyright
-						@ 2014 Glassdoor Practicum Team
-					</small>
-					
-				</div>
-				<!--//row-->
-			</div>
-			<!--//container-->
-		</div>
-		<!--//bottom-bar-->
-	</footer>
-	<!--//footer-->
+			<!-- /.container -->
 
+        </div><!-- /.map-wrapper -->
+    </div><!-- /.block-content-inner -->
+</div><!-- /.block-content -->
+            
+        </div><!-- /#main-inner -->
+    </div><!-- /#main -->
+</div><!-- /#main-wrapper -->
 
-	<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body login-modal">
-					<div class="clearfix"></div>
-					<div id='social-icons-conatainer'>
-						<div class='modal-body-left'>
-							<div class="form-group">
-								<input type="text" id="username" placeholder="Enter your name"
-									value="" class="form-control login-field"> <i
-									class="fa fa-user login-field-icon"></i>
-							</div>
+    <div id="footer-wrapper">
+        <div id="footer">
+            <div id="footer-inner">
+                
+                <div class="footer-bottom">
+                    <div class="container">
+                        <p class="center no-margin">
+                            &copy; 2014 Glassdoor Practicum Team, All Right reserved
+                        </p>
 
-							<div class="form-group">
-								<input type="password" id="login-pass" placeholder="Password"
-									value="" class="form-control login-field"> <i
-									class="fa fa-lock login-field-icon"></i>
-							</div>
-							
-							<div class="row">
-								<div class="icon col-lg-5"><a href="#" class="btn btn-success modal-login-btn">Login</a></div>
-								<div class="icon col-lg-7"><a href="#" class="btn modal-login-btn text-center">Lost your password?</a></div>
-							</div>
+                        <div class="center">
+                            <ul class="social">
+                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fa fa-flickr"></i></a></li>
+                                <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                                <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                <li><a href="#"><i class="fa fa-vimeo-square"></i></a></li>
+                                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                            </ul><!-- /.social -->
+                        </div><!-- /.center -->
+                    </div><!-- /.container -->
+                </div><!-- /.footer-bottom -->
+            </div><!-- /#footer-inner -->
+        </div><!-- /#footer -->
+    </div><!-- /#footer-wrapper -->
+</div><!-- /#wrapper -->
 
-							
-						</div>
+<script type="text/javascript" src="assets/js/jquery.js"></script>
+<script type="text/javascript" src="assets/libraries/isotope/jquery.isotope.min.js"></script>
 
-						<div class='modal-body-right'>
-							<div class="modal-social-icons">
-								<a href='#' class="btn btn-default facebook"> <i
-									class="fa fa-facebook modal-icons"></i> Sign In with Facebook
-								</a> <a href='#' class="btn btn-default twitter"> <i
-									class="fa fa-twitter modal-icons"></i> Sign In with Twitter
-								</a> <a href='#' class="btn btn-default google"> <i
-									class="fa fa-google-plus modal-icons"></i> Sign In with Google
-								</a> <a href='#' class="btn btn-default linkedin"> <i
-									class="fa fa-linkedin modal-icons"></i> Sign In with Linkedin
-								</a>
-							</div>
-						</div>
-						<div id='center-line'></div>
-					</div>
-					<div class="clearfix"></div>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
+<script type="text/javascript" src="assets/js/gmap3.infobox.js"></script>
+<script type="text/javascript" src="assets/js/gmap3.clusterer.js"></script>
+<script type="text/javascript" src="assets/js/map.js"></script>
 
-					<div class="form-group modal-register-btn">
-						<button class="btn btn-default">New User Please Register</button>
-					</div>
-				</div>
-				<div class="clearfix"></div>
-			</div>
-		</div>
-	</div>
-	
+<script type="text/javascript" src="assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/transition.js"></script>
+<script type="text/javascript" src="assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/collapse.js"></script>
+<script type="text/javascript" src="assets/libraries/jquery-bxslider/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="assets/libraries/flexslider/jquery.flexslider.js"></script>
+<script type="text/javascript" src="assets/js/jquery.chained.min.js"></script>
+<script type="text/javascript" src="assets/js/realocation.js"></script>
 
-
-
-	<!-- Javascript -->
-	<script type="text/javascript"
-		src="assets/plugins/jquery-1.10.2.min.js"></script>
-	<script type="text/javascript"
-		src="assets/plugins/jquery-migrate-1.2.1.min.js"></script>
-	<script type="text/javascript"
-		src="assets/plugins/detectmobilebrowser.js"></script>
-	<script type="text/javascript"
-		src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="assets/plugins/back-to-top.js"></script>
-	<script type="text/javascript"
-		src="assets/plugins/jquery-placeholder/jquery.placeholder.js"></script>
-	<script type="text/javascript"
-		src="assets/plugins/jquery-inview/jquery.inview.min.js"></script>
-	<script type="text/javascript"
-		src="assets/plugins/FitVids/jquery.fitvids.js"></script>
-	<script type="text/javascript" src="assets/js/main.js"></script>
-	<!-- <script type="text/javascript" src="assets/js/modernizr-2.6.2.min.js"></script> -->
-	<!--[if !IE]>-->
-	<script type="text/javascript" src="assets/js/animations.js"></script>
-	<!--<![endif]-->
 </body>
 </html>
-
-

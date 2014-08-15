@@ -1,87 +1,161 @@
-<%@ page language="java" contentType="text/html; charset=US-ASCII"
-    pageEncoding="US-ASCII"%>
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<!doctype html>
 
 <html>
 <head>
-	<title>Glassdoor: an inside look at jobs & companies</title>
-	<!-- Meta -->
-	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     <meta name="description" content="">
-    <meta name="author" content="">    
-    <link rel="shortcut icon" href="favicon.ico">  
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic,400italic' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>  
-	<!-- Global CSS -->
-	<link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">   
-	<link rel="stylesheet" href="assets/css/screen.css" />
-	<!-- Plugins CSS -->  
-	<link rel="stylesheet" href="assets/plugins/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" href="assets/plugins/animate-css/animate.min.css">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css" />
-    <link rel="stylesheet" href="assets/css/MarkerCluster.css" />
-	<link rel="stylesheet" href="assets/css/MarkerCluster.Default.css" />
-    <!-- Theme CSS -->  
-    <link id="theme-style" rel="stylesheet" href="assets/css/styles.css"/>
-    
-    <script src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js"></script>
-    <script type="text/javascript" src="assets/js/leaflet.markercluster-src.js"></script>
-    <script type="text/javascript" src="assets/js/main.js"></script>   
-    <script type="text/javascript" src="assets/js/geojson-sample.js"></script>
-	
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" type="text/css" href="../assets/libraries/font-awesome/css/font-awesome.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="../assets/libraries/jquery-bxslider/jquery.bxslider.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="../assets/libraries/flexslider/flexslider.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="../assets/css/realocation.css" media="screen, projection" id="css-main">
+
+    <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
+
+    <title>
+        Glassdoor | Get Hired. Love Your Job
+    </title>
 </head>
 
-<body>
-	<div id="map"></div>
-	<script type="text/javascript">
-		var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-				maxZoom: 18,
-				attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-			}),
-			latlng = L.latLng(0.78, 102.37);
-		var map = L.map('map', {center: latlng, zoom: 7, layers: [tiles]});
-		var geojson = L.geoJson(geojsonSample, {
-			style: function (feature) {
-				return {color: feature.properties.color};
-			},
-			onEachFeature: function (feature, layer) {
-				var popupText = 'geometry type: ' + feature.geometry.type;
-				if (feature.properties.color) {
-					popupText += '<br/>color: ' + feature.properties.color
-				}
-				layer.bindPopup(popupText);
-			}
-		});
-		geojson.addLayer(new L.Marker(new L.LatLng(2.745530718801952, 105.194091796875)))
-		var eye1 = new L.Marker(new L.LatLng(-0.7250783020332547, 101.8212890625));
-		var eye2 = new L.Marker(new L.LatLng(-0.7360637370492077, 103.2275390625));
-		var nose = new L.Marker(new L.LatLng(-1.3292264529974207, 102.5463867187));
-		var mouth = new L.Polyline([
-			new L.LatLng(-1.3841426927920029, 101.7333984375),
-			new L.LatLng(-1.6037944300589726, 101.964111328125),
-			new L.LatLng(-1.6806671337507222, 102.249755859375),
-			new L.LatLng(-1.7355743631421197, 102.67822265625),
-			new L.LatLng(-1.5928123762763, 103.0078125),
-			new L.LatLng(-1.3292264529974207, 103.3154296875)
-		]);
-		
-		var markers = L.markerClusterGroup();
-		markers.addLayer(geojson).addLayers([eye1,eye2,nose,mouth]);
-		map.addLayer(markers);
-	</script>
-	
-	<!-- Javascript -->  
-	<script type="text/javascript" src="assets/plugins/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="assets/plugins/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="assets/plugins/detectmobilebrowser.js"></script> 
-    <script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script> 
-    <script type="text/javascript" src="assets/plugins/back-to-top.js"></script>
-    <script type="text/javascript" src="assets/plugins/jquery-placeholder/jquery.placeholder.js"></script>
-    <script type="text/javascript" src="assets/plugins/jquery-inview/jquery.inview.min.js"></script>
-    <script type="text/javascript" src="assets/plugins/FitVids/jquery.fitvids.js"></script>  
-	       
-    
+<body class="header-light map-navigation-light footer-light">
+
+<div id="wrapper">
+    <div id="header-wrapper">
+        <div id="header">
+    <div id="header-inner">
+        <div class="header-bar">
+            <div class="container">
+                <ul class="header-bar-nav nav nav-register">
+				    <li><a href="login.html">Login</a></li>
+				    <li><a href="register.html">Register</a></li>
+				    <li><a href="renew-password.html">Renew Password</a></li>
+				</ul>            
+			</div><!-- /.container -->
+        </div><!-- /.header-bar -->
+
+        <div class="header-top">
+            <div class="container">
+                <div class="header-identity">
+                    <a href="index.html" class="header-identity-target">
+                        <span class="header-icon"><i class="fa fa-home"></i></span>
+                        <span class="header-title">glassdoor</span><!-- /.header-title -->
+                        <span class="header-slogan">Get Hired. <br> Love Your Job.</span><!-- /.header-slogan -->
+                    </a><!-- /.header-identity-target-->
+                </div><!-- /.header-identity -->
+
+                <div class="header-actions pull-right">
+					<strong style="color: #39b54a"> Map - Job Matching </strong> Feature <br /> 
+					Enables Easier Job Hunting
+				</div><!-- /.header-actions -->
+
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".header-navigation">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div><!-- /.container -->
+        </div><!-- .header-top -->
+
+        <div class="header-navigation">
+            <div class="container">
+                <div class="row">
+                	<!-- menu -->
+                    <ul class="header-nav nav nav-pills">
+					    <li><a href="index.jsp">Home</a></li>
+						<li><a href="jobs.jsp">Jobs</a></li>
+						<li><a href="map.jsp">Map</a></li>
+						<li><a href="#">Companies</a></li>
+						<li><a href="#">Salaries</a></li>
+						<li><a href="#">Interviews</a></li>
+					</ul><!-- /.header-nav -->
+					
+					<!-- search bar -->
+                    <div class="form-search-wrapper col-sm-3">
+                        <form method="post" action="?" class="form-horizontal form-search">
+                            <div class="form-group has-feedback no-margin">
+                                <input type="text" class="form-control" placeholder="Quick Search">
+
+                                <span class="form-control-feedback">
+                                    <i class="fa fa-search"></i>
+                                </span><!-- /.form-control-feedback -->
+                            </div><!-- /.form-group -->
+                        </form>
+                    </div>
+                </div>
+            </div><!-- /.container -->
+        </div><!-- /.header-navigation -->
+    </div><!-- /.header-inner -->
+</div><!-- /#header -->    </div><!-- /#header-wrapper -->
+<div id="main-wrapper">
+    <div id="main">
+        <div id="main-inner">
+
+<!-- MAP -->
+<div class="block-content no-padding">
+    <div class="block-content-inner">
+        <div class="map-wrapper">
+            <div id="usmap"></div><!-- /#map -->
+        </div><!-- /.map-wrapper -->
+    </div><!-- /.block-content-inner -->
+</div><!-- /.block-content -->
+            
+        </div><!-- /#main-inner -->
+    </div><!-- /#main -->
+</div><!-- /#main-wrapper -->
+
+    <div id="footer-wrapper">
+        <div id="footer">
+            <div id="footer-inner">
+                
+                <div class="footer-bottom">
+                    <div class="container">
+                        <p class="center no-margin">
+                            &copy; 2014 Glassdoor Practicum Team, All Right reserved
+                        </p>
+
+                        <div class="center">
+                            <ul class="social">
+                                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href="#"><i class="fa fa-flickr"></i></a></li>
+                                <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                                <li><a href="#"><i class="fa fa-youtube"></i></a></li>
+                                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                <li><a href="#"><i class="fa fa-vimeo-square"></i></a></li>
+                                <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                            </ul><!-- /.social -->
+                        </div><!-- /.center -->
+                    </div><!-- /.container -->
+                </div><!-- /.footer-bottom -->
+            </div><!-- /#footer-inner -->
+        </div><!-- /#footer -->
+    </div><!-- /#footer-wrapper -->
+</div><!-- /#wrapper -->
+
+<script type="text/javascript" src="../assets/js/jquery.js"></script>
+<script type="text/javascript" src="../assets/libraries/isotope/jquery.isotope.min.js"></script>
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
+<script type="text/javascript" src="../assets/js/gmap3.infobox.js"></script>
+<script type="text/javascript" src="../assets/js/gmap3.clusterer.js"></script>
+<script type="text/javascript" src="../assets/js/map.js"></script>
+<script type="text/javascript" src="../assets/js/usmap.js"></script>
+<script type="text/javascript" src="../assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/transition.js"></script>
+<script type="text/javascript" src="../assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/collapse.js"></script>
+<script type="text/javascript" src="../assets/libraries/jquery-bxslider/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../assets/libraries/flexslider/jquery.flexslider.js"></script>
+<script type="text/javascript" src="../assets/js/jquery.chained.min.js"></script>
+<script type="text/javascript" src="../assets/js/jquery.js"></script>
+<script type="text/javascript" src="../assets/js/realocation.js"></script>
+
 </body>
 </html>
