@@ -18,7 +18,8 @@ public class JobDetails {
 	private String source;
 	private String jobSourceLink;
 	private String jobDescription;
-	
+	//private String pageNumber;
+	private Integer totalPages;
 	
 	public Long getJobId() {
 		return jobId;
@@ -115,6 +116,12 @@ public class JobDetails {
 	}
 	public void setJobDescription(String jobDescription) {
 		this.jobDescription = jobDescription;
+	}
+	public Integer getTotalPages() {
+		return totalPages;
+	}
+	public void setTotalPages(Integer pages) {
+		this.totalPages = pages;
 	}
 	
 

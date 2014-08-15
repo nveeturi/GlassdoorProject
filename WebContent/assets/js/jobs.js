@@ -50,19 +50,188 @@ function fixDiv(div_id,offsetTop){
     });
 }
 
+var locations = [];
+var contents = [];
+var types = [];
+var images = [];
+var latitudes = [];
+var longitudes = [];
+var companyNames = [];
+var jobTitles = [];
+var streetNames = [];
+var jobResults = [];
+var map;
+var markers = [];
+
 function pageselectCallback(page_id, jq) {
 	var pageSize = 10;
+	locations = [];
+	contents = [];
+	types = [];
+	images = [];
+	
+	deleteMarkers();
 	$(".job-content").hide();
     $(".job-content").each(function(n) {
-        if (n >= pageSize * page_id && n < pageSize * (page_id + 1))
-            $(this).show();
+    	if (n >= pageSize * page_id && n < pageSize * (page_id + 1)) {
+        	$(this).show();
+        	if(latitudes[n] != '0.0' && latitudes[n] != '') {
+//        		alert(latitudes[n]+','+longitudes[n]+','+companyNames[n]+','+jobTitles[n]+','+streetNames[n]);
+        		var jobResult = {};
+            	jobResult.latitude = latitudes[n];
+            	jobResult.longitude = longitudes[n];
+            	jobResult.companyName = companyNames[n];
+            	jobResult.jobTitle = jobTitles[n];
+            	jobResult.streetName = streetNames[n];
+            	jobResults.push(jobResult);
+//            	locations.push(Array(latitudes[n], longitudes[n]));
+//            	contents.push('<div class="infobox"><div class="infobox-header"><h3 class="infobox-title"><a href="#">'+jobTitles[n]+'</a></h3></div><div class="infobox-picture"><div class="infobox-price">'+companyNames[n]+'</div></div></div>');
+//                types.push('apartment');
+//                images.push('<img src="../assets/img/icons/flatblocks2.png" alt="">');
+            	showJob(jobResult);
+            	addMarker(jobResult);
+        	}
+        }  
     });
+    
+    
+}
+
+function showJob(jobResult) {
+	var markerOptions = {};
+    markerOptions.position = new google.maps.LatLng(jobResult.latitude, jobResult.longitude);
+    markerOptions.map = map;
+    markerOptions.icon = "../assets/img/marker-transparent.png";
+
+    var marker = new google.maps.Marker(markerOptions); 
+    
+    jobResult.marker = marker;
+    jobResult.infowindow = new google.maps.InfoWindow({
+    	content:'<div class="infobox"><div class="infobox-header"><h3 class="infobox-title"><a href="#">'+jobResult.jobTitle+'</a></h3></div><div class="infobox-picture"><div class="infobox-price">'+jobResult.companyName+'</div></div></div>'
+    });
+    google.maps.event.addListener(jobResult.marker, 'mouseover', function(){
+    	jobResult.infowindow.open(map,jobResult.marker);
+    });
+    google.maps.event.addListener(jobResult.marker, 'mouseout', function(){
+    	jobResult.infowindow.close();
+    });
+}
+
+function addMarker(jobResult) {
+	var markerOptions = {};
+    markerOptions.position = new google.maps.LatLng(jobResult.latitude, jobResult.longitude);
+    markerOptions.map = map;
+    
+    var marker = new google.maps.Marker(markerOptions); 
+    
+    jobResult.marker = marker;
+    jobResult.infowindow = new google.maps.InfoWindow({
+    	content:'<div class="infobox"><div class="infobox-header"><h3 class="infobox-title"><a href="#">'+jobResult.jobTitle+'</a></h3></div><div class="infobox-picture"><div class="infobox-price">'+jobResult.companyName+'</div></div></div>'
+    });
+    google.maps.event.addListener(jobResult.marker, 'mouseover', function(){
+    	jobResult.infowindow.open(map,jobResult.marker);
+    });
+    google.maps.event.addListener(jobResult.marker, 'mouseout', function(){
+    	jobResult.infowindow.close();
+    });
+	
+	markers.push(marker);
+}
+
+function setAllMap(map) {
+	for (var i = 0; i < markers.length; i++) {
+		markers[i].setMap(map);
+	 }
+}
+
+function clearMarkers() {
+	setAllMap(null);
+}
+
+function deleteMarkers() {
+	clearMarkers();
+	markers = [];
+}
+
+function toggle(div_id) {
+	var el = document.getElementById(div_id);
+	if ( el.style.display == 'none' ) {	el.style.display = 'block';}
+	else {el.style.display = 'none';}
+}
+
+function blanket_size(popUpDivVar) {
+	if (typeof window.innerWidth != 'undefined') {
+		viewportheight = window.innerHeight;
+	} else {
+		viewportheight = document.documentElement.clientHeight;
+	}
+	if ((viewportheight > document.body.parentNode.scrollHeight) && (viewportheight > document.body.parentNode.clientHeight)) {
+		blanket_height = viewportheight;
+	} else {
+		if (document.body.parentNode.clientHeight > document.body.parentNode.scrollHeight) {
+			blanket_height = document.body.parentNode.clientHeight;
+		} else {
+			blanket_height = document.body.parentNode.scrollHeight;
+		}
+	}
+	var blanket = document.getElementById('blanket');
+	blanket.style.height = blanket_height + 'px';
+	var popUpDiv = document.getElementById(popUpDivVar);
+	popUpDiv_height=blanket_height/2-200;//200 is half popup's height
+	popUpDiv.style.top = popUpDiv_height + 'px';
+}
+
+function window_pos(popUpDivVar) {
+	if (typeof window.innerWidth != 'undefined') {
+		viewportwidth = window.innerHeight;
+	} else {
+		viewportwidth = document.documentElement.clientHeight;
+	}
+	if ((viewportwidth > document.body.parentNode.scrollWidth) && (viewportwidth > document.body.parentNode.clientWidth)) {
+		window_width = viewportwidth;
+	} else {
+		if (document.body.parentNode.clientWidth > document.body.parentNode.scrollWidth) {
+			window_width = document.body.parentNode.clientWidth;
+		} else {
+			window_width = document.body.parentNode.scrollWidth;
+		}
+	}
+	var popUpDiv = document.getElementById(popUpDivVar);
+	window_width=window_width/2-200;//200 is half popup's width
+	popUpDiv.style.left = window_width + 'px';
+}
+
+function popup(windowname) {
+	blanket_size(windowname);
+	window_pos(windowname);
+	toggle('blanket');
+	toggle(windowname);		
+	
+	
 }
 
 
 (function ($) {
 	fixDiv('show',200);
 	fixDiv('refinesearch',200);
+	
+	var jobs = document.getElementsByClassName("job-position");
+	
+	Array.prototype.forEach.call(jobs, function(job) {
+		var splitted = job.value.split("+");
+		latitudes.push(splitted[0]);
+		longitudes.push(splitted[1]);
+		companyNames.push(splitted[2]);
+		jobTitles.push(splitted[3]);
+		streetNames.push(splitted[4]);
+	});
+	
+	map = new google.maps.Map(document.getElementById("jobmap"), {
+        mapTypeId: google.maps.MapTypeId.ROADMAP, 
+        zoom: 12, 
+        center: new google.maps.LatLng(37.77,-122.42),
+        styles : [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}],
+    });
 	
 	$("#Pagination").pagination(parseInt(totalnum), {
 		callback : pageselectCallback,
@@ -74,34 +243,23 @@ function pageselectCallback(page_id, jq) {
 		num_edge_entries : 1
 	});
 	
-	var map = new google.maps.Map(document.getElementById("jobmap"), {
-        mapTypeId: google.maps.MapTypeId.ROADMAP, 
-        zoom: 10, 
-        center: new google.maps.LatLng(37.77,-122.42),
-        styles : [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}],
-    });
-	
-	for (var i=0;i<cities.length; i++) {
-        (function(){
-            var city, markerOptions;
-            city = cities[i];
-            markerOptions = {};
-            markerOptions.position = new google.maps.LatLng(city.lat, city.lng);
-            markerOptions.map = map;
-            
-            city.marker = new google.maps.Marker(markerOptions);
-//          city.marker.setIcon("assets/img/marker-transparent.png");
-            city.infowindow = new google.maps.InfoWindow({
-            	content:city.name
-            });
-            google.maps.event.addListener(city.marker, 'mouseover', function(){
-                city.infowindow.open(map,city.marker);
-            });
-            google.maps.event.addListener(city.marker, 'mouseout', function(){
-                city.infowindow.close();
-            });
-            
-        }());
-    }
+//	map = $('#jobmap').aviators_map({
+//        locations: locations,
+//        contents: contents,
+//        types: types,
+//        images: images,
+//        transparentMarkerImage: '../assets/img/marker-transparent.png',
+//        transparentClusterImage: '../assets/img/clusterer-transparent.png',
+//        zoom: 13,
+//        center: {
+//            latitude: 37.77,
+//            longitude: -122.42
+//        },
+//        enableGeolocation: false,
+//        styles: [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}],
+//        pixelOffsetX     : -100,
+//		pixelOffsetY     : -155
+//	});
+		
 })(jQuery);
 

@@ -15,8 +15,8 @@ public class JobSearchTest {
 			//List<JobDetails> jobdetails = jobService.getJobDataFromGlassdoor("", "Pittsburgh");
 			//jobService.saveJobDetails(jobdetails);
 			//jobService.updateLocationFromCB();
-			//jobService.updateLocationInfo();
-			jobService.updateLocationFromJobLink(null);
+			jobService.updateLocationInfo();
+			//jobService.updateLocationFromJobLink(null);
 		
 		} //catch (IOException e) {
 			// TODO Auto-generated catch block
