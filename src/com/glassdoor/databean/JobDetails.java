@@ -20,6 +20,10 @@ public class JobDetails {
 	private String jobDescription;
 	private Double distance;
 	private int driveTime;
+	private int walkTime;
+	private int transitTime;
+	private int bikeTime;
+	
 	public int getDriveTime() {
 		return driveTime;
 	}
@@ -28,9 +32,6 @@ public class JobDetails {
 		this.driveTime = driveTime;
 	}
 
-	private int walkTime;
-	private int transitTime;
-	private int bikeTime;
 
 	public Double getDistance() {
 		return distance;
@@ -39,8 +40,6 @@ public class JobDetails {
 	public void setDistance(Double distance) {
 		this.distance = distance;
 	}
-
-	
 
 	public int getWalkTime() {
 		return walkTime;
