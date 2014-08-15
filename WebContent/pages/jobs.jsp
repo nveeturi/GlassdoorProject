@@ -192,7 +192,7 @@
                             <div id="blanket" style="display:none;"></div>
 							<div id="popUpDiv" style="display:none;">
 						    
-						    	<a href="#" onclick="popup('popUpDiv')" >Click to Close CSS Pop Up</a>
+						    	<a href="#" onclick="popup('popUpDiv')" >Close</a>
 							</div>	
                             <div class="col-lg-5 col-sm-5" style="float:right">
                                 	<div class="property-rows">
