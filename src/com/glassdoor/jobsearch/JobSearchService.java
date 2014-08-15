@@ -706,11 +706,24 @@ public class JobSearchService {
 		List<JobDetails> JobListWithLatLong = jobSearchDao.getLatLong(details);
 		// match lat long to job details list
 		for (JobDetails i : details) {
+			boolean found = false;
 			for (JobDetails j : JobListWithLatLong) {
 				if (i.getJobId().equals(j.getJobId())) {
-					i.setLatitude(j.getLatitude());
-					i.setLongitude(j.getLongitude());
+					found = true;
+					if(j.getLatitude() == null) {
+						i.setLatitude(0.0);
+						i.setLongitude(0.0);
+						break;
+					}else{
+						i.setLatitude(j.getLatitude());
+						i.setLongitude(j.getLongitude());
+						break;
+					}
 				}
+			}
+			if(!found) {
+				i.setLatitude(0.0);
+				i.setLongitude(0.0);
 			}
 		}
 	}
@@ -726,6 +739,8 @@ public class JobSearchService {
 		for (JobDetails i : details) {
 			if (i.getLatitude() != null && i.getLongitude() != null) {
 				// get distance
+				double a = i.getLatitude();
+				double b = i.getLongitude();
 				double distance = caculateDistance(curLat, curLong,
 						i.getLatitude(), i.getLongitude());
 
@@ -782,22 +797,34 @@ public class JobSearchService {
 	}
 
 	public void sortJobList(List<JobDetails> jobdetails, String criteria) {
-		if (criteria.equals("distance")) {
+		if (criteria.equals("Distance")) {
 			Collections.sort(jobdetails, DistanceComparator);
-		} else if (criteria.equals("commute time")) {
+		} else if (criteria.equals("CommuteTime")) {
 			Collections.sort(jobdetails, CommuteTimecomparator);
 		}
 
 	}
 
 	private static Comparator<JobDetails> DistanceComparator = new Comparator<JobDetails>() {
-		public int compare(JobDetails j1, JobDetails j2) {
-			return (int) (j1.getDistance() - j2.getDistance());
+		public int compare(JobDetails o1, JobDetails o2) {
+			if (o1.getDistance() == null) {
+		        return (o2.getDistance() == null) ? 0 : -1;
+		    }
+		    if (o2.getDistance() == null) {
+		        return -1;
+		    }
+			return (int) (o2.getDistance() - o1.getDistance());
 		}
 	};
 	private static Comparator<JobDetails> CommuteTimecomparator = new Comparator<JobDetails>() {
-		public int compare(JobDetails j1, JobDetails j2) {
-			return j1.getTransitTime() - j2.getTransitTime();
+		public int compare(JobDetails o1, JobDetails o2) {
+			if (o1.getTransitTime()== 0) {
+		        return (o2.getTransitTime() == 0) ? 0 : -1;
+		    }
+		    if (o2.getTransitTime()== 0) {
+		        return -1;
+		    }
+			return o2.getTransitTime() - o1.getTransitTime();
 		}
 	};
 
