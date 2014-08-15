@@ -72,9 +72,11 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
-	public ModelAndView filter(int distance, int commuteTime, String commuteType) { 
+	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
 		ModelAndView mav = new ModelAndView("/jobs");
-		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, distance, commuteTime, commuteType);//filter
+		String dis = distance.split(" ")[1];
+		String com = commuteTime.substring(2, 4);
+		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com), commuteType);//filter
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}

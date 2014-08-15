@@ -1811,8 +1811,8 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	idname = that.idname, 
 	geocoder = new google.maps.Geocoder(), 
 	lastStartPositionIndex, 
-	highlightedIconUrl = "assets/img/icons/marker5.png", 
-	normalIconUrl = "assets/img/icons/marker4.png";
+	highlightedIconUrl = "../assets/img/icons/marker5.png", 
+	normalIconUrl = "../assets/img/icons/marker4.png";
 	
 	var options = {
 		darkOverlayColorDay : "rgba(50,50,50,0.4)",
@@ -2683,7 +2683,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 	};
 	var markers = [];
-	var resultMarker = {}, outsideAreaIcon = "assets/media/img/marker8.png", insideAreaIcon = "assets/media/img/marker5.png", currentSearch = undefined, lastSearchSqkm = 0, searchTypeTimeout = false;
+	var resultMarker = {}, outsideAreaIcon = "../assets/media/img/marker8.png", insideAreaIcon = "../assets/media/img/marker5.png", currentSearch = undefined, lastSearchSqkm = 0, searchTypeTimeout = false;
 	var showSearchIndicator = function() {
 		$("#urbanDistance-search-indicator").css("visibility", "visible");
 	};
