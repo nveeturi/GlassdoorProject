@@ -120,7 +120,7 @@
                     <div class="select-wrapper">
                     	<select id="sort-by" name="criteria" class="form-control">
 							<option value="Distance">Distance</option>
-							<option value="Commute Time">Commute Time</option>
+							<option value="CommuteTime">Commute Time</option>
 						</select>
                     </div>
                 </div><!-- /.form-group -->
@@ -210,7 +210,7 @@
 	
 	                                                    <div class="property-row-price">
 	                                                    	${job.companyName}
-	                                                    	<c:if test="${job.latitude != '0.0' && latitudes[n] != ''}">
+	                                                    	<c:if test="${job.latitude != '0.0' && job.latitude != ''}">
 	                                                        	<a href="#" onclick="popup('popUpDiv')"><i class="fa fa-map-marker" style="color:#39b54a"></i></a>
 	                                                        </c:if>
 	                                                    </div><!-- /.property-row-price -->
