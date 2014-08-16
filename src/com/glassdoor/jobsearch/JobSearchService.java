@@ -457,21 +457,27 @@ public class JobSearchService {
 			JobDetails jobDetails) {
 		if (!formattedAddress.equals("")) {
 			String[] splitAddress = formattedAddress.split(",");
-			jobDetails.setStreetName1(splitAddress[0].trim());
+			
 
 			String[] stateZip = null;
 			String streetNm2 = "";
 			String city = "";
+			String streetNm1 = "";
 
+			if(splitAddress.length == 3){
+				city = splitAddress[0].trim();
+			}
 			if (splitAddress.length == 5) {
+				streetNm1 = splitAddress[0].trim();
 				streetNm2 = splitAddress[1].trim();
 				city = splitAddress[2].trim();
 				stateZip = splitAddress[3].trim().split("\\s");
 			} else if (splitAddress.length == 4) {
+				streetNm1 = splitAddress[0].trim();
 				city = splitAddress[1].trim();
 				stateZip = splitAddress[2].trim().split("\\s");
 			}
-
+			jobDetails.setStreetName1(streetNm1);
 			jobDetails.setCity(city);
 			jobDetails.setStreetName2(streetNm2);
 			jobDetails.setState(stateZip[0]);
@@ -568,8 +574,7 @@ public class JobSearchService {
 
 		// Traverse through all the records that do not have lat-long
 		List<JobDetails> details = null;
-		JobSearchDAO dao = new JobSearchDAO();
-		details = dao.getJobDetailsWithNoLocation();
+		details = jobSearchDao.getJobDetailsWithNoLocation();
 
 		for (JobDetails jobDetails : details) {
 			try {
