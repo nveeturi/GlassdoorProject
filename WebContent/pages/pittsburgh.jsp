@@ -123,7 +123,7 @@
 										<div id="intersect-container"></div>
 									</div>
 									<div class="form-group col-sm-12">
-										<div style="display: inline-block" id="urbanDistance-markerrepo" class="markerrepo"><img id="urbanDistance-markerrepo-marker" class="markerrepo-marker" src="assets/img/icons/marker4.png" alt="New Starting Point"/></div>
+										<div style="display: inline-block" id="urbanDistance-markerrepo" class="markerrepo"><img id="urbanDistance-markerrepo-marker" class="markerrepo-marker" src="../assets/img/icons/marker4.png" alt="New Starting Point"/></div>
 										<label>Drop Me On The Map</label>
 									</div><!-- /.form-group -->
 									
@@ -250,8 +250,6 @@
                     }
                 });
             };
-            
-           
             
             google.setOnLoadCallback(google_init);
         </script>

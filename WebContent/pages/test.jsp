@@ -7,15 +7,22 @@
 <link rel="stylesheet" type="text/css" href="../assets/css/realocation.css" media="screen, projection" id="css-main">
     
 <title>Insert title here</title>
+
+<script src="http://www.google.com/jsapi?key=AIzaSyA0APLVAS_phz0CE0stfzyy5yq0e25qdi0;sensor=false" type="text/javascript"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" type="text/javascript"></script>
+    
 </head>
+
+
 <body>
 
-<div class="infobox">
-		<div class="infobox-header">
-			<h3 class="infobox-title">30 Miller Pl Apt 3</h3>
-			<h4 class="infobox-subtitle">San Francisco, CA</h4>
-		</div>
-		
+<input type="text" id="start" value="5869 northumberland ST"></input>
+	<script>
+	var autocompleteStart = new google.maps.places.Autocomplete((document.getElementById('start')), { types: ['geocode'] });
+	google.maps.event.addListener(autocompleteStart, 'place_changed', function() {
+		startPlace = autocompleteStart.getPlace().name;
+	});
+	</script>	
 	
 	
 	

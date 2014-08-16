@@ -16,8 +16,21 @@
 	height:400px;
 	border:5px solid #000;
 	z-index: 9002;
+	overflow:auto;
+	overflow-x:hidden;
 }
 
 #popUpDiv a {
 	position:relative; top:20px; left:20px
+}
+
+#popMap {
+	width:380px;
+	height:380px;
+	background:red;
+	
+}
+#map-canvas {
+	width:280px;
+	height:200px;
 }
