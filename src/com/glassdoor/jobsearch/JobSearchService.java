@@ -44,6 +44,8 @@ import com.glassdoor.databean.GoogleResult;
 import com.glassdoor.databean.JobDetails;
 import com.glassdoor.databean.JobListing;
 import com.glassdoor.databean.Location;
+import com.glassdoor.databean.TravelTimeListing;
+import com.glassdoor.databean.TravelTimeListingWS;
 import com.google.gson.Gson;
 
 /**
@@ -57,6 +59,7 @@ import com.google.gson.Gson;
 public class JobSearchService {
 
 	private JobSearchDAO jobSearchDao;
+	private static String wsapikey = "4e5e6d22d4da1c95033c23cb1b606596";
 
 	public List<JobDetails> getAllJobsFromDB() {
 
@@ -702,37 +705,31 @@ public class JobSearchService {
 		return jobSearchDao.getJobsForIds(jobIds);
 	}
 
-	public void matchLatLongFromJobList(List<JobDetails> details) {
+	public List<JobDetails> matchLatLongFromJobList(List<JobDetails> details) {
 		List<JobDetails> JobListWithLatLong = jobSearchDao.getLatLong(details);
+		List<JobDetails> newJob = new ArrayList<JobDetails>();
 		// match lat long to job details list
 		for (JobDetails i : details) {
-			boolean found = false;
 			for (JobDetails j : JobListWithLatLong) {
 				if (i.getJobId().equals(j.getJobId())) {
-					found = true;
-					if(j.getLatitude() == null) {
-						i.setLatitude(0.0);
-						i.setLongitude(0.0);
-						break;
-					}else{
+					if (j.getLatitude() != null) {
 						i.setLatitude(j.getLatitude());
 						i.setLongitude(j.getLongitude());
+						newJob.add(i);
 						break;
 					}
 				}
 			}
-			if(!found) {
-				i.setLatitude(0.0);
-				i.setLongitude(0.0);
-			}
+
 		}
+		return newJob;
 	}
 
 	public void updateCommuteTimeAndDistance(List<JobDetails> details) {
 		// double curLat = 40.4435386;
 		// double curLong = -79.94435829999998;
-		double curLat = 47.649677;
-		double curLong = -122.357569;
+		double curLat = 40.443504;
+		double curLong = -79.941571;
 		double desLat = 47.646757;
 		double desLong = -122.361152;
 		// 47.646757,-122.361152
@@ -744,40 +741,120 @@ public class JobSearchService {
 				double distance = caculateDistance(curLat, curLong,
 						i.getLatitude(), i.getLongitude());
 
-				// // commute time by drive
-				// // int busTime = caculateCommuteTime("drive", curLat,
-				// curLong,
-				// // i.getLatitude(), i.getLongitude());
+				// commute time by bus
+				int busTime = caculateCommuteTime("transit", curLat, curLong,
+						i.getLatitude(), i.getLongitude());
 				// int busTime = caculateCommuteTime("drive", curLat, curLong,
 				// desLat, desLong);
-				//
-				// // commute time by walk
-				// int walkTime = caculateCommuteTime("walk", curLat, curLong,
-				// i.getLatitude(), i.getLongitude());
-				//
-				// // commute time by bus
-				// int transitTime = caculateCommuteTime("transit", curLat,
-				// curLong, i.getLatitude(), i.getLongitude());
-				//
-				// // commute time by bike
-				// int bikeTime = caculateCommuteTime("bike", curLat, curLong,
-				// i.getLatitude(), i.getLongitude());
 
+				// commute time by walk
+				int walkTime = caculateCommuteTimeGl("walking", curLat, curLong,
+						i.getLatitude(), i.getLongitude());
+
+				// commute time by drive
+				int driveTime = caculateCommuteTimeGl("driving", curLat,
+						curLong, i.getLatitude(), i.getLongitude());
+
+				// commute time by bike
+				int bikeTime = caculateCommuteTimeGl("bicycling", curLat, curLong,
+						i.getLatitude(), i.getLongitude());
+				
+				int min = Math.min(Math.min(walkTime, driveTime), Math.min(busTime,bikeTime));
 				i.setDistance(distance);
-
-				Random r = new Random();
-				i.setDriveTime(r.nextInt(10000));
-				i.setBikeTime(r.nextInt(10000));
-				i.setTransitTime(r.nextInt(10000));
-				i.setWalkTime(r.nextInt(10000));
-
-				// i.setDriveTime(busTime);
-				// i.setBikeTime(bikeTime);
-				// i.setTransitTime(transitTime);
-				// i.setWalkTime(walkTime);
-
+				i.setDriveTime(driveTime);
+				i.setBikeTime(bikeTime);
+				i.setTransitTime(busTime);
+				i.setWalkTime(walkTime);
+				i.setMinCommuteType(min);
 			}
 		}
+
+	}
+
+	private int caculateCommuteTimeGl(String commuteType, double curLat,
+			double curLong, double desLat, double desLong) {
+		StringBuilder urlString = new StringBuilder(
+				"http://maps.googleapis.com/maps/api/distancematrix/json?");
+		urlString.append("origins=" + curLat + "," + curLong);
+		urlString.append("&destinations=" + desLat + "," + desLong);
+		urlString.append("&mode=" + commuteType);
+		urlString.append("&language=en-EN");
+		URL url;
+		TravelTimeListing ttl = null;
+		try {
+			url = new URL(urlString.toString());
+
+			HttpURLConnection con;
+
+			con = (HttpURLConnection) url.openConnection();
+
+			con.setRequestMethod("GET");
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+
+			StringBuilder response = new StringBuilder();
+			String output;
+			while ((output = br.readLine()) != null) {
+				response.append(output);
+			}
+
+			Gson gson = new Gson();
+			ttl = gson.fromJson(response.toString(), TravelTimeListing.class);
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return Integer.parseInt(ttl.getRows()[0].getElements()[0].getDuration()
+				.getValue());
+
+	}
+
+	private int caculateCommuteTime(String commuteType, double curLat,
+			double curLong, double desLat, double desLong) {
+		StringBuilder urlString = new StringBuilder(
+				"http://api2.walkscore.com/api/v1/traveltime/json?");
+
+		urlString.append("wsapikey=" + wsapikey);
+		urlString.append("&mode=" + commuteType);
+		urlString.append("&origin=" + curLat + "," + curLong);
+		urlString.append("&destination=" + desLat + "," + desLong);
+		URL url;
+		TravelTimeListingWS ttl = null;
+		try {
+			url = new URL(urlString.toString());
+
+			HttpURLConnection con;
+
+			con = (HttpURLConnection) url.openConnection();
+
+			con.setRequestMethod("GET");
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+
+			StringBuilder response = new StringBuilder();
+			String output;
+			while ((output = br.readLine()) != null) {
+				response.append(output);
+			}
+
+			Gson gson = new Gson();
+			ttl = gson.fromJson(response.toString(), TravelTimeListingWS.class);
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ttl.getResponse().getResults()[0].getTravel_times()[0]
+				.getSeconds();
 
 	}
 
@@ -808,47 +885,47 @@ public class JobSearchService {
 	private static Comparator<JobDetails> DistanceComparator = new Comparator<JobDetails>() {
 		public int compare(JobDetails o1, JobDetails o2) {
 			if (o1.getDistance() == null) {
-		        return (o2.getDistance() == null) ? 0 : -1;
-		    }
-		    if (o2.getDistance() == null) {
-		        return -1;
-		    }
-			return (int) (o2.getDistance() - o1.getDistance());
+				return (o2.getDistance() == null) ? 0 : -1;
+			}
+			if (o2.getDistance() == null) {
+				return -1;
+			}
+			return (int) (o1.getDistance() - o2.getDistance());
 		}
 	};
 	private static Comparator<JobDetails> CommuteTimecomparator = new Comparator<JobDetails>() {
 		public int compare(JobDetails o1, JobDetails o2) {
-			if (o1.getTransitTime()== 0) {
-		        return (o2.getTransitTime() == 0) ? 0 : -1;
-		    }
-		    if (o2.getTransitTime()== 0) {
-		        return -1;
-		    }
-			return o2.getTransitTime() - o1.getTransitTime();
+			if (o1.getMinCommuteType() == 0) {
+				return (o2.getMinCommuteType() == 0) ? 0 : -1;
+			}
+			if (o2.getMinCommuteType() == 0) {
+				return -1;
+			}
+			return o1.getMinCommuteType() - o2.getMinCommuteType();
 		}
 	};
 
 	public ArrayList<JobDetails> refineSearch(List<JobDetails> jobdetails,
 			int distance, int commuteTime, String commuteType) {
-		ArrayList<JobDetails> newJob = (ArrayList<JobDetails>) jobdetails;
+		ArrayList<JobDetails> newJob = new ArrayList<JobDetails> (jobdetails);
 		for (int i = 0; i < newJob.size(); i++) {
-			if (newJob.get(i).getDistance() > distance) {
+			if (newJob.get(i).getDistance() > distance*1609) {
 				newJob.remove(i);
 			}
 			switch (commuteType) {
-			case "bus":
+			case "Transit":
 				if (newJob.get(i).getTransitTime() > commuteTime) {
 					newJob.remove(i);
 				}
-			case "drive":
+			case "Drive":
 				if (newJob.get(i).getDriveTime() > commuteTime) {
 					newJob.remove(i);
 				}
-			case "walk":
+			case "Walk":
 				if (newJob.get(i).getWalkTime() > commuteTime) {
 					newJob.remove(i);
 				}
-			case "bike":
+			case "Bike":
 				if (newJob.get(i).getBikeTime() > commuteTime) {
 					newJob.remove(i);
 				}
@@ -857,4 +934,5 @@ public class JobSearchService {
 		return newJob;
 
 	}
+
 }

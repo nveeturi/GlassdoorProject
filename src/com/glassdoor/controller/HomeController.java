@@ -36,7 +36,7 @@ public class HomeController {
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
 		if(pageCount == null){
-			pageCount = "1";
+			pageCount = "10";
 		}
 		
 		try {
@@ -50,7 +50,7 @@ public class HomeController {
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
 					locationEncode,false,Integer.parseInt(pageCount),25);
 			System.out.println(jobdetails);
-			jobService.matchLatLongFromJobList(jobdetails);
+			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
 			jobService.updateCommuteTimeAndDistance(jobdetails);
 
 		} catch (IOException e) {
@@ -76,7 +76,7 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("/jobs");
 		String dis = distance.split(" ")[1];
 		String com = commuteTime.substring(2, 4);
-		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com), commuteType);//filter
+		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}

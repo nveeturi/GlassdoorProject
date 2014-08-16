@@ -170,7 +170,7 @@
                     <div class="select-wrapper">
                     	<select id="filter-distance" name = "commuteType" class="form-control">
 							<option value="Drive">Drive</option>
-							<option value="Public Transit">Public Transit</option>
+							<option value="Transit">Public Transit</option>
 							<option value="Walk">Walk</option>
 							<option value="Bike">Bike</option>
 						</select>

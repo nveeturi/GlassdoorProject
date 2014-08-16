@@ -21,9 +21,27 @@ public class JobDetails {
 	private Double distance;
 	private int driveTime;
 	private int walkTime;
-	private int transitTime;
+	private int busTime;
 	private int bikeTime;
+	private int minCommuteType;
 	
+	
+	public int getBusTime() {
+		return busTime;
+	}
+
+	public void setBusTime(int busTime) {
+		this.busTime = busTime;
+	}
+
+	public int getMinCommuteType() {
+		return minCommuteType;
+	}
+
+	public void setMinCommuteType(int minCommuteType) {
+		this.minCommuteType = minCommuteType;
+	}
+
 	public int getDriveTime() {
 		return driveTime;
 	}
@@ -50,11 +68,11 @@ public class JobDetails {
 	}
 
 	public int getTransitTime() {
-		return transitTime;
+		return busTime;
 	}
 
 	public void setTransitTime(int transitTime) {
-		this.transitTime = transitTime;
+		this.busTime = transitTime;
 	}
 
 	public int getBikeTime() {
