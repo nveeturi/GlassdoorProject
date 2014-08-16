@@ -24,7 +24,7 @@ public class HomeController {
 	private JobSearchService jobService;
 	List<JobDetails> jobdetails = null;
 	/***
-	 * @return
+	 * @return 
 	 */
 	@RequestMapping("index")
 	public ModelAndView index() {
