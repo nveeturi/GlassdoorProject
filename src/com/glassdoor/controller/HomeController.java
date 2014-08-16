@@ -47,8 +47,10 @@ public class HomeController {
 			String keywordEncode = (keyword == null || keyword.trim()
 					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
 
+			/*jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode,false,Integer.parseInt(pageCount),25);*/
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
-					locationEncode,false,Integer.parseInt(pageCount),25);
+					locationEncode,true,1,50);
 			System.out.println(jobdetails);
 			jobService.matchLatLongFromJobList(jobdetails);
 			jobService.updateCommuteTimeAndDistance(jobdetails);
