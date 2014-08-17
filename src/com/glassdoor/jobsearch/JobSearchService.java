@@ -1042,7 +1042,7 @@ public class JobSearchService {
 			if ((i + 1) % 100 == 0) {
 				sbgl.deleteCharAt(sbgl.length() - 1);
 				idgl.add(new StringBuilder(sbgl));
-				sbgl.setLength(0);// clear
+				sbgl.setLength(0);
 			}
 		}
 		if (details.size() < 100) {
