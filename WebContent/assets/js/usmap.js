@@ -240,7 +240,7 @@
             markerOptions.map = map;
             
             city.marker = new google.maps.Marker(markerOptions);
-//          city.marker.setIcon("assets/img/marker-transparent.png");
+            city.marker.setIcon("../assets/img/icons/marker_red.png");
             city.infowindow = new google.maps.InfoWindow({
             	content:city.name
             });

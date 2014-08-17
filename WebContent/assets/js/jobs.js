@@ -1,10 +1,10 @@
 // get height of the window 
 function getClientHeight() {   
-    var clientHeight=0;   
+    var clientHeight = 0;   
     if(document.body.clientHeight&&document.documentElement.clientHeight){   
-        var clientHeight=(document.body.clientHeight<document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;           
+        clientHeight=(document.body.clientHeight<document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;           
     }else{   
-        var clientHeight=(document.body.clientHeight>document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;       
+        clientHeight=(document.body.clientHeight>document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;       
     }   
     return clientHeight;   
 }
@@ -30,16 +30,20 @@ function fixDiv(div_id,offsetTop){
 	var Obj=$('#'+div_id);
     
 	$(window).scroll(function(){
-    	if($(window).scrollTop() >= 0 && $(window).scrollTop() < 1475) {
+		var height = getClientHeight();
+		var contentHeight = getScrollHeight();
+		var h = contentHeight - 200 - height;
+		
+    	if($(window).scrollTop() >= 0 && $(window).scrollTop() < h) {
     		Obj.css({
                 'position':'fixed',
                 'top':0+offsetTop+'px',
 				'z-index':1
             });
-    	} else if($(window).scrollTop() >= 1350){
+    	} else if($(window).scrollTop() >= h){
 			Obj.css({
 				'position':'relative',
-	    		'top':1350
+	    		'top':h
 	    	});
     	} else {
     		Obj.css({
@@ -71,6 +75,7 @@ function pageselectCallback(page_id, jq) {
 	images = [];
 	
 	deleteMarkers();
+	
 	$(".job-content").hide();
     $(".job-content").each(function(n) {
     	if (n >= pageSize * page_id && n < pageSize * (page_id + 1)) {
@@ -89,7 +94,7 @@ function pageselectCallback(page_id, jq) {
 //                types.push('apartment');
 //                images.push('<img src="../assets/img/icons/flatblocks2.png" alt="">');
             	showJob(jobResult);
-            	addMarker(jobResult);
+//            	addMarker(jobResult);
         	}
         }  
     });
@@ -101,10 +106,9 @@ function showJob(jobResult) {
 	var markerOptions = {};
     markerOptions.position = new google.maps.LatLng(jobResult.latitude, jobResult.longitude);
     markerOptions.map = map;
-    markerOptions.icon = "../assets/img/marker-transparent.png";
-
-    var marker = new google.maps.Marker(markerOptions); 
     
+    var marker = new google.maps.Marker(markerOptions); 
+    marker.setIcon("../assets/img/icons/marker_green.png");
     jobResult.marker = marker;
     jobResult.infowindow = new google.maps.InfoWindow({
     	content:'<div class="infobox"><div class="infobox-header"><h3 class="infobox-title"><a href="#">'+jobResult.jobTitle+'</a></h3></div><div class="infobox-picture"><div class="infobox-price">'+jobResult.companyName+'</div></div></div>'
@@ -115,6 +119,8 @@ function showJob(jobResult) {
     google.maps.event.addListener(jobResult.marker, 'mouseout', function(){
     	jobResult.infowindow.close();
     });
+    
+    markers.push(marker);
 }
 
 function addMarker(jobResult) {
@@ -135,7 +141,7 @@ function addMarker(jobResult) {
     	jobResult.infowindow.close();
     });
 	
-	markers.push(marker);
+	
 }
 
 function setAllMap(map) {

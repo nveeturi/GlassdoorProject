@@ -141,7 +141,7 @@ window.Mapnificent = (function(window, document, $, undefined) {
 			}
 		}
 		if (options.layerSettings !== undefined) {
-			that.env.layerSettings = options.layerSettings
+			that.env.layerSettings = options.layerSettings;
 		}
 		that.env.mapGStartCenter = new google.maps.LatLng(that.env.mapStartCenter.lat, that.env.mapStartCenter.lng);
 		that.env.circleRadians = (Math.PI / 180) * 360;
@@ -843,8 +843,7 @@ Mapnificent
 									getTime : function() {
 										return this.time;
 									},
-									startCalculation : function(doneclb,
-											updateclb) {
+									startCalculation : function(doneclb, updateclb) {
 										if (this.running) {
 											if (options.calculateOnDrag) {
 												return
@@ -855,8 +854,7 @@ Mapnificent
 										this.ready = false;
 										if (canCalculate) {
 											this.running = true;
-											Event.trigger("calculationStarted",
-													this);
+											Event.trigger("calculationStarted", this);
 											this.calculate(doneclb, updateclb);
 										}
 									},
@@ -1119,8 +1117,7 @@ Mapnificent
 							},
 							calculateNeeded : function() {
 								for ( var index in positions) {
-									if (!positions[index].ready
-											&& !positions[index].running) {
+									if (!positions[index].ready && !positions[index].running) {
 										positions[index]["startCalculation"]();
 									}
 								}
@@ -1295,8 +1292,7 @@ Mapnificent
 										sets[i] = [];
 									}
 									for (i in objects_to_num) {
-										sets[objects_to_num[this.find(i)]]
-												.push(i);
+										sets[objects_to_num[this.find(i)]].push(i);
 									}
 									var out = [];
 									for (i in sets) {
@@ -1811,9 +1807,17 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	idname = that.idname, 
 	geocoder = new google.maps.Geocoder(), 
 	lastStartPositionIndex, 
-	highlightedIconUrl = "../assets/img/icons/marker5.png", 
-	normalIconUrl = "../assets/img/icons/marker4.png";
+	highlightedIconUrl = "../assets/img/icons/marker_green.png";
+	normalIconUrl = "../assets/img/icons/marker_red.png";
 	
+	
+//	var normalIconUrl = {
+//		    url: '../assets/img/icons/marker3.png',
+//		    // This marker is 20 pixels wide by 32 pixels tall.
+//		    size: new google.maps.Size(20, 25),
+//		    origin: new google.maps.Point(0,0),
+//		    
+//		  };
 	var options = {
 		darkOverlayColorDay : "rgba(50,50,50,0.4)",
 		darkOverlayColorNight : "rgba(0,0,0,0.7)"
@@ -1850,12 +1854,12 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		if (pos) {
 			openPositionWindow(pos.index)();
 		}
-		window.setTimeout(function() {
-			$("#controls").animate({
-				bottom : "20px",
-				right : "-5px"
-			}, 1500);
-		}, 500);
+//		window.setTimeout(function() {
+//			$("#controls").animate({
+//				bottom : "20px",
+//				right : "-5px"
+//			}, 1500);
+//		}, 500);
 	});
 	that.bind("positionMoved", function(pos) {
 		pos.startCalculation();
@@ -2032,7 +2036,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			address : "Loading...",
 			infowindow : new google.maps.InfoWindow(
 					{
-						content : '<div style="height:110px;margin:8px 0px"><strong>Currently at:</strong><span class="'
+						content : '<div style="height:110px;margin:8px 0px"><strong>Currently at:&nbsp;</strong><span class="'
 								+ idname
 								+ "-"
 								+ index
@@ -2040,16 +2044,19 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 								+ idname
 								+ "-"
 								+ index
-								+ '-addressinputform"><input type="text" id="'
+								+ '-addressinputform">'
+								+ '<div class="form-group has-feedback no-margin row">'
+								+'<input id="userAddress" class="form-control" style="display:inline-block;height:26px;width:200px;padding:0px;margin:0px;" type="text" id="'
 								+ idname
 								+ "-"
 								+ index
-								+ '-addressinput" placeholder="Type address here" size="24"/>&nbsp;<input type="submit" value="Go"/></form></div>',
+								+ '-addressinput" placeholder="Type address here" size="24"/>&nbsp;&nbsp;&nbsp;<input type="submit" value="Go" style="display:inline-block;background:#39b54a;color:#fff;border:0px;width:26px;height:26px;font-size:12px;padding:0px;margin:0px;"/></div></form></div>',
 						maxWidth : 250
 					}),
 			position : position,
 			lock : false
 		};
+		
 		google.maps.event
 				.addListener(
 						startPositions[index].infowindow,
@@ -2102,7 +2109,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		addEventOnMarker("mouseover", marker, highlightMarker(index));
 		addEventOnMarker("mouseout", marker, unhighlightMarker(index));
 		addEventOnMarker("dragstart", marker, function() {
-			setAddressForPosition(position)("Â ");
+			setAddressForPosition(position)("");
 			startPositions[index].infowindow.close();
 		});
 		if (that.getOption("calculateOnDrag")) {
@@ -2125,8 +2132,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 					lng : mev.latLng.lng()
 				}, true);
 			} else {
-				moveMarkerTo(startPositions[position.index].marker,
-						position.latlng);
+				moveMarkerTo(startPositions[position.index].marker, position.latlng);
 				showMessage("Your point is out of the covered area.");
 				mapnificent.trigger("redraw");
 			}
@@ -2136,6 +2142,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		position.startCalculation();
 		return position;
 	};
+	
 	var removePosition = function(index) {
 		that.removePosition(index);
 	};
@@ -2172,10 +2179,23 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			that.calculateAll();
 		}
 	};
+	var markers = [];
+	
 	var updateSlider = function(index) {
 		return function(e, ui) {
 			setSecondsForPosition(ui.value * 60, index);
 			$.address.parameter("t" + index, ui.value);
+			for(var i = 0; i < markers.length; i++) {
+				 var xy = mapnificent.getCanvasXY({
+						lat : markers[i].lat,
+						lng : markers[i].lng
+					});
+				  if (that.isHighlighted(xy.x, xy.y)) {
+					  	markers[i].setIcon("../assets/img/icons/marker_orange.png");
+					} else {
+						markers[i].setIcon("../assets/img/icons/marker_blue.png");
+					}
+			}
 		};
 	};
 	var setSecondsForPosition = function(seconds, index) {
@@ -2185,12 +2205,15 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		startPositions[index].lock = true;
 		startPositions[index].time = seconds;
 		startPositions[index].position.setTime(seconds);
-		mapnificent.trigger("redraw");
+		
 		$("#" + idname + "-" + index + "-timeSpan").text(
 				Math.round(seconds / 60));
 		$("#" + idname + "-" + index + "-slider").slider("value",
 				Math.round(seconds / 60));
+		mapnificent.trigger("redraw");
 		startPositions[index].lock = false;
+		
+		
 	};
 	var setOptions = function(opts) {
 		var recalc = false;
@@ -2335,9 +2358,11 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		if ($.browser.webkit) {
 			$("#clear-search").hide();
 		}
+		
+		
 		$("#" + idname + "-search").change(searchArea);
 		$("#" + idname + "-search").click(searchArea);
-		$("#" + idname + "-search").keydown(function(e) {
+		$("#" + idname + "-search").keydown(function(e) { 
 			if (searchTypeTimeout !== false) {
 				window.clearTimeout(searchTypeTimeout);
 			}
@@ -2353,10 +2378,30 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			}
 			searchTypeTimeout = window.setTimeout(searchArea, 800);
 		});
+		
+		
+		$("#" + idname + "-job").keydown(function(e) { 
+			if (searchTypeTimeout !== false) {
+				window.clearTimeout(searchTypeTimeout);
+			}
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				searchJob();
+			} else {
+				if ($("#" + idname + "-job").val() === "") {
+					searchJob();
+				} else {
+					$("#clear-search").css("visibility", "visible");
+				}
+			}
+			searchTypeTimeout = window.setTimeout(searchJob, 800);
+		});
+		
 		$("#clear-search").click(function() {
 			$("#" + that.idname + "-search").val("");;
 			searchArea();
 		});
+		
 		var inter = "";
 		if (mapnificent.env.hasCompositing) {
 			inter = ' readonly="readonly"';
@@ -2368,6 +2413,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			inter = "<p>The intersection feature currently only works in Firefox or Opera.</p>";
 		}
 		var add = "";
+		
 		if (that.getOption("dayTimeEnabled")) {
 			add = '<div class="daytime"><h4>Experimental: Set Time Of Day and Weekday</h4><div style="float:right; margin:0 10px"><input type="radio" class="'
 					+ idname + '-daytime-day" name="'
@@ -2406,7 +2452,6 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 						+ '"/> minutes</p><p><label for="'
 						+ idname
 						+ '-color">Show color map</label>:' 
-						+ '<input type="checkbox" id="'
 						+ idname + '-color"/></p>' + inter + add + "</div>");
 		$('#color-map-container').append('<label for="nishishui">Show Color Map :&nbsp;</label>' 
 				+ '<input type="checkbox" id="woshicolor"/>');
@@ -2462,7 +2507,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 					return
 				}
 				var latlng = mapnificent.getLatLngFromWindowXY(x, y);
-				addPosition(latlng)
+				addPosition(latlng);
 			},
 			scroll : false
 		};
@@ -2682,8 +2727,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			mapnificent.trigger("redraw");
 		}
 	};
-	var markers = [];
-	var resultMarker = {}, outsideAreaIcon = "../assets/media/img/marker8.png", insideAreaIcon = "../assets/media/img/marker5.png", currentSearch = undefined, lastSearchSqkm = 0, searchTypeTimeout = false;
+	var resultMarker = {}, outsideAreaIcon = "assets/media/img/marker8.png", insideAreaIcon = "assets/media/img/marker5.png", currentSearch = undefined, lastSearchSqkm = 0, searchTypeTimeout = false;
 	var showSearchIndicator = function() {
 		$("#urbanDistance-search-indicator").css("visibility", "visible");
 	};
@@ -2713,10 +2757,19 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 	};
 	
+	var searchJob = function() {
+		if (that.getCalculationsInProgress() > 0) {
+			return;
+		}
+		var query = $("#" + that.idname + "-job").val();
+		
+		
+	};
+	
 	/*search function*/
 	var searchArea = function() {
 		if (that.getCalculationsInProgress() > 0) {
-			return
+			return;
 		}
 		var query = $("#" + that.idname + "-search").val();
 		if (query === "") {
@@ -2729,7 +2782,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			return
 		}
 		if (currentSearch === query) {
-			return
+			return;
 		} else {
 			clearSearch();
 		}
@@ -2765,7 +2818,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 				var marker;
 				function callback(results, status) {
 					if (status == google.maps.places.PlacesServiceStatus.OK) {
-					    for (var i = 0; i < results.length; i++) {
+						for (var i = 0; i < results.length; i++) { 
 					      	marker = createMarker(results[i]);
 					      	var placeLoc = results[i].geometry.location;
 					      	if (resultMarker[i] == undefined) {
@@ -2789,14 +2842,17 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 					    map: mapnificent.map,
 					    position: place.geometry.location
 					  });
+					  marker.lat = placeLoc.lat();
+					  marker.lng = placeLoc.lng();
+					  
 					  var xy = mapnificent.getCanvasXY({
 							lat : placeLoc.lat(),
 							lng : placeLoc.lng()
 						});
 					  if (that.isHighlighted(xy.x, xy.y)) {
-						  	marker.setIcon("assets/img/icons/marker6.png");
+						  	marker.setIcon("../assets/img/icons/marker_orange.png");
 						} else {
-							marker.setIcon("assets/img/icons/marker8.png");
+							marker.setIcon("../assets/img/icons/marker_blue.png");
 						}
 					  
 
@@ -2914,4 +2970,5 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			}());
 		}
 	};
+	
 };
