@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
@@ -67,6 +68,24 @@ public class HomeController {
 		mav.addObject("location", location);
 		mav.addObject("joblist", jobdetails);
 		return mav;
+	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public List<JobDetails> getJobs(@RequestParam String keyword, @RequestParam String location) {
+		List<JobDetails> jobdetails = null;
+		try {
+			String locationEncode = (location == null || location.trim()
+					.equals("")) ? "" : URLEncoder.encode(location, "UTF-8");
+
+			String keywordEncode = (keyword == null || keyword.trim()
+					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode, true, 1, 50);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jobdetails;
 	}
 	
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 

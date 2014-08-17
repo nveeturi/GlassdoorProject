@@ -241,7 +241,9 @@
 	                                                    </h3><!-- /.property-row-title -->
 	
 	                                                    <h4 class="property-row-subtitle">
-	                                                        <a href="#">${job.city}, ${job.state}</a> (${job.latitude}, ${job.longitude})
+	                                                        <%-- <a href="#">${job.city}, ${job.state}</a> (${job.latitude}, ${job.longitude}) --%>
+	                                                    <a href="#">${job.city}, ${job.state}</a> (${job.distance}, ${job.minCommuteTime})
+	                                                   
 	                                                    </h4><!-- /.property-row-subtitle -->
 	
 	                                                    <div class="property-row-price">
