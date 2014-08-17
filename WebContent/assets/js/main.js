@@ -2046,7 +2046,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 								+ index
 								+ '-addressinputform">'
 								+ '<div class="form-group has-feedback no-margin row">'
-								+'<input id="userAddress" class="form-control" style="display:inline-block;height:26px;width:200px;padding:0px;margin:0px;" type="text" id="'
+								+'<input class="form-control" style="display:inline-block;height:26px;width:200px;padding:0px;margin:0px;" type="text" id="'
 								+ idname
 								+ "-"
 								+ index
@@ -2737,7 +2737,10 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	var setAllMap = function(map) {
 		for (var i = 0; i < markers.length; i++) {
 		    markers[i].setMap(map);
-		  }
+		}
+		for (var i = 0; i < jobmarkers.length; i++) {
+		    jobmarkers[i].setMap(map);
+		}
 	};
 	
 	var clearSearch = function() {
@@ -2750,6 +2753,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 		resultMarker = {};
 		markers = [];
+		jobmarkers = [];
 	};
 	var closeAllSearchResultWindows = function() {
 		for ( var id in resultMarker) {
@@ -2757,11 +2761,59 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 	};
 	
+	var showElements = function(json_obj) {
+		for (var i in json_obj) {
+        	var myLatlng = new google.maps.LatLng(json_obj[i].latitude,json_obj[i].longitude);
+        	var marker = new google.maps.Marker({
+			    map: mapnificent.map,
+			    position: myLatlng,
+			    icon: "../assets/img/icons/marker_orange.png"
+			});
+        }
+	};
+	
 	var searchJob = function() {
 		if (that.getCalculationsInProgress() > 0) {
 			return;
 		}
 		var query = $("#" + that.idname + "-job").val();
+		if (query === "") {
+			$("#clear-search").css("visibility", "hidden");
+			currentSearch = null;
+			$("#search-attribution").hide();
+			$.address.deleteParameters(["jobsearch"]);
+			clearSearch();
+			mapnificent.unbind("idleAfterRedrawing", updateSearch);
+			return;
+		}
+		if (currentSearch === query) {
+			return;
+		} else {
+			clearSearch();
+		}
+		if (startPositionsCount === 0) {
+			showMessage("You need at least one starting point!");
+			return;
+		}
+		currentSearch = query;
+		$.address.parameter("jobsearch", currentSearch);
+		var txtUrl = "http://localhost:8080/GlassdoorWeb/index/search?keyword="+query+"&location=pittsburgh";
+		
+		$.ajax({
+		    url: txtUrl, 
+			type: "GET",
+		 
+		    success: function(response) {
+		    	showElements(response);
+		    }
+		});
+			
+			if (typeof(Storage) != "undefined"){
+				localStorage.setItem("json",json);
+				}else{
+					alert("Your browser does not have the storage function!");
+				}	
+			
 		
 		
 	};
@@ -2788,7 +2840,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 		if (startPositionsCount === 0) {
 			showMessage("You need at least one starting point!");
-			return
+			return;
 		}
 		showSearchIndicator();
 		currentSearch = query;

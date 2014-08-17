@@ -1057,10 +1057,13 @@ public class JobSearchService {
 			StringBuilder idx = idgl.get(i);
 			Results[] walkTimes = caculateCommuteTimeGL("walking", curLat,
 					curLong, idx);
+			System.out.println("walkTimes");
 			Results[] driveTimes = caculateCommuteTimeGL("driving", curLat,
 					curLong, idx);
+//			System.out.println("driveTimes");
 			Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
 					curLong, idx);
+//			System.out.println("bikeTimes");
 
 			mapWalk.put(i, walkTimes);
 			mapDrive.put(i, driveTimes);
@@ -1089,11 +1092,11 @@ public class JobSearchService {
 				// commute time by drive
 				int driveTime = Integer.parseInt(mapDrive.get(k)[l]
 						.getDuration().getValue());
-
-				// commute time by bike
+//
+//				// commute time by bike
 				int bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
 						.getValue());
-
+//
 				int min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
 				i.setDistance(distance);
@@ -1109,10 +1112,10 @@ public class JobSearchService {
 	private Results[] caculateCommuteTimeGL(String commuteType, double curLat,
 			double curLong, StringBuilder sbgl) {
 		StringBuilder urlString = new StringBuilder(
-				"http://maps.googleapis.com/maps/api/distancematrix/json?");
+				"https://maps.googleapis.com/maps/api/distancematrix/json?");
 		urlString.append("origins=" + curLat + "," + curLong);
 		urlString.append("&destinations=" + sbgl);
-//		urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
+		urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
 		urlString.append("&mode=" + commuteType);
 		urlString.append("&language=en-EN");
 		URL url;
@@ -1146,6 +1149,7 @@ public class JobSearchService {
 			e.printStackTrace();
 		}
 		if (ttl != null) {
+			System.out.println("ttl" + ttl.getRows());
 			return ttl.getRows()[0].getElements();
 		} else {
 			return null;

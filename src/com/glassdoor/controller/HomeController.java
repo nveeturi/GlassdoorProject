@@ -81,6 +81,7 @@ public class HomeController {
 					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
 					locationEncode, true, 1, 50);
+			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -96,6 +97,12 @@ public class HomeController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "sortws", method = RequestMethod.POST) 
+	public List<JobDetails> sortws(String criteria) { 
+		jobService.sortJobList(jobdetails,criteria);//distance or commute time
+		return jobdetails;
+	}
+	
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
 	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -105,7 +112,15 @@ public class HomeController {
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}
-
+	
+	@RequestMapping(value ="filterws", method = RequestMethod.POST) 
+	public List<JobDetails> filterws(String distance, String commuteTime, String commuteType) { 
+		String dis = distance.split(" ")[1];
+		String com = commuteTime.substring(2, 4);
+		return jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
+	}
+	
+	
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
 	public void updateLocation() {
 		try {
