@@ -69,9 +69,9 @@
                 <div class="row">
                 	<!-- menu -->
                     <ul class="header-nav nav nav-pills">
-					    <li><a href="index.jsp">Home</a></li>
-						<li><a href="jobs.jsp">Jobs</a></li>
-						<li><a href="map.jsp">Map</a></li>
+					    <li><a href="#">Home</a></li>
+						<li><a href="#">Jobs</a></li>
+						<li><a href="index/map">Local</a></li>
 						<li><a href="#">Companies</a></li>
 						<li><a href="#">Salaries</a></li>
 						<li><a href="#">Interviews</a></li>

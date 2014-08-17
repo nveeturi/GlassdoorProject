@@ -2737,10 +2737,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	var setAllMap = function(map) {
 		for (var i = 0; i < markers.length; i++) {
 		    markers[i].setMap(map);
-		}
-		for (var i = 0; i < jobmarkers.length; i++) {
-		    jobmarkers[i].setMap(map);
-		}
+		  }
 	};
 	
 	var clearSearch = function() {
@@ -2781,7 +2778,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			$("#clear-search").css("visibility", "hidden");
 			currentSearch = null;
 			$("#search-attribution").hide();
-			$.address.deleteParameters(["jobsearch"]);
+			$.address.deleteParameters([ "jobsearch" ]);
 			clearSearch();
 			mapnificent.unbind("idleAfterRedrawing", updateSearch);
 			return;
