@@ -120,7 +120,7 @@ public class JobSearchDAO {
 		return details;
 
 	}
-
+	
 	public List<JobDetails> getJobsForIds(String jobIds) {
 
 		HibernateUtil util = HibernateUtil.getInstance();
@@ -168,12 +168,14 @@ public class JobSearchDAO {
 		HibernateUtil util = HibernateUtil.getInstance();
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
+		logger.info("getLatLongForCity method initiated");
 		@SuppressWarnings("unchecked")
 		List<Geocode> results = (List<Geocode>) session
 				.createQuery(
 						"from Geocode where city ='"+city+"'").list();
 		session.close();
 		if(results != null && results.size() != 0){
+			logger.info("Lat/Long for city "+ city+" is found in database "+results.get(0).getLatlong());
 			return results.get(0).getLatlong();
 		}
 		return "";
@@ -181,6 +183,7 @@ public class JobSearchDAO {
 	}
 	
 	public void insertLatLongForCity(String city, String latlong) {
+		logger.info("insertLatLongForCity method initiated");
 		HibernateUtil util = HibernateUtil.getInstance();
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
@@ -190,6 +193,7 @@ public class JobSearchDAO {
 		geo.setLatlong(latlong);
 		session.saveOrUpdate(geo);
 		session.close();
+		logger.info("insertLatLongForCity method ended");
 	}
 
 }

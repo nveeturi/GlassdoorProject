@@ -38,10 +38,10 @@ public class HomeController {
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		if (pageCount == null) {
-			pageCount = "1";
+		if(pageCount == null){
+			pageCount = "10";
 		}
-
+		
 		try {
 			String locationEncode = (location == null || location.trim()
 					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
@@ -50,15 +50,14 @@ public class HomeController {
 			String keywordEncode = (keyword == null || keyword.trim()
 					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
 
-			/*
-			 * jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
-			 * locationEncode,false,Integer.parseInt(pageCount),25);
-			 */
+			/*jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode,false,Integer.parseInt(pageCount),25);*/
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
-					locationEncode, true, 1, 50);
+					locationEncode,true,1,50);
 			System.out.println(jobdetails);
-			jobService.matchLatLongFromJobList(jobdetails);
-			jobService.updateCommuteTimeAndDistance(jobdetails);
+			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
+//			jobService.updateCommuteTimeAndDistance(jobdetails);
+//			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -69,23 +68,21 @@ public class HomeController {
 		mav.addObject("joblist", jobdetails);
 		return mav;
 	}
-
-	@RequestMapping(value = "sort", method = RequestMethod.POST)
-	public ModelAndView sort(String criteria) {
+	
+	@RequestMapping(value = "sort", method = RequestMethod.POST) 
+	public ModelAndView sort(String criteria) { 
 		ModelAndView mav = new ModelAndView("/jobs");
-		jobService.sortJobList(jobdetails, criteria);// distance or commute time
+		jobService.sortJobList(jobdetails,criteria);//distance or commute time
 		mav.addObject("joblist", jobdetails);
 		return mav;
 	}
-
-	@RequestMapping(value = "filter", method = RequestMethod.POST)
-	public ModelAndView filter(String distance, String commuteTime,
-			String commuteType) {
+	
+	@RequestMapping(value ="filter", method = RequestMethod.POST) 
+	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
 		ModelAndView mav = new ModelAndView("/jobs");
 		String dis = distance.split(" ")[1];
 		String com = commuteTime.substring(2, 4);
-		List<JobDetails> newJobs = jobService.refineSearch(jobdetails,
-				Integer.parseInt(dis), Integer.parseInt(com), commuteType);// filter
+		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}

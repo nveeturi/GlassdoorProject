@@ -22,7 +22,10 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/pagination.css" />
     
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
-
+    
+    <script src="http://www.google.com/jsapi?key=AIzaSyA0APLVAS_phz0CE0stfzyy5yq0e25qdi0;sensor=false" type="text/javascript"></script>
+	<script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" type="text/javascript"></script>
+    
     <title>
         Glassdoor | Get Hired. Love Your Job
     </title>
@@ -84,7 +87,8 @@
                     <div class="form-search-wrapper col-sm-3">
                         <form method="post" action="search" class="form-horizontal form-search">
                             <div class="form-group has-feedback no-margin">
-                                <input type="text" class="form-control" placeholder="Search">
+                                <input type="text" class="form-control" placeholder="Search" >
+                                
 
                                 <span class="form-control-feedback">
                                     <i class="fa fa-search"></i>
@@ -170,7 +174,7 @@
                     <div class="select-wrapper">
                     	<select id="filter-distance" name = "commuteType" class="form-control">
 							<option value="Drive">Drive</option>
-							<option value="Public Transit">Public Transit</option>
+							<option value="Transit">Public Transit</option>
 							<option value="Walk">Walk</option>
 							<option value="Bike">Bike</option>
 						</select>
@@ -191,7 +195,37 @@
                             </div><!-- /.row -->
                             <div id="blanket" style="display:none;"></div>
 							<div id="popUpDiv" style="display:none;">
-						    	<a href="#" onclick="popup('popUpDiv')" >Close</a>
+							
+								<div id="popMap">
+							      <div style="height:40px">
+							        <strong>Start: </strong>
+							        <input type="text" id="start" value="5869 northumberland ST"></input>
+									<script>
+									var autocompleteStart = new google.maps.places.Autocomplete((document.getElementById('start')), { types: ['geocode'] });
+									google.maps.event.addListener(autocompleteStart, 'place_changed', function() {
+										startPlace = autocompleteStart.getPlace().name;
+									});
+									</script>
+							        <strong>End: </strong>
+							        <input type="text" id="end" value="Carnegie Mellon University"></input>
+							        <strong style="display:inline-block;">Mode of Travel: </strong>
+							        <div class = "select-wrapper" style="display:inline-block;">
+								        <select id="mode" onchange="calcRoute();" class="form-control" style="font-size:12px;width:120px;height:30px;display:inline-block;">
+									    	<option value="DRIVING">Driving</option>
+									        <option value="WALKING">Walking</option>
+									        <option value="BICYCLING">Bicycling</option>
+									        <option value="TRANSIT">Transit</option>
+									    </select>
+							        </div>
+							        <button onClick="calcRoute()">Get Route</button>
+							        <a href="#" onclick="popup('popUpDiv')" style="top:0px;right:0px;">Close</a>
+							      </div>
+							      <div id="map-canvas"></div>
+							      <div id="directionsPanel">
+							        <p>Total Distance: <span id="total"></span></p>
+							      </div>
+							    </div>
+						    	
 							</div>	
                             <div class="col-lg-5 col-sm-5" style="float:right">
                                 	<div class="property-rows">
@@ -273,7 +307,6 @@
 </div><!-- /#wrapper -->
 <script type="text/javascript" src="../assets/js/jquery.js"></script>
 <script type="text/javascript" src="../assets/libraries/isotope/jquery.isotope.min.js"></script>
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
 <script type="text/javascript" src="../assets/js/gmap3.infobox.js"></script>
 <script type="text/javascript" src="../assets/js/gmap3.clusterer.js"></script>
 <script type="text/javascript" src="../assets/js/map.js"></script>
@@ -284,6 +317,7 @@
 <script type="text/javascript" src="../assets/js/jquery.chained.min.js"></script>
 <script type="text/javascript" src="../assets/js/realocation.js"></script>
 <script type="text/javascript" src="../assets/js/jquery.pagination.js"></script>
+<script type="text/javascript" src="../assets/js/mapPop.js"></script>
 <script type="text/javascript" src="../assets/js/jobs.js"></script>
 <script type="text/javascript" src="../assets/js/test.js" defer></script> 
 

@@ -204,10 +204,12 @@ function window_pos(popUpDivVar) {
 function popup(windowname) {
 //	blanket_size(windowname);
 	window_pos(windowname);
-	toggle(windowname);	
+	
 	toggle('blanket');
+	toggle(windowname);	
 	
-	
+	placeInitialize();
+	mapInitialize();	
 }
 
 
@@ -242,6 +244,8 @@ function popup(windowname) {
 		current_page : 0,
 		num_edge_entries : 1
 	});
+	
+	
 	
 //	map = $('#jobmap').aviators_map({
 //        locations: locations,
