@@ -3,9 +3,12 @@ package com.glassdoor.constant;
 public interface Constants {
 	
 	public static String passCode = "19754";
+	public static String SS_AUTH_ID = "5f73116b-8ab9-4217-bcd9-a54baea36041";
+	public static String SS_AUTH_TOKEN = "RLzMx0idro3V437N3K04";
 	public static String key = "IFuttOxoRG";
 	public static String localIP = "127.0.0.1";
 	public static String CB_API_KEY = "WDHV5C05WLC5PSQMN6TQ";
+	public static final String SMARTY_STR_URL = "https://api.smartystreets.com/street-address";
 	public static final String MAPS_API_KEY = "AIzaSyCfvk1pQI4gVpVe3Q_PX9_6eKc6n8e4E1k";
 	public static final String GEOCODE_URL = "http://maps.googleapis.com/maps/api/geocode/json";
 	public static final String MAPS_NEARBY_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";

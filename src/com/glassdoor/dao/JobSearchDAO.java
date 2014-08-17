@@ -2,14 +2,19 @@ package com.glassdoor.dao;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import com.glassdoor.databean.Geocode;
 import com.glassdoor.databean.HibernateUtil;
 import com.glassdoor.databean.JobDetails;
+import com.glassdoor.jobsearch.JobSearchService;
 
 public class JobSearchDAO {
+	
+	public static Logger logger = Logger.getLogger(JobSearchDAO.class);
 
 	public JobDetails getJobDetailsForSearch(String jobId) {
 		HibernateUtil util = HibernateUtil.getInstance();
@@ -34,14 +39,14 @@ public class JobSearchDAO {
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
 		@SuppressWarnings("unchecked")
-		List<JobDetails> results = session.createQuery(
-				"from JobDetails").list();
+		List<JobDetails> results = session.createQuery("from JobDetails")
+				.list();
 		session.close();
 		return results;
 
 	}
-	
-	public void insertJobDetails(List<JobDetails> jobdetails){
+
+	public void insertJobDetails(List<JobDetails> jobdetails) {
 
 		HibernateUtil util = HibernateUtil.getInstance();
 		Session session = util.getSessionFactory().openSession();
@@ -52,9 +57,10 @@ public class JobSearchDAO {
 			try {
 
 				JobDetails job = (JobDetails) jobdetails.get(i);
-				 System.out.println("object no. "+i +"1 "+ job.getJobId() + "2 "
-				  + job.getCompanyName() + "3 " + job.getCity()+ " 4"+job.getZipCode()+"5 "+job.getCountry());
-				 
+			/*	System.out.println("object no. " + i + "1 " + job.getJobId()
+						+ "2 " + job.getCompanyName() + "3 " + job.getCity()
+						+ " 4" + job.getZipCode() + "5 " + job.getCountry());*/
+
 				session.saveOrUpdate(job);
 				if (i % 20 == 0) { // 20, same as the JDBC batch size
 					// flush a batch of inserts and release memory:
@@ -62,8 +68,10 @@ public class JobSearchDAO {
 					session.clear();
 				}
 
-			} 
-			catch (NonUniqueObjectException nue) {
+			} catch (NonUniqueObjectException nue) {
+				continue;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 				continue;
 			}
 
@@ -92,33 +100,37 @@ public class JobSearchDAO {
 	}
 
 	public List<JobDetails> getJobDetailsWithNoLocation() {
+		
+		logger.info("getJobDetailsWithNoLocation method initiated");
 		HibernateUtil util = HibernateUtil.getInstance();
 		List<JobDetails> details = null;
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
 		@SuppressWarnings("unchecked")
-		List<JobDetails> results = session.createQuery(
-				"from JobDetails where latitude is null OR longitude is  null")
-				.list();
+		List<JobDetails> results = session
+				.createQuery(
+						"from JobDetails where jobSourceLink is not null").list();
+		//(latitude is null OR longitude is  null) 
 		if (!(results == null || results.size() == 0)) {
 			details = results;
+			logger.info("Number of records to be processed are: "+details.size());
 		}
+		logger.info("getJobDetailsWithNoLocation method ended");
 		session.close();
 		return details;
 
 	}
-	
+
 	public List<JobDetails> getJobsForIds(String jobIds) {
-		
+
 		HibernateUtil util = HibernateUtil.getInstance();
 		List<JobDetails> details = null;
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
-		System.out.println("jobIds"+jobIds);
+		System.out.println("jobIds" + jobIds);
 		@SuppressWarnings("unchecked")
 		List<JobDetails> results = session.createQuery(
-				"from JobDetails where jobId IN ("+jobIds+")")
-				.list();
+				"from JobDetails where jobId IN (" + jobIds + ")").list();
 		if (!(results == null || results.size() == 0)) {
 			details = results;
 		}
@@ -126,29 +138,58 @@ public class JobSearchDAO {
 		return details;
 
 	}
+
 	public List<JobDetails> getLatLong(List<JobDetails> details) {
-		//get all the job id in details list
+		// get all the job id in details list
 		StringBuffer jobIds = new StringBuffer();
-		
-		for(JobDetails i:details){
-			jobIds.append(i.getJobId()+",");
+
+		for (JobDetails i : details) {
+			jobIds.append(i.getJobId() + ",");
 		}
-		jobIds.deleteCharAt(jobIds.length()-1);
-		
-		//get all the lat long record from database
+		jobIds.deleteCharAt(jobIds.length() - 1);
+
+		// get all the lat long record from database
 		HibernateUtil util = HibernateUtil.getInstance();
 		List<JobDetails> latlongs = null;
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
 		@SuppressWarnings("unchecked")
-		List<JobDetails> results = session.createQuery(
-				"from JobDetails where latitude is not null AND longitude is not null AND jobId IN ("+jobIds+")")
-				.list();
+		List<JobDetails> results = session
+				.createQuery(
+						"from JobDetails where latitude is not null AND longitude is not null AND jobId IN ("
+								+ jobIds + ")").list();
 		session.close();
-		
+
 		return results;
-		
-		
+
+	}
+
+	public String getLatLongForCity(String city) {
+		HibernateUtil util = HibernateUtil.getInstance();
+		@SuppressWarnings("static-access")
+		Session session = util.getSessionFactory().openSession();
+		@SuppressWarnings("unchecked")
+		List<Geocode> results = (List<Geocode>) session
+				.createQuery(
+						"from Geocode where city ='"+city+"'").list();
+		session.close();
+		if(results != null && results.size() != 0){
+			return results.get(0).getLatlong();
+		}
+		return "";
+
+	}
+	
+	public void insertLatLongForCity(String city, String latlong) {
+		HibernateUtil util = HibernateUtil.getInstance();
+		@SuppressWarnings("static-access")
+		Session session = util.getSessionFactory().openSession();
+		@SuppressWarnings("unchecked")
+		Geocode geo = new Geocode();
+		geo.setCity(city);
+		geo.setLatlong(latlong);
+		session.saveOrUpdate(geo);
+		session.close();
 	}
 
 }

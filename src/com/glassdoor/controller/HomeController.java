@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,9 @@ import com.glassdoor.jobsearch.JobSearchService;
 public class HomeController {
 	@Autowired
 	private JobSearchService jobService;
+	public static Logger logger = Logger.getLogger(HomeController.class);
 	List<JobDetails> jobdetails = null;
+
 	/***
 	 * @return
 	 */
@@ -35,10 +38,10 @@ public class HomeController {
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		if(pageCount == null){
+		if (pageCount == null) {
 			pageCount = "1";
 		}
-		
+
 		try {
 			String locationEncode = (location == null || location.trim()
 					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
@@ -47,10 +50,12 @@ public class HomeController {
 			String keywordEncode = (keyword == null || keyword.trim()
 					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
 
-			/*jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
-					locationEncode,false,Integer.parseInt(pageCount),25);*/
+			/*
+			 * jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+			 * locationEncode,false,Integer.parseInt(pageCount),25);
+			 */
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
-					locationEncode,true,1,50);
+					locationEncode, true, 1, 50);
 			System.out.println(jobdetails);
 			jobService.matchLatLongFromJobList(jobdetails);
 			jobService.updateCommuteTimeAndDistance(jobdetails);
@@ -64,21 +69,23 @@ public class HomeController {
 		mav.addObject("joblist", jobdetails);
 		return mav;
 	}
-	
-	@RequestMapping(value = "sort", method = RequestMethod.POST) 
-	public ModelAndView sort(String criteria) { 
+
+	@RequestMapping(value = "sort", method = RequestMethod.POST)
+	public ModelAndView sort(String criteria) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		jobService.sortJobList(jobdetails,criteria);//distance or commute time
+		jobService.sortJobList(jobdetails, criteria);// distance or commute time
 		mav.addObject("joblist", jobdetails);
 		return mav;
 	}
-	
-	@RequestMapping(value ="filter", method = RequestMethod.POST) 
-	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
+
+	@RequestMapping(value = "filter", method = RequestMethod.POST)
+	public ModelAndView filter(String distance, String commuteTime,
+			String commuteType) {
 		ModelAndView mav = new ModelAndView("/jobs");
 		String dis = distance.split(" ")[1];
 		String com = commuteTime.substring(2, 4);
-		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com), commuteType);//filter
+		List<JobDetails> newJobs = jobService.refineSearch(jobdetails,
+				Integer.parseInt(dis), Integer.parseInt(com), commuteType);// filter
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}
@@ -86,6 +93,7 @@ public class HomeController {
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
 	public void updateLocation() {
 		try {
+			logger.info("Initiating updateLocation batch");
 			jobService.updateLocationInfo();
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
@@ -99,20 +107,18 @@ public class HomeController {
 		}
 	}
 
-	
 	@RequestMapping(value = "/updateJobData/{keyword}/{location}", method = RequestMethod.GET)
 	public void updateJobData(@PathVariable String keyword,
 			@PathVariable String location) {
 		List<JobDetails> jobdetails = null;
 		try {
 			String locationEncode = (location == null || location.trim()
-					.equals("")) ? "San Francisco" : URLEncoder.encode(
-					location, "UTF-8");
+					.equals("")) ? "" : URLEncoder.encode(location, "UTF-8");
 
 			String keywordEncode = (keyword == null || keyword.trim()
 					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
-			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode, locationEncode,
-					true, 1, 50);
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode, true, 1, 50);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -26,6 +26,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -36,6 +37,7 @@ import org.xml.sax.SAXException;
 
 import com.glassdoor.constant.Constants;
 import com.glassdoor.dao.JobSearchDAO;
+import com.glassdoor.databean.AddressResponse;
 import com.glassdoor.databean.GMapResponse;
 import com.glassdoor.databean.GMapResult;
 import com.glassdoor.databean.GlassdoorJobData;
@@ -43,7 +45,6 @@ import com.glassdoor.databean.GoogleResponse;
 import com.glassdoor.databean.GoogleResult;
 import com.glassdoor.databean.JobDetails;
 import com.glassdoor.databean.JobListing;
-import com.glassdoor.databean.Location;
 import com.google.gson.Gson;
 
 /**
@@ -57,6 +58,7 @@ import com.google.gson.Gson;
 public class JobSearchService {
 
 	private JobSearchDAO jobSearchDao;
+	public static Logger logger = Logger.getLogger(JobSearchService.class);
 
 	public List<JobDetails> getAllJobsFromDB() {
 
@@ -281,7 +283,8 @@ public class JobSearchService {
 	public void callCBJobRefURL(JobDetails details) throws IOException,
 			ParserConfigurationException, SAXException,
 			XPathExpressionException {
-		System.out.println(details.getJobRefID());
+		logger.info("callCBJobRefURL method initiated");
+		logger.info("Career Builder Job Ref Id :"+ details.getJobRefID());
 		String jobRefId = details.getJobRefID() != null ? URLEncoder.encode(
 				details.getJobRefID(), "UTF-8") : "";
 		StringBuilder urlString = new StringBuilder(
@@ -454,14 +457,13 @@ public class JobSearchService {
 			JobDetails jobDetails) {
 		if (!formattedAddress.equals("")) {
 			String[] splitAddress = formattedAddress.split(",");
-			
 
 			String[] stateZip = null;
 			String streetNm2 = "";
 			String city = "";
 			String streetNm1 = "";
 
-			if(splitAddress.length == 3){
+			if (splitAddress.length == 3) {
 				city = splitAddress[0].trim();
 			}
 			if (splitAddress.length == 5) {
@@ -477,9 +479,11 @@ public class JobSearchService {
 			jobDetails.setStreetName1(streetNm1);
 			jobDetails.setCity(city);
 			jobDetails.setStreetName2(streetNm2);
-			jobDetails.setState(stateZip[0]);
-			if (stateZip.length > 1) {
-				jobDetails.setZipCode(stateZip[1]);
+			if (!(stateZip.equals(""))) {
+				jobDetails.setState(stateZip[0]);
+				if (stateZip.length > 1) {
+					jobDetails.setZipCode(stateZip[1]);
+				}
 			}
 
 		}
@@ -545,7 +549,7 @@ public class JobSearchService {
 		URL url = new URL(Constants.GEOCODE_URL + "?address="
 				+ URLEncoder.encode(locationName, "UTF-8"));
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
+		System.out.println("city lat long" + conn);
 		InputStream in = conn.getInputStream();
 		ObjectMapper mapper = new ObjectMapper();
 		GoogleResponse response = (GoogleResponse) mapper.readValue(in,
@@ -569,6 +573,7 @@ public class JobSearchService {
 	public void updateLocationInfo() throws XPathExpressionException,
 			ParserConfigurationException, SAXException {
 
+		logger.info("updateLocation batch initiated");
 		// Traverse through all the records that do not have lat-long
 		List<JobDetails> details = null;
 		details = jobSearchDao.getJobDetailsWithNoLocation();
@@ -576,20 +581,27 @@ public class JobSearchService {
 		for (JobDetails jobDetails : details) {
 			try {
 				String latlong = "";
-
+				logger.info("Processing the job with job Id "+jobDetails.getJobId());
 				// Check if the lat long is available in Career Builder
 				if (jobDetails.getSource().equals("CareerBuilder")
 						&& !(jobDetails.getJobRefID() == null || jobDetails
 								.getJobRefID() == "")) {
+					logger.info("Job is from source Career Builder");
 					callCBJobRefURL(jobDetails);
 				}
 
 				if (jobDetails.getLatitude() != null
-						|| jobDetails.getLongitude() != null) {
+						&& jobDetails.getLongitude() != null) {
 					latlong = jobDetails.getLatitude().toString() + ","
 							+ jobDetails.getLongitude().toString();
 				}
+
+				System.out.println("latlong of city" + latlong);
 				if (latlong.equals("")) {
+					latlong = jobSearchDao.getLatLongForCity(jobDetails
+							.getCity());
+				}
+				/*if (latlong.equals("")) {
 					// Get the lat-long of the City
 					GoogleResponse res = getLocationLatLong(jobDetails
 							.getCity());
@@ -597,22 +609,29 @@ public class JobSearchService {
 						Location loc = res.getResults()[0].getGeometry()
 								.getLocation();
 						latlong = loc.getLat() + "," + loc.getLng();
+						if (!latlong.equals("")) {
+							jobSearchDao.insertLatLongForCity(
+									jobDetails.getCity(), latlong);
+						}
 					}
-				}
-
+				}*/
 				// Call the nearby search Google Places API with the company
 				// name and latlong
 				if (!latlong.equals("")) {
-					setValidAddress(latlong, jobDetails);
+					System.out.println("validating address");
+					//setValidAddress(latlong, jobDetails);
 				}
-
+				System.out.println("after Maps" + latlong);
 				if (latlong.equals("")
-						&& !(jobDetails.getJobLink() == null || jobDetails
-								.getJobLink().equals(""))) {
+						&& !(jobDetails.getJobSourceLink() == null || jobDetails
+								.getJobSourceLink().equals(""))) {
 					updateLocationFromJobLink(jobDetails);
 				}
+			} /*catch (IOException e) {
+				System.out.println(e.getLocalizedMessage());
+				continue;
 
-			} catch (IOException e) {
+			}*/ catch (Exception e) {
 				System.out.println(e.getLocalizedMessage());
 				continue;
 
@@ -642,27 +661,34 @@ public class JobSearchService {
 		try {
 			// STEP 4: Execute a query
 			org.jsoup.nodes.Document doc = null;
+			String error = "";
 			boolean flag = false;
 			// STEP 5: Extract data from result set
 			String link = "";
-			System.out.println(jobDetails.getJobLink());
-			link = jobDetails.getJobLink();
+			System.out.println(jobDetails.getJobSourceLink());
+			link = jobDetails.getJobSourceLink();
 			try {
 				doc = Jsoup.connect(link).ignoreContentType(true).timeout(0)
 						.get();
 			} catch (HttpStatusException hp) {
 				flag = true;
+				error = hp.getMessage();
 			} catch (SSLHandshakeException e) {
 				flag = true;
+				error = e.getMessage();
 			} catch (MalformedURLException e) {
 				flag = true;
+				error = e.getMessage();
 			} catch (SSLProtocolException e) {
 				flag = true;
+				error = e.getMessage();
 			} catch (Exception e) {
 				flag = true;
+				error = e.getMessage();
 			}
 			if (flag) {
-				System.out.println("Error occured");
+				
+				System.out.println("Error occured"+error);
 				flag = false;
 				return;
 				// continue;
@@ -677,23 +703,61 @@ public class JobSearchService {
 					if (Arrays.asList(Constants.US_STATES).contains(word)
 							|| Arrays.asList(Constants.StateCodes).contains(
 									word)) {
-						System.out.println("Address found");
-						System.out.println(text);
+
 						return;
 					} else {
-						System.out.println("-------------Address not found");
-					}
+						String addr = "";
+						for (int i = 0; i < words.length; i++) {
+							addr += words[i] + " ";
+							
+						}
+						System.out.println("addr"+addr);
+						if(!addr.trim().equals("")){
+							URL url = new URL(Constants.SMARTY_STR_URL
+									+ "?street="
+									+ URLEncoder.encode(addr, "UTF-8")
+									+ "&candidates=5&auth-id="
+									+ Constants.SS_AUTH_ID + "&auth-token="
+									+ Constants.SS_AUTH_TOKEN);
+							// Open the Connection
+							HttpURLConnection conn = (HttpURLConnection) url
+									.openConnection();
+							System.out.println(conn);
+							InputStream in = conn.getInputStream();
+							ObjectMapper mapper = new ObjectMapper();
+							AddressResponse response = (AddressResponse) mapper
+									.readValue(in, AddressResponse.class);
+							if (response.getComponent() != null) {
+
+								String street1 = response.getComponent()
+										.getPrimary_number()
+										+ response.getComponent()
+												.getStreet_name()
+										+ response.getComponent()
+												.getStreet_suffix();
+								jobDetails.setStreetName1(street1);
+								jobDetails.setCity(response.getComponent()
+										.getCounty_name());
+								jobDetails.setLatitude(response.getComponent()
+										.getLatitude());
+								jobDetails.setLongitude(response.getComponent()
+										.getLongitude());
+							}
+
+							in.close();
+
+						}
+						}
+						
 				}
 			}
 
 			// STEP 6: Clean-up environment
 
 		} catch (Exception e) {
-			// Handle errors for Class.forName
-			e.printStackTrace();
+			System.out.println(e.getMessage());
+			
 		}
-
-		// saveJobDetails(details);
 
 		System.out.println("Goodbye!");
 	}// end main
@@ -715,18 +779,18 @@ public class JobSearchService {
 			for (JobDetails j : JobListWithLatLong) {
 				if (i.getJobId().equals(j.getJobId())) {
 					found = true;
-					if(j.getLatitude() == null) {
+					if (j.getLatitude() == null) {
 						i.setLatitude(0.0);
 						i.setLongitude(0.0);
 						break;
-					}else{
+					} else {
 						i.setLatitude(j.getLatitude());
 						i.setLongitude(j.getLongitude());
 						break;
 					}
 				}
 			}
-			if(!found) {
+			if (!found) {
 				i.setLatitude(0.0);
 				i.setLongitude(0.0);
 			}
@@ -813,22 +877,22 @@ public class JobSearchService {
 	private static Comparator<JobDetails> DistanceComparator = new Comparator<JobDetails>() {
 		public int compare(JobDetails o1, JobDetails o2) {
 			if (o1.getDistance() == null) {
-		        return (o2.getDistance() == null) ? 0 : -1;
-		    }
-		    if (o2.getDistance() == null) {
-		        return -1;
-		    }
+				return (o2.getDistance() == null) ? 0 : -1;
+			}
+			if (o2.getDistance() == null) {
+				return -1;
+			}
 			return (int) (o2.getDistance() - o1.getDistance());
 		}
 	};
 	private static Comparator<JobDetails> CommuteTimecomparator = new Comparator<JobDetails>() {
 		public int compare(JobDetails o1, JobDetails o2) {
-			if (o1.getTransitTime()== 0) {
-		        return (o2.getTransitTime() == 0) ? 0 : -1;
-		    }
-		    if (o2.getTransitTime()== 0) {
-		        return -1;
-		    }
+			if (o1.getTransitTime() == 0) {
+				return (o2.getTransitTime() == 0) ? 0 : -1;
+			}
+			if (o2.getTransitTime() == 0) {
+				return -1;
+			}
 			return o2.getTransitTime() - o1.getTransitTime();
 		}
 	};

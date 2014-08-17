@@ -32,6 +32,7 @@
         <property name="hbm2ddl.auto">update</property>
 
         <mapping resource="JobDetails.hbm.xml"/>
+        <mapping resource="Geocode.hbm.xml"/>
 
     </session-factory>
 
