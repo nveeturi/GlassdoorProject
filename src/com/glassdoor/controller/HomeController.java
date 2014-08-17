@@ -57,7 +57,7 @@ public class HomeController {
 			System.out.println(jobdetails);
 			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
 //			jobService.updateCommuteTimeAndDistance(jobdetails);
-//			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
+			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
