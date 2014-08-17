@@ -18,7 +18,7 @@ public class JobDetails {
 	private String source;
 	private String jobSourceLink;
 	private String jobDescription;
-	private Double distance;
+	private double distance;
 	private int driveTime;
 	private int walkTime;
 	private int busTime;
@@ -51,11 +51,11 @@ public class JobDetails {
 	}
 
 
-	public Double getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 
-	public void setDistance(Double distance) {
+	public void setDistance(double distance) {
 		this.distance = distance;
 	}
 

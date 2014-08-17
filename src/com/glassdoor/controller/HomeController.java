@@ -53,7 +53,8 @@ public class HomeController {
 					locationEncode,true,1,50);
 			System.out.println(jobdetails);
 			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
-			jobService.updateCommuteTimeAndDistance(jobdetails);
+//			jobService.updateCommuteTimeAndDistance(jobdetails);
+//			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
