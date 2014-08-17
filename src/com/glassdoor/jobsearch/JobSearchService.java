@@ -290,8 +290,8 @@ public class JobSearchService {
 			ParserConfigurationException, SAXException,
 			XPathExpressionException {
 		logger.info("callCBJobRefURL method initiated");
-		logger.info("Career Builder Job Ref Id :"+ details.getJobRefID());
-		
+		logger.info("Career Builder Job Ref Id :" + details.getJobRefID());
+
 		String jobRefId = details.getJobRefID() != null ? URLEncoder.encode(
 				details.getJobRefID(), "UTF-8") : "";
 		StringBuilder urlString = new StringBuilder(
@@ -376,7 +376,7 @@ public class JobSearchService {
 
 	private void setValidAddress(String latlong, JobDetails jobDetails)
 			throws IOException {
-		
+
 		logger.info("setValidAddress method initiated");
 		String address = "";
 		GMapResponse grsp = getNearByLocation(latlong,
@@ -502,7 +502,7 @@ public class JobSearchService {
 	public GMapResponse getNearByLocation(String latlongString,
 			String companyName) throws IOException {
 		logger.info("getNearByLocation method initiated");
-		
+
 		if (companyName == null || companyName.equals("")) {
 			return null;
 		}
@@ -513,7 +513,7 @@ public class JobSearchService {
 				+ URLEncoder.encode(companyName, "UTF-8") + "&key="
 				+ Constants.MAPS_API_KEY);
 		// Open the Connection
-		logger.info("Calling the URL "+ url.toString());
+		logger.info("Calling the URL " + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		InputStream in = conn.getInputStream();
 		ObjectMapper mapper = new ObjectMapper();
@@ -535,7 +535,7 @@ public class JobSearchService {
 		ObjectMapper mapper = new ObjectMapper();
 		GMapResponse response = (GMapResponse) mapper.readValue(in,
 				GMapResponse.class);
-		logger.info("Status of the Response :"+ response.getStatus());
+		logger.info("Status of the Response :" + response.getStatus());
 		in.close();
 		return response;
 
@@ -546,13 +546,13 @@ public class JobSearchService {
 
 		URL url = new URL(Constants.GEOCODE_URL + "?latlng="
 				+ URLEncoder.encode(latlongString, "UTF-8") + "&sensor=false");
-		logger.info("Calling the URL "+ url.toString());
+		logger.info("Calling the URL " + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		InputStream in = conn.getInputStream();
 		ObjectMapper mapper = new ObjectMapper();
 		GoogleResponse response = (GoogleResponse) mapper.readValue(in,
 				GoogleResponse.class);
-		logger.info("Status of the Response :"+ response.getStatus());
+		logger.info("Status of the Response :" + response.getStatus());
 		in.close();
 		return response;
 
@@ -563,13 +563,13 @@ public class JobSearchService {
 		logger.info("getLocationLatLong method initiated");
 		URL url = new URL(Constants.GEOCODE_URL + "?address="
 				+ URLEncoder.encode(locationName, "UTF-8"));
-		logger.info("Calling the URL "+ url.toString());
+		logger.info("Calling the URL " + url.toString());
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		InputStream in = conn.getInputStream();
 		ObjectMapper mapper = new ObjectMapper();
 		GoogleResponse response = (GoogleResponse) mapper.readValue(in,
 				GoogleResponse.class);
-		logger.info("Status of the Response :"+ response.getStatus());
+		logger.info("Status of the Response :" + response.getStatus());
 		in.close();
 		logger.info("getLocationLatLong method ended");
 		return response;
@@ -598,7 +598,8 @@ public class JobSearchService {
 		for (JobDetails jobDetails : details) {
 			try {
 				String latlong = "";
-				logger.info("Processing the job with job Id "+jobDetails.getJobId());
+				logger.info("Processing the job with job Id "
+						+ jobDetails.getJobId());
 				// Check if the lat long is available in Career Builder
 				if (jobDetails.getSource().equals("CareerBuilder")
 						&& !(jobDetails.getJobRefID() == null || jobDetails
@@ -627,8 +628,8 @@ public class JobSearchService {
 								.getLocation();
 						latlong = loc.getLat() + "," + loc.getLng();
 						if (!latlong.equals("")) {
-							logger.info("Geocode latitude/longitude found for city"+jobDetails
-									.getCity()+" is"+latlong);
+							logger.info("Geocode latitude/longitude found for city"
+									+ jobDetails.getCity() + " is" + latlong);
 							jobSearchDao.insertLatLongForCity(
 									jobDetails.getCity(), latlong);
 						}
@@ -705,8 +706,8 @@ public class JobSearchService {
 				error = e.getMessage();
 			}
 			if (flag) {
-				
-				System.out.println("Error occured"+error);
+
+				System.out.println("Error occured" + error);
 				flag = false;
 				return;
 				// continue;
@@ -727,10 +728,10 @@ public class JobSearchService {
 						String addr = "";
 						for (int i = 0; i < words.length; i++) {
 							addr += words[i] + " ";
-							
+
 						}
-						System.out.println("addr"+addr);
-						if(!addr.trim().equals("")){
+						System.out.println("addr" + addr);
+						if (!addr.trim().equals("")) {
 							URL url = new URL(Constants.SMARTY_STR_URL
 									+ "?street="
 									+ URLEncoder.encode(addr, "UTF-8")
@@ -765,8 +766,8 @@ public class JobSearchService {
 							in.close();
 
 						}
-						}
-						
+					}
+
 				}
 			}
 
@@ -774,7 +775,7 @@ public class JobSearchService {
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			
+
 		}
 
 		System.out.println("Goodbye!");
@@ -809,55 +810,55 @@ public class JobSearchService {
 		return newJob;
 	}
 
-//	public void updateCommuteTimeAndDistance(List<JobDetails> details) {
-//		// double curLat = 40.4435386;
-//		// double curLong = -79.94435829999998;
-//		double curLat = 40.443504;
-//		double curLong = -79.941571;
-//		double desLat = 47.646757;
-//		double desLong = -122.361152;
-//		// 47.646757,-122.361152
-//		for (JobDetails i : details) {
-//			if (i.getLatitude() != null && i.getLongitude() != null) {
-//				// get distance
-//				double a = i.getLatitude();
-//				double b = i.getLongitude();
-//				double distance = caculateDistance(curLat, curLong,
-//						i.getLatitude(), i.getLongitude());
-//
-//				// commute time by bus
-//				int busTime = caculateCommuteTime("transit", curLat, curLong,
-//						i.getLatitude(), i.getLongitude());
-//				// int busTime = caculateCommuteTime("drive", curLat, curLong,
-//				// desLat, desLong);
-//
-//				// commute time by walk
-//				int walkTime = Integer.parseInt(caculateCommuteTimeGl(
-//						"walking", curLat, curLong, i.getLatitude(),
-//						i.getLongitude()));
-//
-//				// commute time by drive
-//				int driveTime = Integer.parseInt(caculateCommuteTimeGl(
-//						"driving", curLat, curLong, i.getLatitude(),
-//						i.getLongitude()));
-//
-//				// commute time by bike
-//				int bikeTime = Integer.parseInt(caculateCommuteTimeGl(
-//						"bicycling", curLat, curLong, i.getLatitude(),
-//						i.getLongitude()));
-//
-//				int min = Math.min(Math.min(walkTime, driveTime),
-//						Math.min(busTime, bikeTime));
-//				i.setDistance(distance);
-//				i.setDriveTime(driveTime);
-//				i.setBikeTime(bikeTime);
-//				i.setTransitTime(busTime);
-//				i.setWalkTime(walkTime);
-//				i.setMinCommuteTime(min);
-//			}
-//		}
-//
-//	}
+	// public void updateCommuteTimeAndDistance(List<JobDetails> details) {
+	// // double curLat = 40.4435386;
+	// // double curLong = -79.94435829999998;
+	// double curLat = 40.443504;
+	// double curLong = -79.941571;
+	// double desLat = 47.646757;
+	// double desLong = -122.361152;
+	// // 47.646757,-122.361152
+	// for (JobDetails i : details) {
+	// if (i.getLatitude() != null && i.getLongitude() != null) {
+	// // get distance
+	// double a = i.getLatitude();
+	// double b = i.getLongitude();
+	// double distance = caculateDistance(curLat, curLong,
+	// i.getLatitude(), i.getLongitude());
+	//
+	// // commute time by bus
+	// int busTime = caculateCommuteTime("transit", curLat, curLong,
+	// i.getLatitude(), i.getLongitude());
+	// // int busTime = caculateCommuteTime("drive", curLat, curLong,
+	// // desLat, desLong);
+	//
+	// // commute time by walk
+	// int walkTime = Integer.parseInt(caculateCommuteTimeGl(
+	// "walking", curLat, curLong, i.getLatitude(),
+	// i.getLongitude()));
+	//
+	// // commute time by drive
+	// int driveTime = Integer.parseInt(caculateCommuteTimeGl(
+	// "driving", curLat, curLong, i.getLatitude(),
+	// i.getLongitude()));
+	//
+	// // commute time by bike
+	// int bikeTime = Integer.parseInt(caculateCommuteTimeGl(
+	// "bicycling", curLat, curLong, i.getLatitude(),
+	// i.getLongitude()));
+	//
+	// int min = Math.min(Math.min(walkTime, driveTime),
+	// Math.min(busTime, bikeTime));
+	// i.setDistance(distance);
+	// i.setDriveTime(driveTime);
+	// i.setBikeTime(bikeTime);
+	// i.setTransitTime(busTime);
+	// i.setWalkTime(walkTime);
+	// i.setMinCommuteTime(min);
+	// }
+	// }
+	//
+	// }
 
 	private String caculateCommuteTimeGl(String commuteType, double curLat,
 			double curLong, double desLat, double desLong) {
@@ -1038,17 +1039,17 @@ public class JobSearchService {
 					+ details.get(i).getLongitude());
 			sbgl.append(details.get(i).getLatitude() + ","
 					+ details.get(i).getLongitude() + "|");
-			if ((i+1)%100==0) {
-				sbgl.deleteCharAt(sbgl.length()-1);
+			if ((i + 1) % 100 == 0) {
+				sbgl.deleteCharAt(sbgl.length() - 1);
 				idgl.add(new StringBuilder(sbgl));
 				sbgl.setLength(0);// clear
 			}
 		}
-		if(details.size()<100){
-			sbgl.deleteCharAt(sbgl.length()-1);
+		if (details.size() < 100) {
+			sbgl.deleteCharAt(sbgl.length() - 1);
 			idgl.add(sbgl);
 		}
-	
+
 		TravelTimeWS[] transitTimes = caculateCommuteTime("transit", curLat,
 				curLong, sbws);
 
@@ -1060,7 +1061,7 @@ public class JobSearchService {
 					curLong, idx);
 			Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
 					curLong, idx);
-			
+
 			mapWalk.put(i, walkTimes);
 			mapDrive.put(i, driveTimes);
 			mapBike.put(i, bikeTimes);
@@ -1079,15 +1080,15 @@ public class JobSearchService {
 				// commute time by bus
 				int busTime = transitTimes[j].getSeconds();
 
-				int k= j/99;
-				int l= j-k*100;
+				int k = j / 99;
+				int l = j - k * 100;
 				// commute time by walk
 				int walkTime = Integer.parseInt(mapWalk.get(k)[l].getDuration()
 						.getValue());
 
 				// commute time by drive
-				int driveTime = Integer.parseInt(mapDrive.get(k)[l].getDuration()
-						.getValue());
+				int driveTime = Integer.parseInt(mapDrive.get(k)[l]
+						.getDuration().getValue());
 
 				// commute time by bike
 				int bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
@@ -1144,7 +1145,11 @@ public class JobSearchService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ttl.getRows()[0].getElements();
+		if (ttl != null) {
+			return ttl.getRows()[0].getElements();
+		} else {
+			return null;
+		}
 
 	}
 
@@ -1187,7 +1192,11 @@ public class JobSearchService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ttl.getResponse().getResults()[0].getTravel_times();
+		if (ttl != null) {
+			return ttl.getResponse().getResults()[0].getTravel_times();
+		} else {
+			return null;
+		}
 	}
 
 }
