@@ -1198,5 +1198,4 @@ public class JobSearchService {
 			return null;
 		}
 	}
-
 }
