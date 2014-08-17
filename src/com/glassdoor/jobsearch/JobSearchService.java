@@ -1108,10 +1108,10 @@ public class JobSearchService {
 	private Results[] caculateCommuteTimeGL(String commuteType, double curLat,
 			double curLong, StringBuilder sbgl) {
 		StringBuilder urlString = new StringBuilder(
-				"https://maps.googleapis.com/maps/api/distancematrix/json?");
+				"http://maps.googleapis.com/maps/api/distancematrix/json?");
 		urlString.append("origins=" + curLat + "," + curLong);
 		urlString.append("&destinations=" + sbgl);
-		urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
+//		urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
 		urlString.append("&mode=" + commuteType);
 		urlString.append("&language=en-EN");
 		URL url;
