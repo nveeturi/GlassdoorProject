@@ -110,7 +110,7 @@ public class JobSearchDAO {
 		@SuppressWarnings("unchecked")
 		List<JobDetails> results = session
 				.createQuery(
-						"from JobDetails where (latitude is null OR longitude is  null)").list();
+						"from JobDetails where (latitude is null OR longitude is  null) and city = 'Pittsburgh'").list();
 		if (!(results == null || results.size() == 0)) {
 			details = results;
 			logger.info("Number of records to be processed are: "+details.size());
@@ -194,6 +194,26 @@ public class JobSearchDAO {
 		session.saveOrUpdate(geo);
 		session.close();
 		logger.info("insertLatLongForCity method ended");
+	}
+
+	public List<JobDetails> getJobetailsInCity(String location) {
+		logger.info("getJobetailsInCity method initiated");
+		HibernateUtil util = HibernateUtil.getInstance();
+		List<JobDetails> details = null;
+		@SuppressWarnings("static-access")
+		Session session = util.getSessionFactory().openSession();
+		@SuppressWarnings("unchecked")
+		List<JobDetails> results = session
+				.createQuery(
+						"from JobDetails where (latitude is not null or longitude is not null) and lower(city) = '"+location.toLowerCase()+"'").list();
+		if (!(results == null || results.size() == 0)) {
+			details = results;
+			logger.info("Number of records to be processed are: "+details.size());
+		}
+		logger.info("getJobetailsInCity method ended");
+		session.close();
+		return details;
+		
 	}
 
 }
