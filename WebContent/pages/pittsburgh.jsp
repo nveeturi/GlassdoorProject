@@ -73,7 +73,7 @@
                     <ul class="header-nav nav nav-pills">
 					    <li><a href="#">Home</a></li>
 						<li><a href="#">Jobs</a></li>
-						<li><a href="#">Map</a></li>
+						<li><a href="index/map">Local</a></li>
 						<li><a href="#">Companies</a></li>
 						<li><a href="#">Salaries</a></li>
 						<li><a href="#">Interviews</a></li>
@@ -110,7 +110,7 @@
             <div id="controls" class="controlsoverlay"></div>
 	        <div id="message" class="shortoverlay" style="display:none"></div>
 	        
-            <div class="container">
+            <div class="container" id="settings">
             	<div class="row">
 					<div class="col-sm-3 col-sm-offset-0 col-md-3 col-md-offset-0 map-navigation-positioning">
 						<div class="map-navigation-wrapper">
@@ -123,19 +123,20 @@
 										<div id="intersect-container"></div>
 									</div>
 									<div class="form-group col-sm-12">
-										<div style="display: inline-block" id="urbanDistance-markerrepo" class="markerrepo"><img id="urbanDistance-markerrepo-marker" class="markerrepo-marker" src="../assets/img/icons/marker4.png" alt="New Starting Point"/></div>
-										<label>Drop Me On The Map</label>
+										<div style="display: inline-block" id="urbanDistance-markerrepo" class="markerrepo"></div>
+										<label style="display:inline-block">Add Position:</label>
+										<img id="urbanDistance-markerrepo-marker" class="markerrepo-marker" src="../assets/img/icons/marker_red.png" style="width:20px;display:inline-block"/>
 									</div><!-- /.form-group -->
 									
 									<div class="form-group col-sm-12">
 										<label>Search Nearby Places</label>
-										<input type="text" id="urbanDistance-search" placeholder="e.g. Coffee">
+										<input type="text" id="urbanDistance-search" placeholder="e.g. Coffee" class="form-control" style="display:inline-block;height:26px;width:150px;padding:0px;margin:0px;">
 									</div><!-- /.form-group -->
 									
 									<div class="form-group col-sm-12">
-										<input type="submit" class="btn btn-primary btn-inversed btn-block" value="Search Nearby"/>
-									</div>
-									<!-- /.form-group -->
+										<label>Search Nearby Jobs</label>
+										<input type="text" id="urbanDistance-job" placeholder="e.g. Software Engineer" class="form-control" style="display:inline-block;height:26px;width:160px;padding:0px;margin:0px;"/>&nbsp;&nbsp;
+									</div><!-- /.form-group -->
 								</form>
 							</div>
 							<!-- /.map-navigation -->
@@ -250,6 +251,8 @@
                     }
                 });
             };
+            
+           
             
             google.setOnLoadCallback(google_init);
         </script>

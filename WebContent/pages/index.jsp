@@ -70,7 +70,7 @@
                     <ul class="header-nav nav nav-pills">
 					    <li><a href="#">Home</a></li>
 						<li><a href="#">Jobs</a></li>
-						<li><a href="index/map">Map</a></li>
+						<li><a href="index/map">Local</a></li>
 						<li><a href="#">Companies</a></li>
 						<li><a href="#">Salaries</a></li>
 						<li><a href="#">Interviews</a></li>

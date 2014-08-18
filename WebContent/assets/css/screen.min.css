@@ -58,7 +58,7 @@
 	background: #fff;
 	position: absolute;
 	left: 50%;
-	top: 40%;
+	top: 50%;
 	margin-left: -125px;
 	margin-top: -150px;
 	width: 250px;
@@ -135,13 +135,14 @@
 .markerrepo {
 	float: right;
 	height: 30px;
-	width: 100px;
+	width: 150px;
 	opacity: 1;
 	-webkit-transition: opacity 1s ease-in;
 }
 .markerrepo-marker {
 	cursor: url('http://maps.gstatic.com/intl/en_us/mapfiles/openhand_8_8.cur'), default;
 	z-index: 900;
+	margin:0px;
 }
 .left {
 	float: left;
@@ -210,8 +211,8 @@
 }
 .controlsoverlay {
 	position: absolute;
-	right: 300px;
-	bottom: 400px;
+	right: 0px;
+	bottom: 0px;
 	width: 500px;
 	background: white;
 	line-height: 1.4em;

@@ -23,7 +23,7 @@ public class JobDetails {
 	private int walkTime;
 	private int busTime;
 	private int bikeTime;
-	private int minCommuteType;
+	private int minCommuteTime;
 	
 	
 	public int getBusTime() {
@@ -34,12 +34,14 @@ public class JobDetails {
 		this.busTime = busTime;
 	}
 
-	public int getMinCommuteType() {
-		return minCommuteType;
+
+
+	public int getMinCommuteTime() {
+		return minCommuteTime;
 	}
 
-	public void setMinCommuteType(int minCommuteType) {
-		this.minCommuteType = minCommuteType;
+	public void setMinCommuteTime(int minCommuteTime) {
+		this.minCommuteTime = minCommuteTime;
 	}
 
 	public int getDriveTime() {

@@ -80,7 +80,8 @@
                     <ul class="header-nav nav nav-pills">
 					    <li><a href="#">Home</a></li>
 						<li><a href="#">Jobs</a></li>
-						<li><a href="index/map">Map</a></li>
+						<li><a href="index/map">Local</a></li>
+						<li><a href="#">Companies</a></li>
 						<li><a href="#">Salaries</a></li>
 						<li><a href="#">Interviews</a></li>
 					</ul><!-- /.header-nav -->
@@ -109,7 +110,9 @@
                         	<div class="row">
                             	<div class="col-lg-4 col-sm-4" id="show">
                             		<div id="jobmap" data-style="2" style="height:500px"></div>
+                            		<div id="show"></div>
                             	</div>
+                            	
                                 
 
                                 <div class="col-sm-3" style="float:right">
@@ -174,7 +177,7 @@
                     <div class="select-wrapper">
                     	<select id="filter-distance" name = "commuteType" class="form-control">
 							<option value="Drive">Drive</option>
-							<option value="Transit">Public Transit</option>
+							<option value="Public Transit">Public Transit</option>
 							<option value="Walk">Walk</option>
 							<option value="Bike">Bike</option>
 						</select>
@@ -239,7 +242,9 @@
 	                                                    </h3><!-- /.property-row-title -->
 	
 	                                                    <h4 class="property-row-subtitle">
-	                                                        <a href="#">${job.city}, ${job.state}</a> (${job.latitude}, ${job.longitude})
+	                                                        <%-- <a href="#">${job.city}, ${job.state}</a> (${job.latitude}, ${job.longitude}) --%>
+	                                                    <a href="#">${job.city}, ${job.state}</a> (${job.distance}, ${job.minCommuteTime})
+	                                                   
 	                                                    </h4><!-- /.property-row-subtitle -->
 	
 	                                                    <div class="property-row-price">
@@ -284,7 +289,7 @@
             <div id="footer-inner">
                 <div class="footer-bottom">
                         <p class="center no-margin">
-                            &copy; 2014 Your Company, All Right reserved
+                            &copy; 2014 Glassdoor Practicum Team, All Right reserved
                         </p>
 
                         <div class="center">
