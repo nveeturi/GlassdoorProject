@@ -92,10 +92,7 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "searchJob", method = RequestMethod.GET)
-	public ModelAndView searchJob() {
-		String keyword = "Software Engineer";
-		String location = "Pittsburgh";
-		
+	public ModelAndView searchJob(String keyword, String location) {
 		ModelAndView mav = new ModelAndView("/jobs");
 		List<JobDetails> jobs = null;
 		try{

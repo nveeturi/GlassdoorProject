@@ -69,7 +69,7 @@
                 	<!-- menu -->
                     <ul class="header-nav nav nav-pills">
 					    <li><a href="#">Home</a></li>
-						<li><a href="index/searchJob">Jobs</a></li>
+						<li><a href="index/searchJob?keyword=Software Engineer&location=Pittsburgh">Jobs</a></li>
 						<li><a href="index/map">Local</a></li>
 						<li><a href="index/profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
