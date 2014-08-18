@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="shortcut icon" href="favicon.ico">
+<link rel="shortcut icon" href="assets/img/favicon.ico"  type="image/x-icon" >
 <link
 	href='http://fonts.googleapis.com/css?family=Lato:300,400,300italic,400italic'
 	rel='stylesheet' type='text/css'>
