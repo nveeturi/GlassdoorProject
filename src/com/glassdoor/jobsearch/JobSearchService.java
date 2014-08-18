@@ -932,12 +932,6 @@ public class JobSearchService {
 
 	private static Comparator<JobDetails> DistanceComparator = new Comparator<JobDetails>() {
 		public int compare(JobDetails o1, JobDetails o2) {
-			if (o1.getDistance() == 0) {
-				return (o2.getDistance() == 0) ? 0 : -1;
-			}
-			if (o2.getDistance() == 0) {
-				return -1;
-			}
 			return (int) (o1.getDistance() - o2.getDistance());
 		}
 	};
@@ -1060,16 +1054,15 @@ public class JobSearchService {
 					+ details.get(i).getLongitude());
 			sbgl.append(details.get(i).getLatitude() + ","
 					+ details.get(i).getLongitude() + "|");
-			if ((i + 1) % 100 == 0) {
+			if ((i + 1) % 80 == 0) {
 				sbgl.deleteCharAt(sbgl.length() - 1);
 				idgl.add(new StringBuilder(sbgl));
 				sbgl.setLength(0);
 			}
 		}
-		if (details.size() < 100) {
-			sbgl.deleteCharAt(sbgl.length() - 1);
-			idgl.add(sbgl);
-		}
+
+		sbgl.deleteCharAt(sbgl.length() - 1);
+		idgl.add(sbgl);
 
 		TravelTimeWS[] transitTimes = caculateCommuteTime("transit", curLat,
 				curLong, sbws);
@@ -1078,10 +1071,10 @@ public class JobSearchService {
 			StringBuilder idx = idgl.get(i);
 			Results[] walkTimes = caculateCommuteTimeGL("walking", curLat,
 					curLong, idx);
-		
+
 			Results[] driveTimes = caculateCommuteTimeGL("driving", curLat,
 					curLong, idx);
-		
+
 			Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
 					curLong, idx);
 
@@ -1093,41 +1086,48 @@ public class JobSearchService {
 		// 47.646757,-122.361152
 		for (int j = 0; j < details.size(); j++) {
 			JobDetails i = details.get(j);
+			double distance = Integer.MAX_VALUE;
+			int walkTime = Integer.MAX_VALUE, driveTime = Integer.MAX_VALUE, bikeTime = Integer.MAX_VALUE, min = Integer.MAX_VALUE, busTime = Integer.MAX_VALUE;
+
 			if (i.getLatitude() != null && i.getLongitude() != null) {
 				// get distance
 				double a = i.getLatitude();
 				double b = i.getLongitude();
-				double distance = caculateDistance(curLat, curLong,
-						i.getLatitude(), i.getLongitude());
+				distance = caculateDistance(curLat, curLong, i.getLatitude(),
+						i.getLongitude());
 
 				// commute time by bus
-				int busTime = transitTimes[j].getSeconds();
+				if (transitTimes[j].isUnroutable() == false) {
+					busTime = transitTimes[j].getSeconds();
+				}
 
-				int k = j / 99;
-				int l = j - k * 100;
-				int walkTime = Integer.MAX_VALUE, driveTime = Integer.MAX_VALUE, bikeTime=Integer.MAX_VALUE;
+				int k = j / 79;
+				int l = j - k * 79;
+
 				// commute time by walk
-				if(mapWalk.containsKey(k)){
-				walkTime = Integer.parseInt(mapWalk.get(k)[l].getDuration()
-						.getValue());
+				if (mapWalk.containsKey(k) && l < mapWalk.get(k).length
+						&& mapWalk.get(k)[l] != null) {
+					walkTime = Integer.parseInt(mapWalk.get(k)[l].getDuration()
+							.getValue());
 				}
-				
+
 				// commute time by drive
-				if((mapDrive.containsKey(k))){
-				driveTime = Integer.parseInt(mapDrive.get(k)[l]
-						.getDuration().getValue());
+				if (mapDrive.containsKey(k) && l < mapWalk.get(k).length
+						&& mapDrive.get(k)[l] != null) {
+					driveTime = Integer.parseInt(mapDrive.get(k)[l]
+							.getDuration().getValue());
 				}
-				
+
 				// // commute time by bike
-				if(mapBike.containsKey(k)){
-				bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
-						.getValue());
+				if (mapBike.containsKey(k) && l < mapWalk.get(k).length
+						&& mapBike.get(k)[l] != null) {
+					bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
+							.getValue());
 				}
-				
-				
-				int min = Math.min(Math.min(walkTime, driveTime),
+
+				min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
-				i.setDistance( (int)distance);
+				i.setDistance((int) distance);
 				i.setDriveTime(driveTime);
 				i.setBikeTime(bikeTime);
 				i.setTransitTime(busTime);

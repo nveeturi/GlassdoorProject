@@ -25,7 +25,7 @@ public class HomeController {
 	@Autowired
 	private JobSearchService jobService;
 	public static Logger logger = Logger.getLogger(HomeController.class);
-	
+	List<JobDetails> jobs = null;
 
 	/***
 	 * @return
@@ -77,14 +77,15 @@ public class HomeController {
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		List<JobDetails> jobs = null;
+	
 		try{
 		logger.info("Search is made with keyword "+keyword + " and city "+location);
 		jobs = jobService.getAllJobsInCity(location);
-
+		jobService.updateCommuteTimeAndDistanceGL(jobs);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		mav.addObject("keyword", keyword);
 		mav.addObject("location", location);
 		mav.addObject("joblist", jobs);
@@ -93,27 +94,24 @@ public class HomeController {
 	
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 
 	public ModelAndView sort(String criteria) { 
-		List<JobDetails> jobdetails = null;
 		ModelAndView mav = new ModelAndView("/jobs");
-		jobService.sortJobList(jobdetails,criteria);//distance or commute time
-		mav.addObject("joblist", jobdetails);
+		jobService.sortJobList(jobs,criteria);//distance or commute time
+		mav.addObject("joblist", jobs);
 		return mav;
 	}
 	
-	@RequestMapping(value = "sortws", method = RequestMethod.POST) 
-	public List<JobDetails> sortws(String criteria) { 
-		List<JobDetails> jobdetails = null;
-		jobService.sortJobList(jobdetails,criteria);//distance or commute time
-		return jobdetails;
-	}
+//	@RequestMapping(value = "sortws", method = RequestMethod.POST) 
+//	public List<JobDetails> sortws(String criteria) { 
+//		jobService.sortJobList(jobs,criteria);//distance or commute time
+//		return jobs;
+//	}
 	
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
 	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
-		List<JobDetails> jobdetails = null;
 		ModelAndView mav = new ModelAndView("/jobs");
 		String dis = distance.split(" ")[1];
 		String com = commuteTime.substring(2, 4);
-		List<JobDetails> newJobs = jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
+		List<JobDetails> newJobs = jobService.refineSearch(jobs, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
 		mav.addObject("joblist", newJobs);
 		return mav;
 	}
