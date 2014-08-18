@@ -76,6 +76,15 @@ function pageselectCallback(page_id, jq) {
 	
 	deleteMarkers();
 	
+	navigator.geolocation.getCurrentPosition(function(position) {
+    	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    	var infowindow = new google.maps.InfoWindow({
+            map: map,
+            position: pos,
+            content: 'You are here!'
+          });
+	});
+	
 	$(".job-content").hide();
     $(".job-content").each(function(n) {
     	if (n >= pageSize * page_id && n < pageSize * (page_id + 1)) {

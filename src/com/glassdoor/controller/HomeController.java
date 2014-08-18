@@ -36,13 +36,19 @@ public class HomeController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "register.do", method = RequestMethod.POST)
+	public ModelAndView register(String username, String password) {
+		ModelAndView mav = new ModelAndView("/profile");
+		mav.addObject("username", username);
+		return mav;
+	}
+	
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
 		if(pageCount == null){
 			pageCount = "1";
 		}
-		
 		try {
 			String locationEncode = (location == null || location.trim()
 					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
@@ -86,7 +92,35 @@ public class HomeController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return jobdetails;
+	}
+	
+	@RequestMapping(value = "/searchjob", method = RequestMethod.GET)
+	public ModelAndView getJobs() {
+		ModelAndView mav = new ModelAndView("/jobs");
+		String keyword = "software engineer";
+		String location = "Pittsburgh";
+		
+		try {
+			String locationEncode = (location == null || location.trim()
+					.equals("")) ? "" : URLEncoder.encode(location, "UTF-8");
+
+			String keywordEncode = (keyword == null || keyword.trim()
+					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode, true, 1, 50);
+			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
+			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		mav.addObject("keyword", keyword);
+		mav.addObject("location", location);
+		mav.addObject("joblist", jobdetails);
+		return mav;
 	}
 	
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 
@@ -197,6 +231,12 @@ public class HomeController {
 	@RequestMapping("register")
 	public ModelAndView register() {
 		ModelAndView mav = new ModelAndView("register");
+		return mav;
+	}
+	
+	@RequestMapping("profile")
+	public ModelAndView profile() {
+		ModelAndView mav = new ModelAndView("profile");
 		return mav;
 	}
 

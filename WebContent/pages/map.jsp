@@ -72,9 +72,7 @@
 					    <li><a href="#">Home</a></li>
 						<li><a href="#">Jobs</a></li>
 						<li><a href="index/map">Local</a></li>
-						<li><a href="#">Companies</a></li>
-						<li><a href="#">Salaries</a></li>
-						<li><a href="#">Interviews</a></li>
+						<li><a href="index/map">Profile</a></li>
 					</ul><!-- /.header-nav -->
 					
 					<!-- search bar -->
