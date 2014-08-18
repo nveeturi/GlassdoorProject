@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 
 <!doctype html>
 
@@ -11,11 +11,11 @@
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="shortcut icon" href="assets/img/favicon.ico"  type="image/x-icon" >
-    <link rel="stylesheet" type="text/css" href="assets/libraries/font-awesome/css/font-awesome.css" media="screen, projection">
-    <link rel="stylesheet" type="text/css" href="assets/libraries/jquery-bxslider/jquery.bxslider.css" media="screen, projection">
-    <link rel="stylesheet" type="text/css" href="assets/libraries/flexslider/flexslider.css" media="screen, projection">
-    <link rel="stylesheet" type="text/css" href="assets/css/realocation.css" media="screen, projection" id="css-main">
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" type="text/css" href="../assets/libraries/font-awesome/css/font-awesome.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="../assets/libraries/jquery-bxslider/jquery.bxslider.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="../assets/libraries/flexslider/flexslider.css" media="screen, projection">
+    <link rel="stylesheet" type="text/css" href="../assets/css/realocation.css" media="screen, projection" id="css-main">
 
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
 
@@ -33,7 +33,7 @@
         <div class="header-bar">
             <div class="container">
                 <ul class="header-bar-nav nav nav-register">
-    <li><a href="index/login">Login</a></li>
+    <li><a href="login.html">Login</a></li>
     <li><a href="register.html">Register</a></li>
     <li><a href="renew-password.html">Renew Password</a></li>
 </ul>            </div><!-- /.container -->
@@ -94,54 +94,43 @@
     </div><!-- /.header-inner -->
 </div><!-- /#header -->    </div><!-- /#header-wrapper -->
 <div id="main-wrapper">
-    <div id="main">
-        <div id="main-inner">
+        <div id="main">
+            <div id="main-inner">
+                <div class="container">
+                    <div class="block-content block-content-small-padding">
+                        <div class="block-content-inner">
+                            <div class="row">
+                                <div class="col-sm-4 col-sm-offset-4">
+                                    <div class="box">
+                                        <form method="post" action="?">
+                                            <div class="form-group">
+                                                <label>Username</label>
+                                                <input type="text" class="form-control" name="username">
+                                            </div><!-- /.form-group -->
 
-<!-- MAP -->
-<div class="block-content no-padding">
-    <div class="block-content-inner">
-        <div class="map-wrapper">
-            <div id="map" data-style="2"></div><!-- /#map -->
-            
-            <div class="container">
-				<div class="row">
-					<div class="col-sm-4 col-sm-offset-8 col-md-3 col-md-offset-9 map-navigation-positioning">
-						<div class="map-navigation-wrapper">
-							<div class="map-navigation">
-								<form action="index/search" method="post" class="clearfix">
-									<div class="form-group col-sm-12">
-										<label>Keyword</label>
-										<input type="text" name="keyword" class="form-control" placeholder="Job Title">
-									</div><!-- /.form-group -->
-									
-									<div class="form-group col-sm-12">
-										<label>Location</label>
-										<input type="text" name="location" class="form-control" placeholder="Location">
-									</div><!-- /.form-group -->
+                                            <div class="form-group">
+                                                <label>Password</label>
+                                                <input type="password" class="form-control" name="password">
+                                            </div><!-- /.form-group -->
 
-									<div class="form-group col-sm-12">
-										<input type="submit" class="btn btn-primary btn-inversed btn-block" value="Find Jobs">
-									</div>
-									<!-- /.form-group -->
-								</form>
-							</div>
-							<!-- /.map-navigation -->
-						</div>
-						<!-- /.map-navigation-wrapper -->
-					</div>
-					<!-- /.col-sm-3 -->
-				</div>
-				<!-- /.row -->
-			</div>
-			<!-- /.container -->
+                                            <div class="form-group">
+                                                <label>Confirm Password</label>
+                                                <input type="password" class="form-control" name="confirmpassword">
+                                            </div><!-- /.form-group -->
 
-        </div><!-- /.map-wrapper -->
-    </div><!-- /.block-content-inner -->
-</div><!-- /.block-content -->
-            
-        </div><!-- /#main-inner -->
-    </div><!-- /#main -->
-</div><!-- /#main-wrapper -->
+                                            <div class="form-group">
+                                                <input type="submit" value="Register" class="btn btn-primary btn-inversed btn-block">
+                                            </div><!-- /.form-group -->
+                                        </form>
+                                    </div><!-- /.box -->
+                                </div>
+                            </div><!-- /.row -->
+                        </div><!-- /.block-content-inner -->
+                    </div><!-- /.block-content -->
+                </div><!-- /.container -->
+            </div><!-- /#main-inner -->
+        </div><!-- /#main -->
+    </div><!-- /#main-wrapper -->
 
     <div id="footer-wrapper">
         <div id="footer">
@@ -173,20 +162,20 @@
     </div><!-- /#footer-wrapper -->
 </div><!-- /#wrapper -->
 
-<script type="text/javascript" src="assets/js/jquery.js"></script>
-<script type="text/javascript" src="assets/libraries/isotope/jquery.isotope.min.js"></script>
+<script type="text/javascript" src="../assets/js/jquery.js"></script>
+<script type="text/javascript" src="../assets/libraries/isotope/jquery.isotope.min.js"></script>
 
 <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
-<script type="text/javascript" src="assets/js/gmap3.infobox.js"></script>
-<script type="text/javascript" src="assets/js/gmap3.clusterer.js"></script>
-<script type="text/javascript" src="assets/js/map.js"></script>
+<script type="text/javascript" src="../assets/js/gmap3.infobox.js"></script>
+<script type="text/javascript" src="../assets/js/gmap3.clusterer.js"></script>
+<script type="text/javascript" src="../assets/js/map.js"></script>
 
-<script type="text/javascript" src="assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/transition.js"></script>
-<script type="text/javascript" src="assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/collapse.js"></script>
-<script type="text/javascript" src="assets/libraries/jquery-bxslider/jquery.bxslider.min.js"></script>
-<script type="text/javascript" src="assets/libraries/flexslider/jquery.flexslider.js"></script>
-<script type="text/javascript" src="assets/js/jquery.chained.min.js"></script>
-<script type="text/javascript" src="assets/js/realocation.js"></script>
+<script type="text/javascript" src="../assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/transition.js"></script>
+<script type="text/javascript" src="../assets/libraries/bootstrap-sass/vendor/assets/javascripts/bootstrap/collapse.js"></script>
+<script type="text/javascript" src="../assets/libraries/jquery-bxslider/jquery.bxslider.min.js"></script>
+<script type="text/javascript" src="../assets/libraries/flexslider/jquery.flexslider.js"></script>
+<script type="text/javascript" src="../assets/js/jquery.chained.min.js"></script>
+<script type="text/javascript" src="../assets/js/realocation.js"></script>
 
 </body>
 </html>

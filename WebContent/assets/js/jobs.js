@@ -129,6 +129,7 @@ function addMarker(jobResult) {
     markerOptions.map = map;
     
     var marker = new google.maps.Marker(markerOptions); 
+    marker.setAnimation(google.maps.Animation.BOUNCE);
     
     jobResult.marker = marker;
     jobResult.infowindow = new google.maps.InfoWindow({

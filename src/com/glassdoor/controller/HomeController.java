@@ -35,7 +35,7 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("/index");
 		return mav;
 	}
-
+	
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -185,6 +185,18 @@ public class HomeController {
 	@RequestMapping("map")
 	public ModelAndView map() {
 		ModelAndView mav = new ModelAndView("map");
+		return mav;
+	}
+	
+	@RequestMapping("login")
+	public ModelAndView login() {
+		ModelAndView mav = new ModelAndView("login");
+		return mav;
+	}
+	
+	@RequestMapping("register")
+	public ModelAndView register() {
+		ModelAndView mav = new ModelAndView("register");
 		return mav;
 	}
 
