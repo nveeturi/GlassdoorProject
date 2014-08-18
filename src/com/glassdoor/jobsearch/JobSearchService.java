@@ -547,7 +547,7 @@ public class JobSearchService {
 	public void updateLocationInfo() throws XPathExpressionException,
 			ParserConfigurationException, SAXException {
 
-		logger.info("updateLocation batch initiated");
+		logger.info("updateLocationInfo batch initiated");
 		// Traverse through all the records that do not have lat-long
 		List<JobDetails> details = null;
 		details = jobSearchDao.getJobDetailsWithNoLocation();
@@ -641,11 +641,11 @@ public class JobSearchService {
 	public void updateLocationFromJobLink(JobDetails jobDetails) {
 		logger.info("updateLocationFromJobLink batch initiated");
 		try {
-			// STEP 4: Execute a query
+			// STEP 1: Execute a query
 			org.jsoup.nodes.Document doc = null;
 			String error = "";
 			boolean flag = false;
-			// STEP 5: Extract data from result set
+			// STEP 2: Extract data from result set
 			String link = "";
 			link = jobDetails.getJobSourceLink();
 			try {
@@ -1308,5 +1308,10 @@ public class JobSearchService {
 		} else {
 			return null;
 		}
+	}
+
+	public List<JobDetails> getAllJobsInCity(String location) {
+
+		return jobSearchDao.getJobetailsInCity(location);
 	}
 }

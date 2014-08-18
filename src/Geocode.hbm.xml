@@ -5,7 +5,6 @@
 
 <hibernate-mapping>
 	<class name="com.glassdoor.databean.Geocode" table="GEOCODE">
-		
 		<id name="city" column="CITY" type="string"></id>
 		<property name="latlong" column="LATLONG" type="string" />
 	</class>
