@@ -10,7 +10,6 @@ import org.hibernate.Transaction;
 import com.glassdoor.databean.Geocode;
 import com.glassdoor.databean.HibernateUtil;
 import com.glassdoor.databean.JobDetails;
-import com.glassdoor.jobsearch.JobSearchService;
 
 public class JobSearchDAO {
 	
@@ -111,8 +110,7 @@ public class JobSearchDAO {
 		@SuppressWarnings("unchecked")
 		List<JobDetails> results = session
 				.createQuery(
-						"from JobDetails where jobSourceLink is not null").list();
-		//(latitude is null OR longitude is  null) 
+						"from JobDetails where (latitude is null OR longitude is  null)").list();
 		if (!(results == null || results.size() == 0)) {
 			details = results;
 			logger.info("Number of records to be processed are: "+details.size());

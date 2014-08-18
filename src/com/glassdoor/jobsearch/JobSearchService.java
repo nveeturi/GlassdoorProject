@@ -551,78 +551,82 @@ public class JobSearchService {
 		// Traverse through all the records that do not have lat-long
 		List<JobDetails> details = null;
 		details = jobSearchDao.getJobDetailsWithNoLocation();
+		if (details != null) {
+			for (JobDetails jobDetails : details) {
+				try {
+					String latlong = "";
+					logger.info("Processing the job with job Id "
+							+ jobDetails.getJobId());
+					// Check if the lat long is available in Career Builder
+					if (jobDetails.getSource().equals("CareerBuilder")
+							&& !(jobDetails.getJobRefID() == null || jobDetails
+									.getJobRefID() == "")) {
+						logger.info("Job is from source Career Builder");
+						callCBJobRefURL(jobDetails);
+					}
 
-		for (JobDetails jobDetails : details) {
-			try {
-				String latlong = "";
-				logger.info("Processing the job with job Id "
-						+ jobDetails.getJobId());
-				// Check if the lat long is available in Career Builder
-				if (jobDetails.getSource().equals("CareerBuilder")
-						&& !(jobDetails.getJobRefID() == null || jobDetails
-								.getJobRefID() == "")) {
-					logger.info("Job is from source Career Builder");
-					callCBJobRefURL(jobDetails);
-				}
+					if (jobDetails.getLatitude() != null
+							&& jobDetails.getLongitude() != null) {
+						latlong = jobDetails.getLatitude().toString() + ","
+								+ jobDetails.getLongitude().toString();
+					}
 
-				if (jobDetails.getLatitude() != null
-						&& jobDetails.getLongitude() != null) {
-					latlong = jobDetails.getLatitude().toString() + ","
-							+ jobDetails.getLongitude().toString();
-				}
-
-				if (latlong.equals("")) {
-					latlong = jobSearchDao.getLatLongForCity(jobDetails
-							.getCity());
-				}
-				if (latlong.equals("")) {
-					// Get the lat-long of the City
-					logger.info("Call Google Geocode API to get city lat/long");
-					GoogleResponse res = getLocationLatLong(jobDetails
-							.getCity());
-					if (res.getResults() != null && res.getResults().length > 0) {
-						Location loc = res.getResults()[0].getGeometry()
-								.getLocation();
-						latlong = loc.getLat() + "," + loc.getLng();
-						if (!latlong.equals("")) {
-							logger.info("Geocode latitude/longitude found for city"
-									+ jobDetails.getCity() + " is" + latlong);
-							jobSearchDao.insertLatLongForCity(
-									jobDetails.getCity(), latlong);
+					if (latlong.equals("")) {
+						latlong = jobSearchDao.getLatLongForCity(jobDetails
+								.getCity());
+					}
+					if (latlong.equals("")) {
+						// Get the lat-long of the City
+						logger.info("Call Google Geocode API to get city lat/long");
+						GoogleResponse res = getLocationLatLong(jobDetails
+								.getCity());
+						if (res.getResults() != null
+								&& res.getResults().length > 0) {
+							Location loc = res.getResults()[0].getGeometry()
+									.getLocation();
+							latlong = loc.getLat() + "," + loc.getLng();
+							if (!latlong.equals("")) {
+								logger.info("Geocode latitude/longitude found for city "
+										+ jobDetails.getCity()
+										+ " is "
+										+ latlong);
+								jobSearchDao.insertLatLongForCity(
+										jobDetails.getCity(), latlong);
+							}
 						}
 					}
-				}
-				// Call the nearby search Google Places API with the company
-				// name and latlong
-				if (!latlong.equals("")) {
-					setValidAddress(latlong, jobDetails);
-				}
-				if (latlong.equals("")
-						&& !(jobDetails.getJobSourceLink() == null || jobDetails
-								.getJobSourceLink().equals(""))) {
-					logger.info("The job source link will be scrapped to find the address "
-							+ jobDetails.getJobSourceLink());
-					updateLocationFromJobLink(jobDetails);
-				}
-			} catch (IOException e) {
-				logger.error("Error occurred - "+e.getMessage());
-				continue;
+					// Call the nearby search Google Places API with the company
+					// name and latlong
+					if (!latlong.equals("")) {
+						setValidAddress(latlong, jobDetails);
+					}
+					if (latlong.equals("")
+							&& !(jobDetails.getJobSourceLink() == null || jobDetails
+									.getJobSourceLink().equals(""))) {
+						logger.info("The job source link will be scrapped to find the address "
+								+ jobDetails.getJobSourceLink());
+						updateLocationFromJobLink(jobDetails);
+					}
+				} catch (IOException e) {
+					logger.error("Error occurred - " + e.getMessage());
+					continue;
 
-			} catch (Exception e) {
-				logger.error("Error occurred - "+e.getMessage());
-				continue;
+				} catch (Exception e) {
+					logger.error("Error occurred - " + e.getMessage());
+					continue;
+
+				}
 
 			}
 
+			// If it is a single location single company, we will get one
+			// record
+			// If it is a single company in each location, we will get one
+			// result
+
+			// If many outlets in single city, we will get many results
+			saveJobDetails(details);
 		}
-
-		// If it is a single location single company, we will get one
-		// record
-		// If it is a single company in each location, we will get one
-		// result
-
-		// If many outlets in single city, we will get many results
-		saveJobDetails(details);
 
 		// For such records, we will call Career builder API if the source
 		// is
@@ -635,6 +639,7 @@ public class JobSearchService {
 	}
 
 	public void updateLocationFromJobLink(JobDetails jobDetails) {
+		logger.info("updateLocationFromJobLink batch initiated");
 		try {
 			// STEP 4: Execute a query
 			org.jsoup.nodes.Document doc = null;
@@ -642,7 +647,6 @@ public class JobSearchService {
 			boolean flag = false;
 			// STEP 5: Extract data from result set
 			String link = "";
-			System.out.println(jobDetails.getJobSourceLink());
 			link = jobDetails.getJobSourceLink();
 			try {
 				doc = Jsoup.connect(link).ignoreContentType(true).timeout(0)
@@ -688,7 +692,7 @@ public class JobSearchService {
 							addr += words[i] + " ";
 
 						}
-						
+
 						if (!addr.trim().equals("")) {
 							URL url = new URL(Constants.SMARTY_STR_URL
 									+ "?street="
@@ -720,7 +724,7 @@ public class JobSearchService {
 								jobDetails.setLongitude(response.getMetadata()
 										.getLongitude());
 							}
-							
+
 							in.close();
 
 						}
@@ -1077,10 +1081,10 @@ public class JobSearchService {
 			System.out.println("walkTimes");
 			Results[] driveTimes = caculateCommuteTimeGL("driving", curLat,
 					curLong, idx);
-//			System.out.println("driveTimes");
+			// System.out.println("driveTimes");
 			Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
 					curLong, idx);
-//			System.out.println("bikeTimes");
+			// System.out.println("bikeTimes");
 
 			mapWalk.put(i, walkTimes);
 			mapDrive.put(i, driveTimes);
@@ -1109,11 +1113,11 @@ public class JobSearchService {
 				// commute time by drive
 				int driveTime = Integer.parseInt(mapDrive.get(k)[l]
 						.getDuration().getValue());
-//
-//				// commute time by bike
+				//
+				// // commute time by bike
 				int bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
 						.getValue());
-//
+				//
 				int min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
 				i.setDistance(distance);
@@ -1197,95 +1201,98 @@ public class JobSearchService {
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					con.getInputStream()));
 
-	// private Results[] caculateCommuteTimeGL(String commuteType, double
-	// curLat,
-	// double curLong, StringBuilder sbgl) {
-	// StringBuilder urlString = new StringBuilder(
-	// "http://maps.googleapis.com/maps/api/distancematrix/json?");
-	// urlString.append("origins=" + curLat + "," + curLong);
-	// urlString.append("&destinations=" + sbgl);
-	// urlString.append("&mode=" + commuteType);
-	// urlString.append("&language=en-EN");
-	// URL url;
-	// TravelTimeListing ttl = null;
-	// try {
-	// url = new URL(urlString.toString());
-	//
-	// HttpURLConnection con;
-	//
-	// con = (HttpURLConnection) url.openConnection();
-	//
-	// con.setRequestMethod("GET");
-	//
-	// BufferedReader br = new BufferedReader(new InputStreamReader(
-	// con.getInputStream()));
-	//
-	// StringBuilder response = new StringBuilder();
-	// String output;
-	// while ((output = br.readLine()) != null) {
-	// response.append(output);
-	// }
-	//
-	// Gson gson = new Gson();
-	// ttl = gson.fromJson(response.toString(), TravelTimeListing.class);
-	//
-	// } catch (MalformedURLException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return ttl.getRows()[0].getElements();
-	//
-	// }
+			// private Results[] caculateCommuteTimeGL(String commuteType,
+			// double
+			// curLat,
+			// double curLong, StringBuilder sbgl) {
+			// StringBuilder urlString = new StringBuilder(
+			// "http://maps.googleapis.com/maps/api/distancematrix/json?");
+			// urlString.append("origins=" + curLat + "," + curLong);
+			// urlString.append("&destinations=" + sbgl);
+			// urlString.append("&mode=" + commuteType);
+			// urlString.append("&language=en-EN");
+			// URL url;
+			// TravelTimeListing ttl = null;
+			// try {
+			// url = new URL(urlString.toString());
+			//
+			// HttpURLConnection con;
+			//
+			// con = (HttpURLConnection) url.openConnection();
+			//
+			// con.setRequestMethod("GET");
+			//
+			// BufferedReader br = new BufferedReader(new InputStreamReader(
+			// con.getInputStream()));
+			//
+			// StringBuilder response = new StringBuilder();
+			// String output;
+			// while ((output = br.readLine()) != null) {
+			// response.append(output);
+			// }
+			//
+			// Gson gson = new Gson();
+			// ttl = gson.fromJson(response.toString(),
+			// TravelTimeListing.class);
+			//
+			// } catch (MalformedURLException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// } catch (IOException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
+			// return ttl.getRows()[0].getElements();
+			//
+			// }
 			StringBuilder response = new StringBuilder();
 			String output;
 			while ((output = br.readLine()) != null) {
 				response.append(output);
 			}
 
-	// private TravelTimeWS[] caculateCommuteTime(String commuteType,
-	// double curLat, double curLong, StringBuilder sbws) {
-	// StringBuilder urlString = new StringBuilder(
-	// "http://api2.walkscore.com/api/v1/traveltime/json?");
-	//
-	// urlString.append("wsapikey=" + wsapikey);
-	// urlString.append("&mode=" + commuteType);
-	// urlString.append("&origin=" + curLat + "," + curLong);
-	// urlString.append(sbws);
-	// URL url;
-	// TravelTimeListingWS ttl = null;
-	// try {
-	// url = new URL(urlString.toString());
-	//
-	// HttpURLConnection con;
-	//
-	// con = (HttpURLConnection) url.openConnection();
-	//
-	// con.setRequestMethod("GET");
-	//
-	// BufferedReader br = new BufferedReader(new InputStreamReader(
-	// con.getInputStream()));
-	//
-	// StringBuilder response = new StringBuilder();
-	// String output;
-	// while ((output = br.readLine()) != null) {
-	// response.append(output);
-	// }
-	//
-	// Gson gson = new Gson();
-	// ttl = gson.fromJson(response.toString(), TravelTimeListingWS.class);
-	//
-	// } catch (MalformedURLException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// } catch (IOException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return ttl.getResponse().getResults()[0].getTravel_times();
-	// }
+			// private TravelTimeWS[] caculateCommuteTime(String commuteType,
+			// double curLat, double curLong, StringBuilder sbws) {
+			// StringBuilder urlString = new StringBuilder(
+			// "http://api2.walkscore.com/api/v1/traveltime/json?");
+			//
+			// urlString.append("wsapikey=" + wsapikey);
+			// urlString.append("&mode=" + commuteType);
+			// urlString.append("&origin=" + curLat + "," + curLong);
+			// urlString.append(sbws);
+			// URL url;
+			// TravelTimeListingWS ttl = null;
+			// try {
+			// url = new URL(urlString.toString());
+			//
+			// HttpURLConnection con;
+			//
+			// con = (HttpURLConnection) url.openConnection();
+			//
+			// con.setRequestMethod("GET");
+			//
+			// BufferedReader br = new BufferedReader(new InputStreamReader(
+			// con.getInputStream()));
+			//
+			// StringBuilder response = new StringBuilder();
+			// String output;
+			// while ((output = br.readLine()) != null) {
+			// response.append(output);
+			// }
+			//
+			// Gson gson = new Gson();
+			// ttl = gson.fromJson(response.toString(),
+			// TravelTimeListingWS.class);
+			//
+			// } catch (MalformedURLException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// } catch (IOException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
+			// return ttl.getResponse().getResults()[0].getTravel_times();
+			// }
 			Gson gson = new Gson();
 			ttl = gson.fromJson(response.toString(), TravelTimeListingWS.class);
 
