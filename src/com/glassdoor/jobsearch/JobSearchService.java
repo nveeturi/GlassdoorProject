@@ -1078,13 +1078,12 @@ public class JobSearchService {
 			StringBuilder idx = idgl.get(i);
 			Results[] walkTimes = caculateCommuteTimeGL("walking", curLat,
 					curLong, idx);
-			System.out.println("walkTimes");
+		
 			Results[] driveTimes = caculateCommuteTimeGL("driving", curLat,
 					curLong, idx);
-			// System.out.println("driveTimes");
+		
 			Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
 					curLong, idx);
-			// System.out.println("bikeTimes");
 
 			mapWalk.put(i, walkTimes);
 			mapDrive.put(i, driveTimes);
@@ -1106,21 +1105,29 @@ public class JobSearchService {
 
 				int k = j / 99;
 				int l = j - k * 100;
+				int walkTime = Integer.MAX_VALUE, driveTime = Integer.MAX_VALUE, bikeTime=Integer.MAX_VALUE;
 				// commute time by walk
-				int walkTime = Integer.parseInt(mapWalk.get(k)[l].getDuration()
+				if(mapWalk.containsKey(k)){
+				walkTime = Integer.parseInt(mapWalk.get(k)[l].getDuration()
 						.getValue());
-
+				}
+				
 				// commute time by drive
-				int driveTime = Integer.parseInt(mapDrive.get(k)[l]
+				if((mapDrive.containsKey(k))){
+				driveTime = Integer.parseInt(mapDrive.get(k)[l]
 						.getDuration().getValue());
-				//
+				}
+				
 				// // commute time by bike
-				int bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
+				if(mapBike.containsKey(k)){
+				bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
 						.getValue());
-				//
+				}
+				
+				
 				int min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
-				i.setDistance(distance);
+				i.setDistance( (int)distance);
 				i.setDriveTime(driveTime);
 				i.setBikeTime(bikeTime);
 				i.setTransitTime(busTime);

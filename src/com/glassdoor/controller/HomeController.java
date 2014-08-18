@@ -40,7 +40,7 @@ public class HomeController {
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
 		if(pageCount == null){
-			pageCount = "10";
+			pageCount = "1";
 		}
 		
 		try {
