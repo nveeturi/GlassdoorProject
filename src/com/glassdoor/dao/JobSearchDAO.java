@@ -48,6 +48,7 @@ public class JobSearchDAO {
 
 	public void insertJobDetails(List<JobDetails> jobdetails) {
 
+		logger.info("insertJobDetails method initiated");
 		HibernateUtil util = HibernateUtil.getInstance();
 		Session session = util.getSessionFactory().openSession();
 		Transaction tx = session.beginTransaction();
@@ -69,21 +70,22 @@ public class JobSearchDAO {
 				}
 
 			} catch (NonUniqueObjectException nue) {
+				logger.error(nue.getMessage());
 				continue;
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage());
 				continue;
 			}
 
 		}
 		tx.commit();
 		session.close();
-		System.out.println("Object saved");
+		logger.info("Object saved successfully!");
 
 	}
 
 	public List<JobDetails> getCBJobDetails() {
-
+		
 		HibernateUtil util = HibernateUtil.getInstance();
 		List<JobDetails> details = null;
 		@SuppressWarnings("static-access")
