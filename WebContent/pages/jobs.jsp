@@ -79,11 +79,9 @@
                 <div class="row">
                     <ul class="header-nav nav nav-pills">
 					    <li><a href="#">Home</a></li>
-						<li><a href="#">Jobs</a></li>
-						<li><a href="index/map">Local</a></li>
-						<li><a href="#">Companies</a></li>
-						<li><a href="#">Salaries</a></li>
-						<li><a href="#">Interviews</a></li>
+						<li><a href="search">Jobs</a></li>
+						<li><a href="map">Local</a></li>
+						<li><a href="profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
                     <div class="form-search-wrapper col-sm-3">
                         <form method="post" action="search" class="form-horizontal form-search">

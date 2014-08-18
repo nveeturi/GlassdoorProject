@@ -71,9 +71,7 @@
 					    <li><a href="#">Home</a></li>
 						<li><a href="#">Jobs</a></li>
 						<li><a href="index/map">Local</a></li>
-						<li><a href="#">Companies</a></li>
-						<li><a href="#">Salaries</a></li>
-						<li><a href="#">Interviews</a></li>
+						<li><a href="index/profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
 					
 					<!-- search bar -->
@@ -102,7 +100,7 @@
                             <div class="row">
                                 <div class="col-sm-4 col-sm-offset-4">
                                     <div class="box">
-                                        <form method="post" action="?">
+                                        <form method="post" action="register.do">
                                             <div class="form-group">
                                                 <label>Username</label>
                                                 <input type="text" class="form-control" name="username">

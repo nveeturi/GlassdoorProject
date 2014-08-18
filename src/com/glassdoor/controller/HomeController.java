@@ -36,6 +36,13 @@ public class HomeController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "register.do", method = RequestMethod.POST)
+	public ModelAndView register(String username, String password) {
+		ModelAndView mav = new ModelAndView("/profile");
+		mav.addObject("username", username);
+		return mav;
+	}
+	
 	@RequestMapping(value = "searchGlassdoor", method = RequestMethod.POST)
 	public ModelAndView searchGlassdoor(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -195,6 +202,12 @@ public class HomeController {
 	@RequestMapping("register")
 	public ModelAndView register() {
 		ModelAndView mav = new ModelAndView("register");
+		return mav;
+	}
+	
+	@RequestMapping("profile")
+	public ModelAndView profile() {
+		ModelAndView mav = new ModelAndView("profile");
 		return mav;
 	}
 
