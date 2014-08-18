@@ -106,10 +106,12 @@
                 <div class="container">
                     <div class="block-content block-content-small-padding">
                         <div class="block-content-inner">
-                            <div class="hero">
-                                <strong>404</strong>
-                                <span>Page Not Found</span>
+                        	<div style="height:200px"></div>
+                        	<div class="hero">
+                                <strong>Sorry</strong>
+                                <span>An unexpected error has occured...</span>
                             </div><!-- /.hero -->
+                            <div style="height:100px" class="error-msg">Error Message</div>
                         </div><!-- /.block-content-inner -->
                     </div><!-- /.block-content -->
                 </div><!-- /.container -->

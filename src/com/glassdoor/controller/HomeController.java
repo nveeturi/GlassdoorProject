@@ -91,6 +91,26 @@ public class HomeController {
 		return mav;
 	}
 	
+	@RequestMapping(value = "searchJob", method = RequestMethod.GET)
+	public ModelAndView searchJob() {
+		String keyword = "Software Engineer";
+		String location = "Pittsburgh";
+		
+		ModelAndView mav = new ModelAndView("/jobs");
+		List<JobDetails> jobs = null;
+		try{
+		logger.info("Search is made with keyword "+keyword + " and city "+location);
+		jobs = jobService.getAllJobsInCity(location);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		mav.addObject("keyword", keyword);
+		mav.addObject("location", location);
+		mav.addObject("joblist", jobs);
+		return mav;
+	}
+	
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 
 	public ModelAndView sort(String criteria) { 
 		List<JobDetails> jobdetails = null;
@@ -214,6 +234,12 @@ public class HomeController {
 	@RequestMapping("test")
 	public ModelAndView test() {
 		ModelAndView mav = new ModelAndView("test");
+		return mav;
+	}
+	
+	@RequestMapping("error")
+	public ModelAndView error() {
+		ModelAndView mav = new ModelAndView("error");
 		return mav;
 	}
 
