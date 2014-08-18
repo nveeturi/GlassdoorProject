@@ -31,7 +31,7 @@
     </title>
 </head>
 
-<body class="header-light map-navigation-light footer-light">
+<body class="header-light map-navigation-light footer-light" onload="placeInitialize()">
 <script>
 	var totalnum = '${fn:length(joblist)}';
 </script>
@@ -111,9 +111,7 @@
                             		<div id="show"></div>
                             	</div>
                             	
-                                
-
-                                <div class="col-sm-3" style="float:right">
+                            	<div class="col-sm-3" style="float:right">
                                     <div id="refinesearch" class="sidebar">
                                         <div class="sidebar-inner">
                                             <div class="widget">
@@ -201,13 +199,7 @@
 							      <div style="height:40px">
 							        <strong>Start: </strong>
 							        <input type="text" id="start" value="5869 northumberland ST"></input>
-									<script>
-									var autocompleteStart = new google.maps.places.Autocomplete((document.getElementById('start')), { types: ['geocode'] });
-									google.maps.event.addListener(autocompleteStart, 'place_changed', function() {
-										startPlace = autocompleteStart.getPlace().name;
-									});
-									</script>
-							        <strong>End: </strong>
+									<strong>End: </strong>
 							        <input type="text" id="end" value="Carnegie Mellon University"></input>
 							        <strong style="display:inline-block;">Mode of Travel: </strong>
 							        <div class = "select-wrapper" style="display:inline-block;">

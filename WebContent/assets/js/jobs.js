@@ -76,6 +76,18 @@ function pageselectCallback(page_id, jq) {
 	
 	deleteMarkers();
 	
+	navigator.geolocation.getCurrentPosition(function(position) {
+		var markerOptions = {};
+	    markerOptions.position = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	    markerOptions.map = map;
+	    
+	    var marker = new google.maps.Marker(markerOptions); 
+		var infowindow = new google.maps.InfoWindow({
+            content: 'You are here!'
+        });
+		marker.setIcon("../assets/img/icons/marker_red.png");
+    	infowindow.open(map,marker);
+	});
 	$(".job-content").hide();
     $(".job-content").each(function(n) {
     	if (n >= pageSize * page_id && n < pageSize * (page_id + 1)) {
