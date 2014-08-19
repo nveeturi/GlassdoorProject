@@ -912,7 +912,7 @@ public class JobSearchService {
 		double longDiff = finalLong - initialLong;
 		double earthRadius = 6371; // In Km
 
-		//km
+		// km
 		double distance = 2
 				* earthRadius
 				* Math.asin(Math.sqrt(Math.pow(Math.sin(latDiff / 2.0), 2)
@@ -1043,7 +1043,9 @@ public class JobSearchService {
 		double curLat = 40.443504;
 		double curLong = -79.941571;
 
+		ArrayList<StringBuilder> idws = new ArrayList<StringBuilder>();
 		ArrayList<StringBuilder> idgl = new ArrayList<StringBuilder>();
+		HashMap<Integer, TravelTimeWS[]> mapTransitTimes = new HashMap<Integer, TravelTimeWS[]>();
 		HashMap<Integer, Results[]> mapWalk = new HashMap<Integer, Results[]>();
 		HashMap<Integer, Results[]> mapDrive = new HashMap<Integer, Results[]>();
 		HashMap<Integer, Results[]> mapBike = new HashMap<Integer, Results[]>();
@@ -1057,17 +1059,23 @@ public class JobSearchService {
 			sbgl.append(details.get(i).getLatitude() + ","
 					+ details.get(i).getLongitude() + "|");
 			if ((i + 1) % 80 == 0) {
+				idws.add(new StringBuilder(sbws));
+				sbws.setLength(0);
 				sbgl.deleteCharAt(sbgl.length() - 1);
 				idgl.add(new StringBuilder(sbgl));
 				sbgl.setLength(0);
 			}
 		}
-
+		idws.add(sbws);
 		sbgl.deleteCharAt(sbgl.length() - 1);
 		idgl.add(sbgl);
 
-		TravelTimeWS[] transitTimes = caculateCommuteTime("transit", curLat,
-				curLong, sbws);
+		for (int i = 0; i < idws.size(); i++) {
+			StringBuilder idx = idws.get(i);
+			TravelTimeWS[] transitTimes = caculateCommuteTime("transit",
+					curLat, curLong, idx);
+			mapTransitTimes.put(i, transitTimes);
+		}
 
 		for (int i = 0; i < idgl.size(); i++) {
 			StringBuilder idx = idgl.get(i);
@@ -1096,19 +1104,23 @@ public class JobSearchService {
 				int k = j / 79;
 				int l = j - k * 79;
 
+				// commute time by bus
+				if (mapTransitTimes.containsKey(k)
+						&& l < mapTransitTimes.get(k).length
+						&& mapTransitTimes.get(k)[l] != null) {
+					if (mapTransitTimes.get(k)[l].isUnroutable() == false) {
+						busTime = mapTransitTimes.get(k)[l].getSeconds();
+					}
+				}
+
 				if (mapDrive.containsKey(k) && l < mapWalk.get(k).length
 						&& mapDrive.get(k)[l] != null) {
-					distance = Integer.parseInt(mapDrive.get(k)[l].getDistance().getValue())*0.62/1000;//km-mile
+					distance = Integer.parseInt(mapDrive.get(k)[l]
+							.getDistance().getValue()) * 0.62 / 1000;// km-mile
 				}
-//				distance = caculateDistance(curLat, curLong, i.getLatitude(),
-//						i.getLongitude());
+				// distance = caculateDistance(curLat, curLong, i.getLatitude(),
+				// i.getLongitude());
 
-				// commute time by bus
-				if (transitTimes[j].isUnroutable() == false) {
-					busTime = transitTimes[j].getSeconds();
-				}
-
-				
 				// commute time by walk
 				if (mapWalk.containsKey(k) && l < mapWalk.get(k).length
 						&& mapWalk.get(k)[l] != null) {
@@ -1133,11 +1145,11 @@ public class JobSearchService {
 				min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
 				i.setDistance((int) distance);
-				i.setDriveTime(driveTime/60);
-				i.setBikeTime(bikeTime/60);
-				i.setTransitTime(busTime/60);
-				i.setWalkTime(walkTime/60);
-				i.setMinCommuteTime(min/60);
+				i.setDriveTime(driveTime / 60);
+				i.setBikeTime(bikeTime / 60);
+				i.setTransitTime(busTime / 60);
+				i.setWalkTime(walkTime / 60);
+				i.setMinCommuteTime(min / 60);
 			}
 		}
 	}
