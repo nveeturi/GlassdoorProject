@@ -150,11 +150,11 @@ public class HomeController {
 		return mav;
 	}
 	
-//	@RequestMapping(value = "sortws", method = RequestMethod.POST) 
-//	public List<JobDetails> sortws(String criteria) { 
-//		jobService.sortJobList(jobs,criteria);//distance or commute time
-//		return jobs;
-//	}
+	@RequestMapping(value = "sortws", method = RequestMethod.POST) 
+	public List<JobDetails> sortws(String criteria) { 
+		jobService.sortJobList(jobs,criteria);//distance or commute time
+		return jobs;
+	}
 	
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
 	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 

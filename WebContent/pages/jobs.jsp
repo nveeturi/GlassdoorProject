@@ -233,7 +233,7 @@
 	
 	                                                    <h4 class="property-row-subtitle">
 	                                                        <%-- <a href="#">${job.city}, ${job.state}</a> (${job.latitude}, ${job.longitude}) --%>
-	                                                    <a href="#">${job.city}, ${job.state}</a> (${job.distance}, ${job.minCommuteTime})
+	                                                    <a href="#">${job.city}, ${job.state}</a> (${job.distance} miles)
 	                                                   
 	                                                    </h4><!-- /.property-row-subtitle -->
 	

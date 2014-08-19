@@ -2794,13 +2794,15 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 		currentSearch = query;
 		$.address.parameter("jobsearch", currentSearch);
-		var txtUrl = "http://localhost:8080/GlassdoorWeb/index/search?keyword="+query+"&location=pittsburgh";
-		
+		alert("hi");
+		var txtUrl = "http://localhost:8080/GlassdoorWeb/index/searchws?keyword="+query+"&location=pittsburgh";
+		alert(txtUrl);
 		$.ajax({
 		    url: txtUrl, 
 			type: "GET",
 		 
 		    success: function(response) {
+		    	alert(response);
 		    	showElements(response);
 		    }
 		});
