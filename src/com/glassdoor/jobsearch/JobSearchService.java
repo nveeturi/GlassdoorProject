@@ -912,6 +912,7 @@ public class JobSearchService {
 		double longDiff = finalLong - initialLong;
 		double earthRadius = 6371; // In Km
 
+		//km
 		double distance = 2
 				* earthRadius
 				* Math.asin(Math.sqrt(Math.pow(Math.sin(latDiff / 2.0), 2)
@@ -945,8 +946,9 @@ public class JobSearchService {
 			int distance, int commuteTime, String commuteType) {
 		ArrayList<JobDetails> newJob = new ArrayList<JobDetails>(jobdetails);
 		for (int i = 0; i < newJob.size(); i++) {
-			if (newJob.get(i).getDistance() > distance * 1609) {
+			if (newJob.get(i).getDistance() > distance) {
 				newJob.remove(i);
+				continue;
 			}
 			switch (commuteType) {
 			case "Transit":
@@ -1091,19 +1093,22 @@ public class JobSearchService {
 
 			if (i.getLatitude() != null && i.getLongitude() != null) {
 				// get distance
-				double a = i.getLatitude();
-				double b = i.getLongitude();
-				distance = caculateDistance(curLat, curLong, i.getLatitude(),
-						i.getLongitude());
+				int k = j / 79;
+				int l = j - k * 79;
+
+				if (mapDrive.containsKey(k) && l < mapWalk.get(k).length
+						&& mapDrive.get(k)[l] != null) {
+					distance = Integer.parseInt(mapDrive.get(k)[l].getDistance().getValue())*0.62/1000;//km-mile
+				}
+//				distance = caculateDistance(curLat, curLong, i.getLatitude(),
+//						i.getLongitude());
 
 				// commute time by bus
 				if (transitTimes[j].isUnroutable() == false) {
 					busTime = transitTimes[j].getSeconds();
 				}
 
-				int k = j / 79;
-				int l = j - k * 79;
-
+				
 				// commute time by walk
 				if (mapWalk.containsKey(k) && l < mapWalk.get(k).length
 						&& mapWalk.get(k)[l] != null) {
@@ -1128,11 +1133,11 @@ public class JobSearchService {
 				min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
 				i.setDistance((int) distance);
-				i.setDriveTime(driveTime);
-				i.setBikeTime(bikeTime);
-				i.setTransitTime(busTime);
-				i.setWalkTime(walkTime);
-				i.setMinCommuteTime(min);
+				i.setDriveTime(driveTime/60);
+				i.setBikeTime(bikeTime/60);
+				i.setTransitTime(busTime/60);
+				i.setWalkTime(walkTime/60);
+				i.setMinCommuteTime(min/60);
 			}
 		}
 	}
