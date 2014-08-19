@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.glassdoor.databean.User" table="user">
+		<id name="userID" column="USER_ID" type="int"></id>
+		<property name="userName" column="USERNAME" type="string" />
+		<property name="password" column="PASSWORD" type="string" />
+	</class>
+</hibernate-mapping>

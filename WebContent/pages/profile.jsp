@@ -102,8 +102,7 @@
     <h2 class="center">${username}'s Profile</h2>
 
     <ul class="properties-filter">
-        <li class="selected"><a href="#" data-filter="*"><span>All</span></a></li>
-        <li><a href="#" data-filter=".property-featured"><span>Featured</span></a></li>
+    	<li class="selected"><a href="#" data-filter=".property-featured"><span>Featured</span></a></li>
         <li><a href="#" data-filter=".property-rent"><span>Rent</span></a></li>
         <li><a href="#" data-filter=".property-sale"><span>Sale</span></a></li>
     </ul>

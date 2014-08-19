@@ -33,6 +33,7 @@
 
         <mapping resource="JobDetails.hbm.xml"/>
         <mapping resource="Geocode.hbm.xml"/>
+        <mapping resource="User.hbm.xml"/>
 
     </session-factory>
 
