@@ -187,11 +187,12 @@ public class JobSearchDAO {
 		HibernateUtil util = HibernateUtil.getInstance();
 		@SuppressWarnings("static-access")
 		Session session = util.getSessionFactory().openSession();
-		@SuppressWarnings("unchecked")
+		Transaction tx = session.beginTransaction();
 		Geocode geo = new Geocode();
 		geo.setCity(city);
 		geo.setLatlong(latlong);
 		session.saveOrUpdate(geo);
+		tx.commit();
 		session.close();
 		logger.info("insertLatLongForCity method ended");
 	}
