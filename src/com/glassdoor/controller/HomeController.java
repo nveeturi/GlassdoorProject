@@ -18,11 +18,14 @@ import org.xml.sax.SAXException;
 
 import com.glassdoor.databean.JobDetails;
 import com.glassdoor.jobsearch.JobSearchService;
+import com.glassdoor.jobsearch.UserService;
 
 @RestController
 public class HomeController {
 	@Autowired
 	private JobSearchService jobService;
+	@Autowired
+	private UserService userService;
 	public static Logger logger = Logger.getLogger(HomeController.class);
 	List<JobDetails> jobs = null;
 
@@ -37,6 +40,14 @@ public class HomeController {
 	
 	@RequestMapping(value = "register.do", method = RequestMethod.POST)
 	public ModelAndView register(String username, String password) {
+		ModelAndView mav = new ModelAndView("/profile");
+		userService.addUser(username, password);
+		mav.addObject("username", username);
+		return mav;
+	}
+	
+	@RequestMapping(value = "login.do", method = RequestMethod.POST)
+	public ModelAndView login(String username, String password) {
 		ModelAndView mav = new ModelAndView("/profile");
 		mav.addObject("username", username);
 		return mav;
@@ -106,6 +117,29 @@ public class HomeController {
 		mav.addObject("location", location);
 		mav.addObject("joblist", jobs);
 		return mav;
+	}
+	
+	@RequestMapping(value = "searchws", method = RequestMethod.GET)
+	public List<JobDetails> searchws(String keyword, String location) {
+		List<JobDetails> jobdetails = null;
+		try {
+			String locationEncode = (location == null || location.trim()
+					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
+					"UTF-8");
+
+			String keywordEncode = (keyword == null || keyword.trim()
+					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
+					locationEncode,true,1,50);
+			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
+//			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jobdetails;
 	}
 	
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 
@@ -239,5 +273,9 @@ public class HomeController {
 
 	public void setJobService(JobSearchService jobService) {
 		this.jobService = jobService;
+	}
+	
+	public void setUserService(UserService userService) {
+		this.userService = userService;
 	}
 }

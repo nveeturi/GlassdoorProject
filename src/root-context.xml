@@ -12,6 +12,12 @@
    </bean>  
      
     <bean id="jobSearchDao" class="com.glassdoor.dao.JobSearchDAO">
-      
-   </bean> 
+    </bean> 
+    
+    <bean id="userService" class="com.glassdoor.jobsearch.UserService">
+       <property name="userDao" ref="userDao"/>
+   </bean>  
+    
+    <bean id="userDao" class="com.glassdoor.dao.UserDAO">
+    </bean> 
 </beans>  
