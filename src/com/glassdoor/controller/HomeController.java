@@ -157,10 +157,11 @@ public class HomeController {
 	@RequestMapping(value = "searchJob", method = RequestMethod.GET)
 	public ModelAndView searchJob(String keyword, String location) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		List<JobDetails> jobs = null;
+		
 		try{
 		logger.info("Search is made with keyword "+keyword + " and city "+location);
 		jobs = jobService.getAllJobsInCity(location);
+		jobService.updateCommuteTimeAndDistanceGL(jobs);
 
 		} catch (Exception e) {
 			e.printStackTrace();

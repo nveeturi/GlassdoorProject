@@ -196,23 +196,25 @@
 							<div id="popUpDiv" style="display:none;">
 							
 								<div id="popMap">
-							      <div style="height:40px">
-							        <strong>Start: </strong>
-							        <input type="text" id="start" value="5000 Forbes Ave, Pittsburgh, PA"></input>
-									<strong>End: </strong>
-							        <input type="text" id="end" value="Carnegie Mellon University"></input>
-							        <strong style="display:inline-block;">Mode of Travel: </strong>
-							        <div class = "select-wrapper" style="display:inline-block;">
-								        <select id="mode" onchange="calcRoute();" class="form-control" style="font-size:12px;width:120px;height:30px;display:inline-block;">
-									    	<option value="DRIVING">Driving</option>
-									        <option value="WALKING">Walking</option>
-									        <option value="BICYCLING">Bicycling</option>
-									        <option value="TRANSIT">Transit</option>
-									    </select>
-							        </div>
-							        <a href="#" onclick="popup('popUpDiv')" style="top:0px;right:0px;">Close</a>
-							      </div>
-							      <div id="map-canvas"></div>
+									<div>
+								      <div style="height:40px">
+								        <strong>Start: </strong>
+								        <input type="text" id="start" value="5000 Forbes Ave, Pittsburgh, PA"></input>
+										<strong>End: </strong>
+								        <input type="text" id="end" value="Carnegie Mellon University"></input>
+								        <strong style="display:inline-block;">Mode of Travel: </strong>
+								        <div class = "select-wrapper" style="display:inline-block;">
+									        <select id="mode" onchange="calcRoute();" class="form-control" style="font-size:12px;width:120px;height:30px;display:inline-block;">
+										    	<option value="DRIVING">Driving</option>
+										        <option value="WALKING">Walking</option>
+										        <option value="BICYCLING">Bicycling</option>
+										        <option value="TRANSIT">Transit</option>
+										    </select>
+								        </div>
+								        <a href="#" onclick="popup('popUpDiv')" style="top:0px;right:0px;">Close</a>
+								      </div>
+								      <div id="map-canvas"></div>
+								  </div>
 							      <div id="directionsPanel">
 							        <p>Total Distance: <span id="total"></span></p>
 							      </div>
