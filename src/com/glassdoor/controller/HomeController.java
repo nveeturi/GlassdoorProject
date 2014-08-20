@@ -3,10 +3,8 @@ package com.glassdoor.controller;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +13,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
-
 import com.glassdoor.databean.JobDetails;
 import com.glassdoor.jobsearch.JobSearchService;
 import com.glassdoor.jobsearch.UserService;
 
+/**
+ * The single Controller intercepts all the request and redirects
+ * to the appropriate view and calls the services accordingly to 
+ * display the desired data.
+ * @author Glassdoor Practicum Team
+ * MSIT eBusiness Technology 2014 -  Carnegie Mellon University
+ *
+ */
 @RestController
 public class HomeController {
 	@Autowired
@@ -30,6 +35,7 @@ public class HomeController {
 	List<JobDetails> jobs = null;
 
 	/***
+	 * The welcome page
 	 * @return
 	 */
 	@RequestMapping("index")
@@ -38,6 +44,13 @@ public class HomeController {
 		return mav;
 	}
 	
+	/**
+	 * This action handles the registration of new users and save their profile in database
+	 * and redirects to their profile page.
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	@RequestMapping(value = "register.do", method = RequestMethod.POST)
 	public ModelAndView register(String username, String password) {
 		ModelAndView mav = new ModelAndView("/profile");
@@ -46,6 +59,13 @@ public class HomeController {
 		return mav;
 	}
 	
+	/**
+	 * The action handles the login of the existing users and redirects the user 
+	 * to their profile page.
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	@RequestMapping(value = "login.do", method = RequestMethod.POST)
 	public ModelAndView login(String username, String password) {
 		ModelAndView mav = new ModelAndView("/profile");
@@ -53,6 +73,16 @@ public class HomeController {
 		return mav;
 	}
 	
+	/**
+	 * This action calls the glassdoor search API to fetch all the results for the search keyword
+	 * and location. It then matches the job data with the data available in local database
+	 * for which geo location is available. Then the commute time is calculated and displayed in the
+	 * view. 
+	 * @param keyword
+	 * @param location
+	 * @param pageCount
+	 * @return
+	 */
 	@RequestMapping(value = "searchGlassdoor", method = RequestMethod.POST)
 	public ModelAndView searchGlassdoor(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -77,7 +107,9 @@ public class HomeController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			mav =  new ModelAndView("error");
+			mav = new ModelAndView("error");
+			mav.addObject("message",e.getMessage());
+			return mav;
 		}
 		mav.addObject("keyword", keyword);
 		mav.addObject("location", location);
@@ -85,6 +117,16 @@ public class HomeController {
 		return mav;
 	}
 	
+	/**
+	 * The action fetches all the job data form the database along with the 
+	 * street address and geo location data and displays in the list and map format
+	 * along with the commute time.
+	 * 
+	 * @param keyword
+	 * @param location
+	 * @param pageCount
+	 * @return
+	 */
 	@RequestMapping(value = "search", method = RequestMethod.POST)
 	public ModelAndView search(String keyword, String location, String pageCount) {
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -125,6 +167,12 @@ public class HomeController {
 		return mav;
 	}
 	
+	/**
+	 * Returns the job details for the search keyword and location
+	 * @param keyword
+	 * @param location
+	 * @return
+	 */
 	@RequestMapping(value = "searchws", method = RequestMethod.GET)
 	public List<JobDetails> searchws(String keyword, String location) {
 		List<JobDetails> jobdetails = null;
@@ -149,6 +197,12 @@ public class HomeController {
 		return jobdetails;
 	}
 	
+	/**
+	 * The action is used to sort the job data that is displayed in the list view
+	 * based on the criteria such as, commute time and the distance.
+	 * @param criteria
+	 * @return
+	 */
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 
 	public ModelAndView sort(String criteria) { 
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -170,6 +224,13 @@ public class HomeController {
 		return jobs;
 	}
 	
+	/**
+	 * The action filters the job data displayed in the list view based on the 
+	 * @param distance
+	 * @param commuteTime
+	 * @param commuteType
+	 * @return
+	 */
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
 	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
 		ModelAndView mav = new ModelAndView("/jobs");
@@ -195,7 +256,13 @@ public class HomeController {
 		return jobService.refineSearch(jobdetails, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
 	}
 	
-	
+	/**
+	 * This action exposes the rest web service to update the jobs
+	 * available in the database with the geo location data using third party REST
+	 * services such as, Career Builder API, Google Maps API and SmartyStreet API
+	 * to find the lat/long and street address.
+	 * @return
+	 */
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
 	public ModelAndView updateLocation() {
 		ModelAndView mav = new ModelAndView("/batch");
@@ -224,7 +291,17 @@ public class HomeController {
 		}
 		return mav;
 	}
-
+	
+	/**
+	 * This action exposes the rest webservice that makes search in Glassdoor database
+	 * using the search API and then uploads it in the local database.
+	 * This can be used as a batch service to dump the data in the local database with
+	 * job details and the city / location.
+	 * from the keyword and location 
+	 * @param keyword
+	 * @param location
+	 * @return
+	 */
 	@RequestMapping(value = "/updateJobData/{keyword}/{location}", method = RequestMethod.GET)
 	public ModelAndView updateJobData(@PathVariable String keyword,
 			@PathVariable String location) {
@@ -254,6 +331,11 @@ public class HomeController {
 		return mav;
 	}
 
+	/**
+	 * This action is exposed as rest web service to get all the jobs available in the database and returns
+	 * the job data in JSON format.
+	 * @return
+	 */
 	@RequestMapping(value = "/getJobsData", method = RequestMethod.GET)
 	public List<JobDetails> getAllJobsFromDB() {
 		List<JobDetails> details = null;
@@ -266,6 +348,12 @@ public class HomeController {
 		return details;
 	}
 
+	/**
+	 * This action is exposed as a rest web service to get the job details of a
+	 * certain job with glassdoor jobId. This returns the response in JSON format
+	 * @param jobId
+	 * @return
+	 */
 	@RequestMapping(value = "/getJobsData/{jobId}", method = RequestMethod.GET)
 	public JobDetails getJobForId(@PathVariable String jobId) {
 		JobDetails details = null;
@@ -279,6 +367,12 @@ public class HomeController {
 
 	}
 
+	/**
+	 * This action is exposed as a rest web service to get the job details of a list of
+	 * glassdoor jobIds. This returns the response in JSON format.
+	 * @param jobIds
+	 * @return
+	 */
 	@RequestMapping(value = "/getJobsData/list/{ids}", method = RequestMethod.GET)
 	public List<JobDetails> getJobs(@PathVariable("ids") String jobIds) {
 		List<JobDetails> details = null;
