@@ -77,6 +77,7 @@ public class HomeController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mav =  new ModelAndView("error");
 		}
 		mav.addObject("keyword", keyword);
 		mav.addObject("location", location);
@@ -94,6 +95,9 @@ public class HomeController {
 		jobService.updateCommuteTimeAndDistanceGL(jobs);
 		} catch (Exception e) {
 			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message",e.getMessage());
+			return mav;
 		}
 
 		mav.addObject("keyword", keyword);
@@ -112,6 +116,8 @@ public class HomeController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			mav.addObject("message",e.getMessage());
+			return  new ModelAndView("error");
 		}
 		mav.addObject("keyword", keyword);
 		mav.addObject("location", location);
@@ -138,6 +144,7 @@ public class HomeController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		}
 		return jobdetails;
 	}
@@ -145,8 +152,15 @@ public class HomeController {
 	@RequestMapping(value = "sort", method = RequestMethod.POST) 
 	public ModelAndView sort(String criteria) { 
 		ModelAndView mav = new ModelAndView("/jobs");
+		try{
 		jobService.sortJobList(jobs,criteria);//distance or commute time
 		mav.addObject("joblist", jobs);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			mav  =  new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
+		}
 		return mav;
 	}
 	
@@ -159,10 +173,17 @@ public class HomeController {
 	@RequestMapping(value ="filter", method = RequestMethod.POST) 
 	public ModelAndView filter(String distance, String commuteTime, String commuteType) { 
 		ModelAndView mav = new ModelAndView("/jobs");
+		try{
 		String dis = distance.split(" ")[1];
 		String com = commuteTime.substring(2, 4);
 		List<JobDetails> newJobs = jobService.refineSearch(jobs, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
 		mav.addObject("joblist", newJobs);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			mav  =  new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
+		}
 		return mav;
 	}
 	
@@ -176,25 +197,38 @@ public class HomeController {
 	
 	
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
-	public void updateLocation() {
+	public ModelAndView updateLocation() {
+		ModelAndView mav = new ModelAndView("/batch");
 		try {
 			logger.info("Initiating updateLocation batch");
 			jobService.updateLocationInfo();
 		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
 		}
+		return mav;
 	}
 
 	@RequestMapping(value = "/updateJobData/{keyword}/{location}", method = RequestMethod.GET)
-	public void updateJobData(@PathVariable String keyword,
+	public ModelAndView updateJobData(@PathVariable String keyword,
 			@PathVariable String location) {
+		ModelAndView mav = new ModelAndView("/batch");
 		List<JobDetails> jobdetails = null;
 		try {
 			String locationEncode = (location == null || location.trim()
@@ -204,29 +238,57 @@ public class HomeController {
 					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
 					locationEncode, true, 1, 50);
+		
+		jobService.saveJobDetails(jobdetails);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
 		}
-		jobService.saveJobDetails(jobdetails);
+		catch (Exception e) {
+			e.printStackTrace();
+			mav = new ModelAndView("error");
+			mav.addObject("message", e.getMessage());
+		}
+		return mav;
 	}
 
 	@RequestMapping(value = "/getJobsData", method = RequestMethod.GET)
 	public List<JobDetails> getAllJobsFromDB() {
-		return jobService.getAllJobsFromDB();
-
+		List<JobDetails> details = null;
+		try{
+		details =  jobService.getAllJobsFromDB();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return details;
 	}
 
 	@RequestMapping(value = "/getJobsData/{jobId}", method = RequestMethod.GET)
 	public JobDetails getJobForId(@PathVariable String jobId) {
-		return jobService.getJobForId(jobId);
+		JobDetails details = null;
+		try{
+		details = jobService.getJobForId(jobId);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return details;
 
 	}
 
 	@RequestMapping(value = "/getJobsData/list/{ids}", method = RequestMethod.GET)
 	public List<JobDetails> getJobs(@PathVariable("ids") String jobIds) {
-		System.out.println("ids" + jobIds);
-		return jobService.getJobDataForIds(jobIds);
+		List<JobDetails> details = null;
+		try{
+			details = jobService.getJobDataForIds(jobIds);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return details;
 	}
 
 	@RequestMapping("jobs")
@@ -258,7 +320,12 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("profile");
 		return mav;
 	}
-
+	
+	@RequestMapping("batch")
+	public ModelAndView batchList() {
+		ModelAndView mav = new ModelAndView("batchservice");
+		return mav;
+	}
 	@RequestMapping("test")
 	public ModelAndView test() {
 		ModelAndView mav = new ModelAndView("test");

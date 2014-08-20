@@ -111,7 +111,7 @@
                                 <strong>Sorry</strong>
                                 <span>An unexpected error has occured...</span>
                             </div><!-- /.hero -->
-                            <div style="height:100px" class="error-msg">Error Message</div>
+                            <div style="height:100px" class="error-msg">Error Message -  ${message }</div>
                         </div><!-- /.block-content-inner -->
                     </div><!-- /.block-content -->
                 </div><!-- /.container -->
