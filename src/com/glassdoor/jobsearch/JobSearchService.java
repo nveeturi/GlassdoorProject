@@ -764,7 +764,6 @@ public class JobSearchService {
 					}
 				}
 			}
-
 		}
 		return newJob;
 	}
@@ -808,68 +807,12 @@ public class JobSearchService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return ttl.getRows()[0].getElements()[0].getDuration().getValue();
-
-	}
-
-	private int caculateCommuteTime(String commuteType, double curLat,
-			double curLong, double desLat, double desLong) {
-		StringBuilder urlString = new StringBuilder(
-				"http://api2.walkscore.com/api/v1/traveltime/json?");
-
-		urlString.append("wsapikey=" + wsapikey);
-		urlString.append("&mode=" + commuteType);
-		urlString.append("&origin=" + curLat + "," + curLong);
-		urlString.append("&destination=" + desLat + "," + desLong);
-		URL url;
-		TravelTimeListingWS ttl = null;
-		try {
-			url = new URL(urlString.toString());
-
-			HttpURLConnection con;
-
-			con = (HttpURLConnection) url.openConnection();
-
-			con.setRequestMethod("GET");
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					con.getInputStream()));
-
-			StringBuilder response = new StringBuilder();
-			String output;
-			while ((output = br.readLine()) != null) {
-				response.append(output);
-			}
-
-			Gson gson = new Gson();
-			ttl = gson.fromJson(response.toString(), TravelTimeListingWS.class);
-
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (ttl.getRows() != null && ttl.getRows().length != 0) {
+			return ttl.getRows()[0].getElements()[0].getDuration().getValue();
+		} else {
+			return null;
 		}
-		return ttl.getResponse().getResults()[0].getTravel_times()[0]
-				.getSeconds();
 
-	}
-
-	private double caculateDistance(double initialLat, double initialLong,
-			double finalLat, double finalLong) {
-		double latDiff = finalLat - initialLat;
-		double longDiff = finalLong - initialLong;
-		double earthRadius = 6371; // In Km
-
-		// km
-		double distance = 2
-				* earthRadius
-				* Math.asin(Math.sqrt(Math.pow(Math.sin(latDiff / 2.0), 2)
-						+ Math.cos(initialLat) * Math.cos(finalLat)
-						* Math.pow(Math.sin(longDiff / 2), 2)));
-
-		return distance;
 	}
 
 	public void sortJobList(List<JobDetails> jobdetails, String criteria) {
@@ -898,7 +841,7 @@ public class JobSearchService {
 		for (int i = 0; i < jobdetails.size(); i++) {
 
 			switch (commuteType) {
-			case "Transit":
+			case "Public Transit":
 				if (jobdetails.get(i).getTransitTime() < commuteTime
 						&& jobdetails.get(i).getDistance() < distance) {
 					newJob.add(jobdetails.get(i));
@@ -928,68 +871,6 @@ public class JobSearchService {
 
 	}
 
-	// public void updateCommuteTimeAndDistanceGL(List<JobDetails> details) {
-	// double curLat = 40.443504;
-	// double curLong = -79.941571;
-	//
-	// StringBuilder sbws = new StringBuilder();
-	// StringBuilder sbgl = new StringBuilder();
-	// // get all the location lat long
-	// for (JobDetails i : details) {
-	// sbws.append("&destination=" + i.getLatitude() + ","
-	// + i.getLongitude());
-	// sbgl.append(i.getLatitude() + "," + i.getLongitude() + "|");
-	//
-	// }
-	// sbgl.deleteCharAt(sbgl.length() - 1);
-	//
-	// TravelTimeWS[] transitTimes = caculateCommuteTime("transit", curLat,
-	// curLong, sbws);
-	// Results[] walkTimes = caculateCommuteTimeGL("walking", curLat, curLong,
-	// sbgl);
-	// Results[] driveTimes = caculateCommuteTimeGL("driving", curLat,
-	// curLong, sbgl);
-	// Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
-	// curLong, sbgl);
-	//
-	// // 47.646757,-122.361152
-	// for (int j = 0; j < details.size(); j++) {
-	// JobDetails i = details.get(j);
-	// if (i.getLatitude() != null && i.getLongitude() != null) {
-	// // get distance
-	// double a = i.getLatitude();
-	// double b = i.getLongitude();
-	// double distance = caculateDistance(curLat, curLong,
-	// i.getLatitude(), i.getLongitude());
-	//
-	// // commute time by bus
-	// int busTime = transitTimes[j].getSeconds();
-	// // int busTime = caculateCommuteTime("drive", curLat, curLong,
-	// // desLat, desLong);
-	//
-	// // commute time by walk
-	// int walkTime = Integer.parseInt(walkTimes[j].getDuration()
-	// .getValue());
-	//
-	// // commute time by drive
-	// int driveTime = Integer.parseInt(driveTimes[j].getDuration()
-	// .getValue());
-	//
-	// // commute time by bike
-	// int bikeTime = Integer.parseInt(bikeTimes[j].getDuration()
-	// .getValue());
-	//
-	// int min = Math.min(Math.min(walkTime, driveTime),
-	// Math.min(busTime, bikeTime));
-	// i.setDistance(distance);
-	// i.setDriveTime(driveTime);
-	// i.setBikeTime(bikeTime);
-	// i.setTransitTime(busTime);
-	// i.setWalkTime(walkTime);
-	// i.setMinCommuteType(min);
-	// }
-	// }
-	// }
 	public void updateCommuteTimeAndDistanceGL(List<JobDetails> details) {
 		double curLat = 40.443504;
 		double curLong = -79.941571;
@@ -1074,8 +955,6 @@ public class JobSearchService {
 					distance = Integer.parseInt(mapDrive.get(k)[l]
 							.getDistance().getValue()) * 0.62 / 1000;// km-mile
 				}
-				// distance = caculateDistance(curLat, curLong, i.getLatitude(),
-				// i.getLongitude());
 
 				// commute time by walk
 				if (mapWalk.containsKey(k) && mapWalk.get(k) != null
@@ -1116,7 +995,7 @@ public class JobSearchService {
 				"https://maps.googleapis.com/maps/api/distancematrix/json?");
 		urlString.append("origins=" + curLat + "," + curLong);
 		urlString.append("&destinations=" + sbgl);
-		 urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
+		urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
 		urlString.append("&mode=" + commuteType);
 		urlString.append("&language=en-EN");
 		URL url;
@@ -1182,98 +1061,13 @@ public class JobSearchService {
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					con.getInputStream()));
 
-			// private Results[] caculateCommuteTimeGL(String commuteType,
-			// double
-			// curLat,
-			// double curLong, StringBuilder sbgl) {
-			// StringBuilder urlString = new StringBuilder(
-			// "http://maps.googleapis.com/maps/api/distancematrix/json?");
-			// urlString.append("origins=" + curLat + "," + curLong);
-			// urlString.append("&destinations=" + sbgl);
-			// urlString.append("&mode=" + commuteType);
-			// urlString.append("&language=en-EN");
-			// URL url;
-			// TravelTimeListing ttl = null;
-			// try {
-			// url = new URL(urlString.toString());
-			//
-			// HttpURLConnection con;
-			//
-			// con = (HttpURLConnection) url.openConnection();
-			//
-			// con.setRequestMethod("GET");
-			//
-			// BufferedReader br = new BufferedReader(new InputStreamReader(
-			// con.getInputStream()));
-			//
-			// StringBuilder response = new StringBuilder();
-			// String output;
-			// while ((output = br.readLine()) != null) {
-			// response.append(output);
-			// }
-			//
-			// Gson gson = new Gson();
-			// ttl = gson.fromJson(response.toString(),
-			// TravelTimeListing.class);
-			//
-			// } catch (MalformedURLException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// } catch (IOException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-			// return ttl.getRows()[0].getElements();
-			//
-			// }
+			
 			StringBuilder response = new StringBuilder();
 			String output;
 			while ((output = br.readLine()) != null) {
 				response.append(output);
 			}
 
-			// private TravelTimeWS[] caculateCommuteTime(String commuteType,
-			// double curLat, double curLong, StringBuilder sbws) {
-			// StringBuilder urlString = new StringBuilder(
-			// "http://api2.walkscore.com/api/v1/traveltime/json?");
-			//
-			// urlString.append("wsapikey=" + wsapikey);
-			// urlString.append("&mode=" + commuteType);
-			// urlString.append("&origin=" + curLat + "," + curLong);
-			// urlString.append(sbws);
-			// URL url;
-			// TravelTimeListingWS ttl = null;
-			// try {
-			// url = new URL(urlString.toString());
-			//
-			// HttpURLConnection con;
-			//
-			// con = (HttpURLConnection) url.openConnection();
-			//
-			// con.setRequestMethod("GET");
-			//
-			// BufferedReader br = new BufferedReader(new InputStreamReader(
-			// con.getInputStream()));
-			//
-			// StringBuilder response = new StringBuilder();
-			// String output;
-			// while ((output = br.readLine()) != null) {
-			// response.append(output);
-			// }
-			//
-			// Gson gson = new Gson();
-			// ttl = gson.fromJson(response.toString(),
-			// TravelTimeListingWS.class);
-			//
-			// } catch (MalformedURLException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// } catch (IOException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-			// return ttl.getResponse().getResults()[0].getTravel_times();
-			// }
 			Gson gson = new Gson();
 			ttl = gson.fromJson(response.toString(), TravelTimeListingWS.class);
 
