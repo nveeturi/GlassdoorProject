@@ -177,20 +177,17 @@ public class HomeController {
 	public List<JobDetails> searchws(String keyword, String location) {
 		List<JobDetails> jobdetails = null;
 		try {
-			String locationEncode = (location == null || location.trim()
-					.equals("")) ? "Pittsburgh" : URLEncoder.encode(location,
-					"UTF-8");
+			String locationEncode = (location == null || 
+					location.trim().equals("")) ? "Pittsburgh" : URLEncoder.encode(location,"UTF-8");
 
-			String keywordEncode = (keyword == null || keyword.trim()
-					.equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
-
-			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,
-					locationEncode,true,1,50);
+			String keywordEncode = (keyword == null || 
+					keyword.trim().equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+			
+			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,locationEncode,true,1,50);
 			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
 //			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}

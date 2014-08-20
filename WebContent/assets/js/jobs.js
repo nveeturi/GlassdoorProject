@@ -67,12 +67,16 @@ var jobResults = [];
 var map;
 var markers = [];
 
+var hash = {};
+
+
 function pageselectCallback(page_id, jq) {
 	var pageSize = 10;
 	locations = [];
 	contents = [];
 	types = [];
 	images = [];
+	hash = {};
 	
 	deleteMarkers();
 	
@@ -89,10 +93,10 @@ function pageselectCallback(page_id, jq) {
     	infowindow.open(map,marker);
 	});
 	$(".job-content").hide();
-    $(".job-content").each(function(n) {
+	$(".job-content").each(function(n) {
     	if (n >= pageSize * page_id && n < pageSize * (page_id + 1)) {
         	$(this).show();
-        	if(latitudes[n] != '0.0' && latitudes[n] != '') {
+        	if(latitudes[n] != '0.0' && latitudes[n] != '' && hash[latitudes[n]+','+longitudes[n]] == undefined) {
 //        		alert(latitudes[n]+','+longitudes[n]+','+companyNames[n]+','+jobTitles[n]+','+streetNames[n]);
         		var jobResult = {};
             	jobResult.latitude = latitudes[n];
@@ -107,11 +111,21 @@ function pageselectCallback(page_id, jq) {
 //                images.push('<img src="../assets/img/icons/flatblocks2.png" alt="">');
             	showJob(jobResult);
 //            	addMarker(jobResult);
+            	hash[latitudes[n]+','+longitudes[n]] = companyNames[n];
         	}
         }  
     });
-    
-    
+	
+	$('.company').hover(
+    	function() {
+    		var i = parseInt(this.id) % 10;
+    		markers[i].setIcon("../assets/img/icons/marker_orange.png");
+    	}, function() {
+    		var i = parseInt(this.id) % 10;
+    		markers[i].setIcon("../assets/img/icons/marker_green.png");
+    	}
+    );
+
 }
 
 function showJob(jobResult) {
@@ -120,6 +134,9 @@ function showJob(jobResult) {
     markerOptions.map = map;
     
     var marker = new google.maps.Marker(markerOptions); 
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function(){marker.setAnimation(null);}, 1000);
+    
     marker.setIcon("../assets/img/icons/marker_green.png");
     jobResult.marker = marker;
     jobResult.infowindow = new google.maps.InfoWindow({
@@ -152,9 +169,7 @@ function addMarker(jobResult) {
     });
     google.maps.event.addListener(jobResult.marker, 'mouseout', function(){
     	jobResult.infowindow.close();
-    });
-	
-	
+    });	
 }
 
 function setAllMap(map) {
@@ -220,8 +235,9 @@ function window_pos(popUpDivVar) {
 	popUpDiv.style.left = window_width + 'px';
 }
 
-function popup(windowname) {
-//	blanket_size(windowname);
+function popup(windowname, streetname) {
+
+	$('#end').val(streetname+',Pittsburgh, PA');
 	window_pos(windowname);
 	
 	toggle('blanket');
@@ -229,6 +245,8 @@ function popup(windowname) {
 	
 	placeInitialize();
 	mapInitialize();	
+	
+	
 }
 
 
@@ -250,7 +268,6 @@ function popup(windowname) {
 	map = new google.maps.Map(document.getElementById("jobmap"), {
         mapTypeId: google.maps.MapTypeId.ROADMAP, 
         zoom: 12, 
-//      center: new google.maps.LatLng(37.77,-122.42),
         center: new google.maps.LatLng(40.44, -80.00),
         styles : [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#a2daf2"}]},{"featureType":"landscape.man_made","elementType":"geometry","stylers":[{"color":"#f7f1df"}]},{"featureType":"landscape.natural","elementType":"geometry","stylers":[{"color":"#d0e3b4"}]},{"featureType":"landscape.natural.terrain","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#bde6ab"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi.medical","elementType":"geometry","stylers":[{"color":"#fbd3da"}]},{"featureType":"poi.business","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffe15f"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#efd151"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"black"}]},{"featureType":"transit.station.airport","elementType":"geometry.fill","stylers":[{"color":"#cfb2db"}]}],
     });
@@ -264,6 +281,52 @@ function popup(windowname) {
 		current_page : 0,
 		num_edge_entries : 1
 	});
+	
+	var sortValue = $.cookie('sort');
+	$('#sort-by').val(sortValue);
+
+	
+	$('#sort-by').change(function() {
+		$.cookie('sort', $(this).val(), {expires: 365});
+		$("#sort-by").val($(this).val());
+	});
+	
+	
+	var filterDistanceValue = $.cookie('filter-distance');
+	$('#filter-distance').val(filterDistanceValue);
+	
+	$('#filter-distance').change(function() {
+		$.cookie('filter-distance', $(this).val(), {expires: 365});
+		$("#filter-distance").val($(this).val());
+	});
+	
+	var filterTimeValue = $.cookie('filter-time');
+	$('#filter-time').val(filterTimeValue);
+	
+	$('#filter-time').change(function() {
+		$.cookie('filter-time', $(this).val(), {expires: 365});
+		$("#filter-time").val($(this).val());
+	});
+	
+	
+	var filterTypeValue = $.cookie('filter-type');
+	$('#filter-type').val(filterTypeValue);
+	
+	$('#filter-type').change(function() {
+		$.cookie('filter-type', $(this).val(), {expires: 365});
+		$("#filter-type").val($(this).val());
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -146,11 +146,11 @@
                 <div class="form-group col-sm-12">
                     <label>Distance</label>
                     <div class="select-wrapper">
-                    	<select id="filter-distance" name = "distance" class="form-control">
+                    	<select id="filter-distance" name = "distance" class="form-control" >
+							<option value="Within 3 miles">Within 3 miles</option>
 							<option value="Within 5 miles">Within 5 miles</option>
 							<option value="Within 10 miles">Within 10 miles</option>
-							<option value="Within 20 miles">Within 20 miles</option>
-							<option value="Within 30 miles">Within 30 miles</option>
+							<option value="Within 15 miles">Within 15 miles</option>
 						</select>
                     </div>
                 </div><!-- /.form-group -->
@@ -159,7 +159,7 @@
                     <label>Commute Time</label>
                     
                     <div class="select-wrapper">
-                    	<select id="filter-distance" name = "commuteTime" class="form-control">
+                    	<select id="filter-time" name = "commuteTime" class="form-control">
 							<option value="&lt; 10 min">&lt; 10 min</option>
 							<option value="&lt; 30 min">&lt; 30 min</option>
 							<option value="&lt; 60 min">&lt; 60 min</option>
@@ -171,7 +171,7 @@
                     <label>via</label>
                     
                     <div class="select-wrapper">
-                    	<select id="filter-distance" name = "commuteType" class="form-control">
+                    	<select id="filter-type" name = "commuteType" class="form-control">
 							<option value="Drive">Drive</option>
 							<option value="Public Transit">Public Transit</option>
 							<option value="Walk">Walk</option>
@@ -198,7 +198,7 @@
 								<div id="popMap">
 							      <div style="height:40px">
 							        <strong>Start: </strong>
-							        <input type="text" id="start" value="5869 northumberland ST"></input>
+							        <input type="text" id="start" value="5000 Forbes Ave, Pittsburgh, PA"></input>
 									<strong>End: </strong>
 							        <input type="text" id="end" value="Carnegie Mellon University"></input>
 							        <strong style="display:inline-block;">Mode of Travel: </strong>
@@ -210,7 +210,6 @@
 									        <option value="TRANSIT">Transit</option>
 									    </select>
 							        </div>
-							        <button onClick="calcRoute()">Get Route</button>
 							        <a href="#" onclick="popup('popUpDiv')" style="top:0px;right:0px;">Close</a>
 							      </div>
 							      <div id="map-canvas"></div>
@@ -238,9 +237,9 @@
 	                                                    </h4><!-- /.property-row-subtitle -->
 	
 	                                                    <div class="property-row-price">
-	                                                    	${job.companyName}
+	                                                    	<a class='company' id='${status.index}' href='#'>${job.companyName}</a>
 	                                                    	<c:if test="${job.latitude != '0.0' && job.latitude != ''}">
-	                                                        	<a href="#" onclick="popup('popUpDiv')"><i class="fa fa-map-marker" style="color:#39b54a"></i></a>
+	                                                        	<a href="#" onclick="popup('popUpDiv', '${job.streetName1}')"><i class="fa fa-map-marker" style="color:#39b54a"></i></a>
 	                                                        </c:if>
 	                                                    </div><!-- /.property-row-price -->
 	                                                    <p class="property-row-body">
@@ -249,7 +248,7 @@
 	                                                </div><!-- /.property-row-content -->
 	                                            </div><!-- /.row -->
 	                                        </div><!-- /.property-row -->
-                                        </c:forEach>
+	                                    </c:forEach>
                                         
                                     </div><!-- /.property-rows -->
 
@@ -301,6 +300,8 @@
     </div><!-- /#footer-wrapper -->
 </div><!-- /#wrapper -->
 <script type="text/javascript" src="../assets/js/jquery.js"></script>
+<script type="text/javascript" src="../assets/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="../assets/js/jquery.geocomplete.js"></script>
 <script type="text/javascript" src="../assets/libraries/isotope/jquery.isotope.min.js"></script>
 <script type="text/javascript" src="../assets/js/gmap3.infobox.js"></script>
 <script type="text/javascript" src="../assets/js/gmap3.clusterer.js"></script>

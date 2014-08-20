@@ -111,10 +111,8 @@ public class JobSearchService {
 			}
 
 			Gson gson = new Gson();
-			JobListing jobListings = gson.fromJson(response.toString(),
-					JobListing.class);
-			List<GlassdoorJobData> joblist = jobListings.getResponse()
-					.getJobListings();
+			JobListing jobListings = gson.fromJson(response.toString(),JobListing.class);
+			List<GlassdoorJobData> joblist = jobListings.getResponse().getJobListings();
 
 			if (loadAll) {
 				totalpages = jobListings.getResponse().getTotalNumberOfPages();

@@ -1,9 +1,15 @@
 var placeSearch, autocomplete;
-var startPlace = document.getElementById('start').value;
-var endPlace = document.getElementById('end').value;
+var startPlace, endPlace;
 
 function placeInitialize() {
+  startPlace = document.getElementById('start').value;
+  endPlace = document.getElementById('end').value;
+
 	
+  $( "#getRoute" ).click(function() {
+	  calcRoute();
+  });
+  
   var autocompleteStart = new google.maps.places.Autocomplete(
 	 (document.getElementById('start')),
       { types: ['geocode'] });
