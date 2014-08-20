@@ -78,8 +78,8 @@
             <div class="container">
                 <div class="row">
                     <ul class="header-nav nav nav-pills">
-					    <li><a href="#">Home</a></li>
-						<li><a href="search">Jobs</a></li>
+					    <li><a href="../">Home</a></li>
+						<li><a href="searchJob?keyword=Software Engineer&location=Pittsburgh">Jobs</a></li>
 						<li><a href="map">Local</a></li>
 						<li><a href="profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
@@ -160,7 +160,7 @@
                     
                     <div class="select-wrapper">
                     	<select id="filter-time" name = "commuteTime" class="form-control">
-							<option value="&lt; 10 min">&lt; 10 min</option>
+							<option value="&lt; 15 min">&lt; 15 min</option>
 							<option value="&lt; 30 min">&lt; 30 min</option>
 							<option value="&lt; 60 min">&lt; 60 min</option>
 						</select>

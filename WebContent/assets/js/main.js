@@ -2742,7 +2742,6 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 		resultMarker = {};
 		markers = [];
-		jobmarkers = [];
 	};
 	var closeAllSearchResultWindows = function() {
 		for ( var id in resultMarker) {
@@ -2750,37 +2749,13 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 	};
 	
-	var arrayaaaa = ['a','b','c','d','e','f','g','h','i','j'];
-	
 	var showElements = function(json_obj) {
-		alert("show");
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < json_obj.length; i++) {
 			addMarker(json_obj[i]);
-//        	var myLatlng = new google.maps.LatLng(json_obj[i].latitude,json_obj[i].longitude);
-//        	var infowindow = new google.maps.InfoWindow({
-//        	      content: arrayaaaa[i]
-//        	  });
-//        	var jobMarker = new google.maps.Marker({
-//			    map: mapnificent.map,
-//			    position: myLatlng,
-//			});
-//        	var xy = mapnificent.getCanvasXY({
-//				lat : myLatlng.lat(),
-//				lng : myLatlng.lng()
-//			});
-//        	
-//        	if (that.isHighlighted(xy.x, xy.y)) {
-//        		jobMarker.setIcon("../assets/img/icons/marker_orange.png");
-//			} else {
-//				jobMarker.setIcon("../assets/img/icons/marker_blue.png");
-//			}
-//        	
-//        	google.maps.event.addListener(jobMarker, 'click', function() {
-//        		infowindow.open(mapnificent.map,this);
-//        	});
         }
 	};
 	
+	var jobmarkers = [];
 	var addMarker = function(jobResult) {
 		var markerOptions = {};
 		myLatlng = new google.maps.LatLng(jobResult.latitude, jobResult.longitude);
@@ -2813,8 +2788,14 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	    google.maps.event.addListener(jobResult.marker, 'mouseout', function(){
 	    	jobResult.infowindow.close();
 	    });	
+	    jobmarkers.push(marker);
 	};
-	
+	var clearJob = function() {
+		for (var i = 0; i < jobmarkers.length; i++) {
+			jobmarkers[i].setMap(null);
+		 }
+		jobmarkers = [];
+	};
 	var searchJob = function() {
 		if (that.getCalculationsInProgress() > 0) {
 			return;
@@ -2826,6 +2807,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 			$("#search-attribution").hide();
 			$.address.deleteParameters(["jobsearch"]);
 			clearSearch();
+			clearJob();
 			mapnificent.unbind("idleAfterRedrawing", updateSearch);
 			return;
 		}

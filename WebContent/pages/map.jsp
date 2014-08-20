@@ -69,10 +69,10 @@
                 <div class="row">
                 	<!-- menu -->
                     <ul class="header-nav nav nav-pills">
-					    <li><a href="#">Home</a></li>
-						<li><a href="#">Jobs</a></li>
-						<li><a href="index/map">Local</a></li>
-						<li><a href="index/map">Profile</a></li>
+					    <li><a href="../">Home</a></li>
+						<li><a href="searchJob?keyword=Software Engineer&location=Pittsburgh">Jobs</a></li>
+						<li><a href="map">Local</a></li>
+						<li><a href="profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
 					
 					<!-- search bar -->

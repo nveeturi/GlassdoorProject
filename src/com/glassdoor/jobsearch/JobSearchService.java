@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLProtocolException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,6 +28,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -54,8 +57,7 @@ import com.google.gson.Gson;
  * from Glassdoor. This also contains the services to update the database with
  * geo-location data.
  * 
- * @author Glassdoor Practicum Team 
- * MSIT eBusiness Technology 2014 - Carnegie Mellon University
+ * @author nveeturi
  * 
  */
 public class JobSearchService {
@@ -64,19 +66,16 @@ public class JobSearchService {
 	public static Logger logger = Logger.getLogger(JobSearchService.class);
 	private static String wsapikey = "4e5e6d22d4da1c95033c23cb1b606596";
 
-	/**
-	 * The service calls the Glassdoor Search API with search keyword or job title
-	 * and location and returns the results with number of records per page equal to
-	 * resultCount.
-	 * 
-	 * @param jobTitle
-	 * @param city
-	 * @param loadAll
-	 * @param pageNum
-	 * @param resultCount
-	 * @return
-	 * @throws IOException
-	 */
+	public List<JobDetails> getAllJobsFromDB() {
+
+		return jobSearchDao.getJobetailsFromDB();
+	}
+
+	public JobDetails getJobForId(String jobId) {
+
+		return jobSearchDao.getJobDetailsForSearch(jobId);
+	}
+
 	public List<JobDetails> getJobDataFromGlassdoor(String jobTitle,
 			String city, boolean loadAll, int pageNum, int resultCount)
 			throws IOException {
@@ -111,8 +110,10 @@ public class JobSearchService {
 			}
 
 			Gson gson = new Gson();
-			JobListing jobListings = gson.fromJson(response.toString(),JobListing.class);
-			List<GlassdoorJobData> joblist = jobListings.getResponse().getJobListings();
+			JobListing jobListings = gson.fromJson(response.toString(),
+					JobListing.class);
+			List<GlassdoorJobData> joblist = jobListings.getResponse()
+					.getJobListings();
 
 			if (loadAll) {
 				totalpages = jobListings.getResponse().getTotalNumberOfPages();
@@ -152,106 +153,102 @@ public class JobSearchService {
 
 	}
 
-	/**
-	 * This is the main service that will update the geo-location data in the
-	 * database. This service fetches all the job data from database and calls
-	 * different service methods that makes Career Builder API call and uses
-	 * Places API data to update the street location data and the lat/long
-	 * information.
-	 * 
-	 * @throws XPathExpressionException
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 */
-	public void updateLocationInfo() throws XPathExpressionException,
-			ParserConfigurationException, SAXException {
+	public void saveJobDetails(List<JobDetails> jobdetails) {
 
-		logger.info("updateLocationInfo batch initiated");
-		// Traverse through all the records that do not have lat-long
-		List<JobDetails> details = null;
-		details = jobSearchDao.getJobDetailsWithNoLocation();
-		if (details != null) {
-			for (JobDetails jobDetails : details) {
-				try {
-					String latlong = "";
-					logger.info("Processing the job with job Id "
-							+ jobDetails.getJobId());
-					// Check if the lat long is available in Career Builder
-					if (jobDetails.getSource().equals("CareerBuilder")
-							&& !(jobDetails.getJobRefID() == null || jobDetails
-									.getJobRefID() == "")) {
-						logger.info("Job is from source Career Builder");
-						callCBJobRefURL(jobDetails);
-					}
-
-					if (jobDetails.getLatitude() != null
-							&& jobDetails.getLongitude() != null) {
-						latlong = jobDetails.getLatitude().toString() + ","
-								+ jobDetails.getLongitude().toString();
-					}
-
-					if (latlong.equals("")) {
-						latlong = jobSearchDao.getLatLongForCity(jobDetails
-								.getCity());
-					}
-					if (latlong.equals("")) {
-						// Get the lat-long of the City
-						logger.info("Call Google Geocode API to get city lat/long");
-						GoogleResponse res = getLocationLatLong(jobDetails
-								.getCity());
-						if (res.getResults() != null
-								&& res.getResults().length > 0) {
-							Location loc = res.getResults()[0].getGeometry()
-									.getLocation();
-							latlong = loc.getLat() + "," + loc.getLng();
-							if (!latlong.equals("")) {
-								logger.info("Geocode latitude/longitude found for city "
-										+ jobDetails.getCity()
-										+ " is "
-										+ latlong);
-								jobSearchDao.insertLatLongForCity(
-										jobDetails.getCity(), latlong);
-							}
-						}
-					}
-					// Call the nearby search Google Places API with the company name and lat/long
-					if (!latlong.equals("")) {
-						setValidAddress(latlong, jobDetails);
-					}
-					if (latlong.equals("")
-							&& !(jobDetails.getJobSourceLink() == null || jobDetails
-									.getJobSourceLink().equals(""))) {
-						logger.info("The job source link will be scrapped to find the address "
-								+ jobDetails.getJobSourceLink());
-						updateLocationFromJobLink(jobDetails);
-					}
-				} catch (IOException e) {
-					logger.error("Error occurred for Job ID "
-							+ jobDetails.getJobId() + " - " + e.getMessage());
-					continue;
-
-				} catch (Exception e) {
-					logger.error("Error occurred - " + e.getMessage());
-					continue;
-
-				}
-
-			}
-
-			saveJobDetails(details);
-		}
+		jobSearchDao.insertJobDetails(jobdetails);
 
 	}
 
-	/**
-	 * The service will call the Career Builder API with Job Ref ID and extracts the
-	 * latitude and longitude of the job details.
-	 * @param details
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws XPathExpressionException
+	/*
+	 * public List<JobDetails> getCBJobData() { List<JobDetails> details = null;
+	 * details = jobSearchDao.getCBJobDetails(); return details; }
 	 */
+
+	/*
+	 * public void updateLocation(String jobTitle, String city, JobDetails
+	 * details) throws XPathExpressionException, SAXException, IOException,
+	 * ParserConfigurationException {
+	 * 
+	 * if (details.getJobRefID() != null && !details.getJobRefID().equals("")) {
+	 * callCBJobRefURL(details); } else if (details.getLatitude() == null) { int
+	 * pageNum = 1; int totalpages = 1; HttpURLConnection con = null;
+	 * 
+	 * while (pageNum <= totalpages) { StringBuilder urlString = new
+	 * StringBuilder( "http://api.careerbuilder.com/v1/jobsearch?");
+	 * urlString.append("DeveloperKey=" + Constants.CB_API_KEY);
+	 * urlString.append("&Keywords=" + jobTitle); urlString.append("&Location="
+	 * + city); urlString.append("&PageNumber=" + pageNum); URL url = new
+	 * URL(urlString.toString()); StringBuilder response = null; try {
+	 * System.out.println("Processing page number: " + pageNum); con =
+	 * (HttpURLConnection) url.openConnection(); con.setRequestMethod("GET");
+	 * BufferedReader br = new BufferedReader( new
+	 * InputStreamReader((con.getInputStream()))); response = new
+	 * StringBuilder(); pageNum++; String output; while ((output =
+	 * br.readLine()) != null) { response.append(output); } } catch (IOException
+	 * e) { logger.error(e.getMessage()); if (e.getMessage().contains("400")) {
+	 * break; }
+	 * 
+	 * } DocumentBuilderFactory builderFactory = DocumentBuilderFactory
+	 * .newInstance(); DocumentBuilder builder =
+	 * builderFactory.newDocumentBuilder(); Document document =
+	 * builder.parse(new ByteArrayInputStream( response.toString().getBytes()));
+	 * 
+	 * // parse xml with Xpath XPath xPath =
+	 * XPathFactory.newInstance().newXPath(); String expression =
+	 * "/ResponseJobSearch/TotalPages"; String totalPageStr =
+	 * xPath.compile(expression).evaluate( document);
+	 * System.out.println("totalPageStr" + totalPageStr); totalpages =
+	 * Integer.parseInt(totalPageStr); if (totalpages == 0) { break; }
+	 * expression = "/ResponseJobSearch/Results/JobSearchResult/JobServiceURL";
+	 * 
+	 * // read a nodelist using xpath String cbServiceUrl =
+	 * xPath.compile(expression).evaluate( document); expression =
+	 * "/ResponseJobSearch/Results/JobSearchResult/DID";
+	 * 
+	 * String jobDID = xPath.compile(expression).evaluate(document);
+	 * 
+	 * if (callCBServiceURL(cbServiceUrl, con, response, builder,
+	 * builderFactory, details, expression, document, xPath, jobDID)) { break; }
+	 * 
+	 * } }
+	 * 
+	 * }
+	 */
+	/*
+	 * private boolean callCBServiceURL(String cbServiceUrl, HttpURLConnection
+	 * con, StringBuilder response, DocumentBuilder builder,
+	 * DocumentBuilderFactory builderFactory, JobDetails details, String
+	 * expression, Document document, XPath xPath, String jobDID) throws
+	 * IOException, ParserConfigurationException, XPathExpressionException,
+	 * SAXException {
+	 * 
+	 * URL serviceurl = new URL(cbServiceUrl); con = (HttpURLConnection)
+	 * serviceurl.openConnection(); con.setRequestMethod("GET"); BufferedReader
+	 * br = new BufferedReader(new InputStreamReader( (con.getInputStream())));
+	 * response = new StringBuilder(); String output; while ((output =
+	 * br.readLine()) != null) { response.append(output); }
+	 * 
+	 * builder = builderFactory.newDocumentBuilder(); document =
+	 * builder.parse(new ByteArrayInputStream(response.toString() .getBytes()));
+	 * 
+	 * expression = "/ResponseJob/Job/DisplayJobID"; String jobId =
+	 * xPath.compile(expression).evaluate(document);
+	 * System.out.println("Job Ref ID = " + details.getJobRefID() +
+	 * " parse Job ID = " + jobId + " parse DID  = " + jobDID); if
+	 * (details.getJobId().equals(jobId) || details.getJobId().equals(jobDID)) {
+	 * expression =
+	 * "/ResponseJobSearch/Results/JobSearchResult/LocationLatitude"; String
+	 * latitude = xPath.compile(expression).evaluate(document);
+	 * details.setLatitude(Double.valueOf(latitude)); expression =
+	 * "/ResponseJobSearch/Results/JobSearchResult/LocationLongitude"; String
+	 * longitude = xPath.compile(expression).evaluate(document);
+	 * details.setLongitude(Double.valueOf(longitude)); return true;
+	 * 
+	 * } return false;
+	 * 
+	 * }
+	 */
+
 	public void callCBJobRefURL(JobDetails details) throws IOException,
 			ParserConfigurationException, SAXException,
 			XPathExpressionException {
@@ -300,12 +297,37 @@ public class JobSearchService {
 
 	}
 
-	/**
+	/*
+	 * public List<JobDetails> updateLocationFromCB() throws IOException,
+	 * ParserConfigurationException, SAXException, XPathExpressionException {
+	 * List<JobDetails> details = getCBJobData(); for (JobDetails jobDetails :
+	 * details) { String jobTitle = jobDetails.getJobTitle(); String city =
+	 * jobDetails.getCity(); updateLocation(URLEncoder.encode(jobTitle,
+	 * "UTF-8"), URLEncoder.encode(city, "UTF-8"), jobDetails); // Check if the
+	 * lat-long maps to the correct address
 	 * 
-	 * @param latlong
-	 * @param jobDetails
-	 * @throws IOException
-	 */
+	 * validateFromGoogleAPI(jobDetails); // if it does not match with the
+	 * company's address or does not have // the company name, set it back to
+	 * null
+	 * 
+	 * } saveJobDetails(details); return details;
+	 * 
+	 * }
+	 *//*
+		 * private void validateFromGoogleAPI(JobDetails jobDetails) throws
+		 * IOException {
+		 * 
+		 * if (jobDetails.getLatitude() == null || jobDetails.getLongitude() ==
+		 * null) { return; } // Call Maps API to get the nearest company
+		 * location from the lat/long // available
+		 * 
+		 * String latlong = jobDetails.getLatitude().toString() + "," +
+		 * jobDetails.getLongitude().toString();
+		 * 
+		 * setValidAddress(latlong, jobDetails);
+		 * 
+		 * }
+		 */
 	private void setValidAddress(String latlong, JobDetails jobDetails)
 			throws IOException {
 
@@ -391,16 +413,6 @@ public class JobSearchService {
 		}
 	}
 
-	/**
-	 * 
-	 * @param jobdetails
-	 */
-	public void saveJobDetails(List<JobDetails> jobdetails) {
-
-		jobSearchDao.insertJobDetails(jobdetails);
-
-	}
-
 	private String removeSpecialChar(String input) {
 		input = input.replaceAll("[^a-zA-Z0-9]+", "");
 
@@ -408,19 +420,6 @@ public class JobSearchService {
 
 	}
 
-	public List<JobDetails> getAllJobsFromDB() {
-		return jobSearchDao.getJobetailsFromDB();
-	}
-
-	public JobDetails getJobForId(String jobId) {
-		return jobSearchDao.getJobDetailsForSearch(jobId);
-	}
-
-	/**
-	 * 
-	 * @param formattedAddress
-	 * @param jobDetails
-	 */
 	private void setAddressDetails(String formattedAddress,
 			JobDetails jobDetails) {
 		if (!formattedAddress.equals("")) {
@@ -456,13 +455,6 @@ public class JobSearchService {
 		}
 	}
 
-	/**
-	 * 
-	 * @param latlongString
-	 * @param companyName
-	 * @return
-	 * @throws IOException
-	 */
 	public GMapResponse getNearByLocation(String latlongString,
 			String companyName) throws IOException {
 		logger.info("getNearByLocation method initiated");
@@ -489,12 +481,6 @@ public class JobSearchService {
 
 	}
 
-	/**
-	 * 
-	 * @param textSearch
-	 * @return
-	 * @throws IOException
-	 */
 	public GMapResponse getTextLocation(String textSearch) throws IOException {
 		logger.info("getTextLocation method initiated");
 		URL url = new URL(Constants.MAPS_TEXT_SEARCH_URL + "?query="
@@ -512,12 +498,6 @@ public class JobSearchService {
 
 	}
 
-	/**
-	 * 
-	 * @param latlongString
-	 * @return
-	 * @throws IOException
-	 */
 	public GoogleResponse convertFromLatLong(String latlongString)
 			throws IOException {
 
@@ -535,12 +515,6 @@ public class JobSearchService {
 
 	}
 
-	/**
-	 * 
-	 * @param locationName
-	 * @return
-	 * @throws IOException
-	 */
 	public GoogleResponse getLocationLatLong(String locationName)
 			throws IOException {
 		logger.info("getLocationLatLong method initiated");
@@ -560,76 +534,208 @@ public class JobSearchService {
 	}
 
 	/**
+	 * This is the main service that will update the geo-location data in the
+	 * database. This service fetches all the job data from database and calls
+	 * different service methods that makes Career Builder API call and uses
+	 * Places API data to update the street location data and the lat/long
+	 * information.
 	 * 
-	 * @param jobDetails
-	 * @throws IOException
+	 * @throws XPathExpressionException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
 	 */
-	public void updateLocationFromJobLink(JobDetails jobDetails)
-			throws IOException {
-		logger.info("updateLocationFromJobLink batch initiated");
-		// STEP 1: Execute a query
-		org.jsoup.nodes.Document doc = null;
-		String error = "";
-		boolean flag = false;
-		// STEP 2: Extract data from result set
-		String link = "";
-		link = jobDetails.getJobSourceLink();
-		doc = Jsoup.connect(link).ignoreContentType(true).timeout(0).get();
+	public void updateLocationInfo() throws XPathExpressionException,
+			ParserConfigurationException, SAXException {
 
-		Elements elements = doc.body().select("*");
-
-		for (Element x : elements) {
-			// System.out.println(x.ownText());
-			String text = x.ownText();
-			String[] words = text.split("\\s+");
-			for (String word : words) {
-				if (Arrays.asList(Constants.US_STATES).contains(word)
-						|| Arrays.asList(Constants.StateCodes).contains(word)) {
-
-					return;
-				} else {
-					String addr = "";
-					for (int i = 0; i < words.length; i++) {
-						addr += words[i] + " ";
-
+		logger.info("updateLocationInfo batch initiated");
+		// Traverse through all the records that do not have lat-long
+		List<JobDetails> details = null;
+		details = jobSearchDao.getJobDetailsWithNoLocation();
+		if (details != null) {
+			for (JobDetails jobDetails : details) {
+				try {
+					String latlong = "";
+					logger.info("Processing the job with job Id "
+							+ jobDetails.getJobId());
+					// Check if the lat long is available in Career Builder
+					if (jobDetails.getSource().equals("CareerBuilder")
+							&& !(jobDetails.getJobRefID() == null || jobDetails
+									.getJobRefID() == "")) {
+						logger.info("Job is from source Career Builder");
+						callCBJobRefURL(jobDetails);
 					}
 
-					if (!addr.trim().equals("")) {
-						URL url = new URL(Constants.SMARTY_STR_URL + "?street="
-								+ URLEncoder.encode(addr, "UTF-8")
-								+ "&candidates=5&auth-id="
-								+ Constants.SS_AUTH_ID + "&auth-token="
-								+ Constants.SS_AUTH_TOKEN);
-						// Open the Connection
-						HttpURLConnection conn = (HttpURLConnection) url
-								.openConnection();
-						InputStream in = conn.getInputStream();
-						ObjectMapper mapper = new ObjectMapper();
-						AddressResponse response = (AddressResponse) mapper
-								.readValue(in, AddressResponse.class);
-						logger.info("Address retrieved");
-						if (response.getComponents() != null) {
-							logger.info("Address retrieved");
-							String street1 = response.getComponents()
-									.getPrimary_number()
-									+ response.getComponents().getStreet_name()
-									+ response.getComponents()
-											.getStreet_suffix();
-							jobDetails.setStreetName1(street1);
-							jobDetails.setCity(response.getMetadata()
-									.getCounty_name());
-							jobDetails.setLatitude(response.getMetadata()
-									.getLatitude());
-							jobDetails.setLongitude(response.getMetadata()
-									.getLongitude());
+					if (jobDetails.getLatitude() != null
+							&& jobDetails.getLongitude() != null) {
+						latlong = jobDetails.getLatitude().toString() + ","
+								+ jobDetails.getLongitude().toString();
+					}
+
+					if (latlong.equals("")) {
+						latlong = jobSearchDao.getLatLongForCity(jobDetails
+								.getCity());
+					}
+					if (latlong.equals("")) {
+						// Get the lat-long of the City
+						logger.info("Call Google Geocode API to get city lat/long");
+						GoogleResponse res = getLocationLatLong(jobDetails
+								.getCity());
+						if (res.getResults() != null
+								&& res.getResults().length > 0) {
+							Location loc = res.getResults()[0].getGeometry()
+									.getLocation();
+							latlong = loc.getLat() + "," + loc.getLng();
+							if (!latlong.equals("")) {
+								logger.info("Geocode latitude/longitude found for city "
+										+ jobDetails.getCity()
+										+ " is "
+										+ latlong);
+								jobSearchDao.insertLatLongForCity(
+										jobDetails.getCity(), latlong);
+							}
 						}
-
-						in.close();
-
 					}
+					// Call the nearby search Google Places API with the company
+					// name and latlong
+					if (!latlong.equals("")) {
+						setValidAddress(latlong, jobDetails);
+					}
+					if (latlong.equals("")
+							&& !(jobDetails.getJobSourceLink() == null || jobDetails
+									.getJobSourceLink().equals(""))) {
+						logger.info("The job source link will be scrapped to find the address "
+								+ jobDetails.getJobSourceLink());
+						updateLocationFromJobLink(jobDetails);
+					}
+				} catch (IOException e) {
+					logger.error("Error occurred - " + e.getMessage());
+					continue;
+
+				} catch (Exception e) {
+					logger.error("Error occurred - " + e.getMessage());
+					continue;
+
 				}
 
 			}
+
+			// If it is a single location single company, we will get one
+			// record
+			// If it is a single company in each location, we will get one
+			// result
+
+			// If many outlets in single city, we will get many results
+			saveJobDetails(details);
+		}
+
+		// For such records, we will call Career builder API if the source
+		// is
+		// Careerbuilder
+		// For remaining records, we will try to scrape the company's
+		// website
+		// and get the location information
+		// Save in the database
+
+	}
+
+	public void updateLocationFromJobLink(JobDetails jobDetails) {
+		logger.info("updateLocationFromJobLink batch initiated");
+		try {
+			// STEP 1: Execute a query
+			org.jsoup.nodes.Document doc = null;
+			String error = "";
+			boolean flag = false;
+			// STEP 2: Extract data from result set
+			String link = "";
+			link = jobDetails.getJobSourceLink();
+			try {
+				doc = Jsoup.connect(link).ignoreContentType(true).timeout(0)
+						.get();
+			} catch (HttpStatusException hp) {
+				flag = true;
+				error = hp.getMessage();
+			} catch (SSLHandshakeException e) {
+				flag = true;
+				error = e.getMessage();
+			} catch (MalformedURLException e) {
+				flag = true;
+				error = e.getMessage();
+			} catch (SSLProtocolException e) {
+				flag = true;
+				error = e.getMessage();
+			} catch (Exception e) {
+				flag = true;
+				error = e.getMessage();
+			}
+			if (flag) {
+
+				logger.error("Error occured - " + error);
+				flag = false;
+				return;
+				// continue;
+			}
+			Elements elements = doc.body().select("*");
+
+			for (Element x : elements) {
+				// System.out.println(x.ownText());
+				String text = x.ownText();
+				String[] words = text.split("\\s+");
+				for (String word : words) {
+					if (Arrays.asList(Constants.US_STATES).contains(word)
+							|| Arrays.asList(Constants.StateCodes).contains(
+									word)) {
+
+						return;
+					} else {
+						String addr = "";
+						for (int i = 0; i < words.length; i++) {
+							addr += words[i] + " ";
+
+						}
+
+						if (!addr.trim().equals("")) {
+							URL url = new URL(Constants.SMARTY_STR_URL
+									+ "?street="
+									+ URLEncoder.encode(addr, "UTF-8")
+									+ "&candidates=5&auth-id="
+									+ Constants.SS_AUTH_ID + "&auth-token="
+									+ Constants.SS_AUTH_TOKEN);
+							// Open the Connection
+							HttpURLConnection conn = (HttpURLConnection) url
+									.openConnection();
+							InputStream in = conn.getInputStream();
+							ObjectMapper mapper = new ObjectMapper();
+							AddressResponse response = (AddressResponse) mapper
+									.readValue(in, AddressResponse.class);
+							logger.info("Address retrieved");
+							if (response.getComponents() != null) {
+								logger.info("Address retrieved");
+								String street1 = response.getComponents()
+										.getPrimary_number()
+										+ response.getComponents()
+												.getStreet_name()
+										+ response.getComponents()
+												.getStreet_suffix();
+								jobDetails.setStreetName1(street1);
+								jobDetails.setCity(response.getMetadata()
+										.getCounty_name());
+								jobDetails.setLatitude(response.getMetadata()
+										.getLatitude());
+								jobDetails.setLongitude(response.getMetadata()
+										.getLongitude());
+							}
+
+							in.close();
+
+						}
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error("Error occured - " + e.getMessage());
+
 		}
 
 	}// end main
@@ -643,11 +749,6 @@ public class JobSearchService {
 		return jobSearchDao.getJobsForIds(jobIds);
 	}
 
-	/**
-	 * 
-	 * @param details
-	 * @return
-	 */
 	public List<JobDetails> matchLatLongFromJobList(List<JobDetails> details) {
 		List<JobDetails> JobListWithLatLong = jobSearchDao.getLatLong(details);
 		List<JobDetails> newJob = new ArrayList<JobDetails>();
@@ -668,66 +769,7 @@ public class JobSearchService {
 		return newJob;
 	}
 
-	// public void updateCommuteTimeAndDistance(List<JobDetails> details) {
-	// // double curLat = 40.4435386;
-	// // double curLong = -79.94435829999998;
-	// double curLat = 40.443504;
-	// double curLong = -79.941571;
-	// double desLat = 47.646757;
-	// double desLong = -122.361152;
-	// // 47.646757,-122.361152
-	// for (JobDetails i : details) {
-	// if (i.getLatitude() != null && i.getLongitude() != null) {
-	// // get distance
-	// double a = i.getLatitude();
-	// double b = i.getLongitude();
-	// double distance = caculateDistance(curLat, curLong,
-	// i.getLatitude(), i.getLongitude());
-	//
-	// // commute time by bus
-	// int busTime = caculateCommuteTime("transit", curLat, curLong,
-	// i.getLatitude(), i.getLongitude());
-	// // int busTime = caculateCommuteTime("drive", curLat, curLong,
-	// // desLat, desLong);
-	//
-	// // commute time by walk
-	// int walkTime = Integer.parseInt(caculateCommuteTimeGl(
-	// "walking", curLat, curLong, i.getLatitude(),
-	// i.getLongitude()));
-	//
-	// // commute time by drive
-	// int driveTime = Integer.parseInt(caculateCommuteTimeGl(
-	// "driving", curLat, curLong, i.getLatitude(),
-	// i.getLongitude()));
-	//
-	// // commute time by bike
-	// int bikeTime = Integer.parseInt(caculateCommuteTimeGl(
-	// "bicycling", curLat, curLong, i.getLatitude(),
-	// i.getLongitude()));
-	//
-	// int min = Math.min(Math.min(walkTime, driveTime),
-	// Math.min(busTime, bikeTime));
-	// i.setDistance(distance);
-	// i.setDriveTime(driveTime);
-	// i.setBikeTime(bikeTime);
-	// i.setTransitTime(busTime);
-	// i.setWalkTime(walkTime);
-	// i.setMinCommuteTime(min);
-	// }
-	// }
-	//
-	// }
-
-	/**
-	 * 
-	 * @param commuteType
-	 * @param curLat
-	 * @param curLong
-	 * @param desLat
-	 * @param desLong
-	 * @return
-	 */
-	private String calculateCommuteTimeGl(String commuteType, double curLat,
+	private String caculateCommuteTimeGl(String commuteType, double curLat,
 			double curLong, double desLat, double desLong) {
 		StringBuilder urlString = new StringBuilder(
 				"https://maps.googleapis.com/maps/api/distancematrix/json?");
@@ -770,16 +812,7 @@ public class JobSearchService {
 
 	}
 
-	/**
-	 * 
-	 * @param commuteType
-	 * @param curLat
-	 * @param curLong
-	 * @param desLat
-	 * @param desLong
-	 * @return
-	 */
-	private int calculateCommuteTime(String commuteType, double curLat,
+	private int caculateCommuteTime(String commuteType, double curLat,
 			double curLong, double desLat, double desLong) {
 		StringBuilder urlString = new StringBuilder(
 				"http://api2.walkscore.com/api/v1/traveltime/json?");
@@ -823,20 +856,13 @@ public class JobSearchService {
 
 	}
 
-	/**
-	 * 
-	 * @param initialLat
-	 * @param initialLong
-	 * @param finalLat
-	 * @param finalLong
-	 * @return
-	 */
-	private double calculateDistance(double initialLat, double initialLong,
+	private double caculateDistance(double initialLat, double initialLong,
 			double finalLat, double finalLong) {
 		double latDiff = finalLat - initialLat;
 		double longDiff = finalLong - initialLong;
 		double earthRadius = 6371; // In Km
 
+		// km
 		double distance = 2
 				* earthRadius
 				* Math.asin(Math.sqrt(Math.pow(Math.sin(latDiff / 2.0), 2)
@@ -857,12 +883,6 @@ public class JobSearchService {
 
 	private static Comparator<JobDetails> DistanceComparator = new Comparator<JobDetails>() {
 		public int compare(JobDetails o1, JobDetails o2) {
-			if (o1.getDistance() == 0) {
-				return (o2.getDistance() == 0) ? 0 : -1;
-			}
-			if (o2.getDistance() == 0) {
-				return -1;
-			}
 			return (int) (o1.getDistance() - o2.getDistance());
 		}
 	};
@@ -872,40 +892,34 @@ public class JobSearchService {
 		}
 	};
 
-	/**
-	 * 
-	 * @param jobdetails
-	 * @param distance
-	 * @param commuteTime
-	 * @param commuteType
-	 * @return
-	 */
 	public ArrayList<JobDetails> refineSearch(List<JobDetails> jobdetails,
 			int distance, int commuteTime, String commuteType) {
-		ArrayList<JobDetails> newJob = new ArrayList<JobDetails>(jobdetails);
-		for (int i = 0; i < newJob.size(); i++) {
-			if (newJob.get(i).getDistance() > distance * 1609) {
-				newJob.remove(i);
-			}
+		ArrayList<JobDetails> newJob = new ArrayList<JobDetails>();
+		for (int i = 0; i < jobdetails.size(); i++) {
+
 			switch (commuteType) {
 			case "Transit":
-				if (newJob.get(i).getTransitTime() > commuteTime) {
-					newJob.remove(i);
+				if (jobdetails.get(i).getTransitTime() < commuteTime
+						&& jobdetails.get(i).getDistance() < distance) {
+					newJob.add(jobdetails.get(i));
 				}
 				continue;
 			case "Drive":
-				if (newJob.get(i).getDriveTime() > commuteTime) {
-					newJob.remove(i);
+				if (jobdetails.get(i).getDriveTime() < commuteTime
+						&& jobdetails.get(i).getDistance() < distance) {
+					newJob.add(jobdetails.get(i));
 				}
 				continue;
 			case "Walk":
-				if (newJob.get(i).getWalkTime() > commuteTime) {
-					newJob.remove(i);
+				if (jobdetails.get(i).getWalkTime() < commuteTime
+						&& jobdetails.get(i).getDistance() < distance) {
+					newJob.add(jobdetails.get(i));
 				}
 				continue;
 			case "Bike":
-				if (newJob.get(i).getBikeTime() > commuteTime) {
-					newJob.remove(i);
+				if (jobdetails.get(i).getBikeTime() < commuteTime
+						&& jobdetails.get(i).getDistance() < distance) {
+					newJob.add(jobdetails.get(i));
 				}
 				continue;
 			}
@@ -980,7 +994,9 @@ public class JobSearchService {
 		double curLat = 40.443504;
 		double curLong = -79.941571;
 
+		ArrayList<StringBuilder> idws = new ArrayList<StringBuilder>();
 		ArrayList<StringBuilder> idgl = new ArrayList<StringBuilder>();
+		HashMap<Integer, TravelTimeWS[]> mapTransitTimes = new HashMap<Integer, TravelTimeWS[]>();
 		HashMap<Integer, Results[]> mapWalk = new HashMap<Integer, Results[]>();
 		HashMap<Integer, Results[]> mapDrive = new HashMap<Integer, Results[]>();
 		HashMap<Integer, Results[]> mapBike = new HashMap<Integer, Results[]>();
@@ -993,29 +1009,34 @@ public class JobSearchService {
 					+ details.get(i).getLongitude());
 			sbgl.append(details.get(i).getLatitude() + ","
 					+ details.get(i).getLongitude() + "|");
-			if ((i + 1) % 100 == 0) {
+			if ((i + 1) % 80 == 0) {
+				idws.add(new StringBuilder(sbws));
+				sbws.setLength(0);
 				sbgl.deleteCharAt(sbgl.length() - 1);
 				idgl.add(new StringBuilder(sbgl));
 				sbgl.setLength(0);
 			}
 		}
-		if (details.size() < 100) {
-			sbgl.deleteCharAt(sbgl.length() - 1);
-			idgl.add(sbgl);
-		}
+		idws.add(sbws);
+		sbgl.deleteCharAt(sbgl.length() - 1);
+		idgl.add(sbgl);
 
-		TravelTimeWS[] transitTimes = calculateCommuteTime("transit", curLat,
-				curLong, sbws);
+		for (int i = 0; i < idws.size(); i++) {
+			StringBuilder idx = idws.get(i);
+			TravelTimeWS[] transitTimes = caculateCommuteTime("transit",
+					curLat, curLong, idx);
+			mapTransitTimes.put(i, transitTimes);
+		}
 
 		for (int i = 0; i < idgl.size(); i++) {
 			StringBuilder idx = idgl.get(i);
-			Results[] walkTimes = calculateCommuteTimeGL("walking", curLat,
+			Results[] walkTimes = caculateCommuteTimeGL("walking", curLat,
 					curLong, idx);
 
-			Results[] driveTimes = calculateCommuteTimeGL("driving", curLat,
+			Results[] driveTimes = caculateCommuteTimeGL("driving", curLat,
 					curLong, idx);
 
-			Results[] bikeTimes = calculateCommuteTimeGL("bicycling", curLat,
+			Results[] bikeTimes = caculateCommuteTimeGL("bicycling", curLat,
 					curLong, idx);
 
 			mapWalk.put(i, walkTimes);
@@ -1026,60 +1047,81 @@ public class JobSearchService {
 		// 47.646757,-122.361152
 		for (int j = 0; j < details.size(); j++) {
 			JobDetails i = details.get(j);
+			double distance = Integer.MAX_VALUE;
+			int walkTime = Integer.MAX_VALUE, driveTime = Integer.MAX_VALUE, bikeTime = Integer.MAX_VALUE, min = Integer.MAX_VALUE, busTime = Integer.MAX_VALUE;
+
 			if (i.getLatitude() != null && i.getLongitude() != null) {
 				// get distance
-				double a = i.getLatitude();
-				double b = i.getLongitude();
-				double distance = calculateDistance(curLat, curLong,
-						i.getLatitude(), i.getLongitude());
+				int k = j / 80;
+				int l = j - k * 80;
 
 				// commute time by bus
-				int busTime = transitTimes[j].getSeconds();
+				if (mapTransitTimes.containsKey(k)
+						&& mapTransitTimes.get(k) != null
+						&& l < mapTransitTimes.get(k).length) {
+					if (mapTransitTimes.get(k)[l].isUnroutable() == false) {
+						busTime = mapTransitTimes.get(k)[l].getSeconds();
+					}
+				}
 
-				int k = j / 99;
-				int l = j - k * 100;
-				int walkTime = Integer.MAX_VALUE, driveTime = Integer.MAX_VALUE, bikeTime = Integer.MAX_VALUE;
+				System.out.println(mapDrive.containsKey(k));
+				System.out.println("k=" + k);
+				System.out.println(mapDrive.get(k).length);
+				System.out.println("l=" + l + "," + "mapdrive k"
+						+ mapDrive.get(k).length);
+				if (mapDrive.containsKey(k) && mapDrive.get(k) != null
+						&& l < mapDrive.get(k).length) {
+					distance = Integer.parseInt(mapDrive.get(k)[l]
+							.getDistance().getValue()) * 0.62 / 1000;// km-mile
+				}
+				// distance = caculateDistance(curLat, curLong, i.getLatitude(),
+				// i.getLongitude());
+
 				// commute time by walk
-				if (mapWalk.containsKey(k)) {
+				if (mapWalk.containsKey(k) && mapWalk.get(k) != null
+						&& l < mapWalk.get(k).length) {
 					walkTime = Integer.parseInt(mapWalk.get(k)[l].getDuration()
 							.getValue());
 				}
 
 				// commute time by drive
-				if ((mapDrive.containsKey(k))) {
+				if (mapDrive.containsKey(k) && mapDrive.get(k) != null
+						&& l < mapWalk.get(k).length) {
 					driveTime = Integer.parseInt(mapDrive.get(k)[l]
 							.getDuration().getValue());
 				}
 
 				// // commute time by bike
-				if (mapBike.containsKey(k)) {
+				if (mapBike.containsKey(k) && mapBike.get(k) != null
+						&& l < mapWalk.get(k).length) {
 					bikeTime = Integer.parseInt(mapBike.get(k)[l].getDuration()
 							.getValue());
 				}
 
-				int min = Math.min(Math.min(walkTime, driveTime),
+				min = Math.min(Math.min(walkTime, driveTime),
 						Math.min(busTime, bikeTime));
 				i.setDistance((int) distance);
-				i.setDriveTime(driveTime);
-				i.setBikeTime(bikeTime);
-				i.setTransitTime(busTime);
-				i.setWalkTime(walkTime);
-				i.setMinCommuteTime(min);
+				i.setDriveTime(driveTime / 60);
+				i.setBikeTime(bikeTime / 60);
+				i.setTransitTime(busTime / 60);
+				i.setWalkTime(walkTime / 60);
+				i.setMinCommuteTime(min / 60);
 			}
 		}
 	}
 
-	private Results[] calculateCommuteTimeGL(String commuteType, double curLat,
+	private Results[] caculateCommuteTimeGL(String commuteType, double curLat,
 			double curLong, StringBuilder sbgl) {
 		StringBuilder urlString = new StringBuilder(
 				"https://maps.googleapis.com/maps/api/distancematrix/json?");
 		urlString.append("origins=" + curLat + "," + curLong);
 		urlString.append("&destinations=" + sbgl);
-		urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
+		 urlString.append("&key=AIzaSyBwt9e578fMqY9A0EfiLEr7pj-s9fjfZj4");
 		urlString.append("&mode=" + commuteType);
 		urlString.append("&language=en-EN");
 		URL url;
 		TravelTimeListing ttl = null;
+		// System.out.println(urlString.toString());
 		try {
 			url = new URL(urlString.toString());
 
@@ -1108,7 +1150,8 @@ public class JobSearchService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (ttl != null) {
+		if (ttl.getRows().length != 0 && ttl.getRows() != null) {
+			// System.out.println("ttl" + ttl.getRows());
 			return ttl.getRows()[0].getElements();
 		} else {
 			return null;
@@ -1116,7 +1159,7 @@ public class JobSearchService {
 
 	}
 
-	private TravelTimeWS[] calculateCommuteTime(String commuteType,
+	private TravelTimeWS[] caculateCommuteTime(String commuteType,
 			double curLat, double curLong, StringBuilder sbws) {
 		StringBuilder urlString = new StringBuilder(
 				"http://api2.walkscore.com/api/v1/traveltime/json?");
@@ -1241,7 +1284,8 @@ public class JobSearchService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (ttl != null) {
+		if (ttl.getResponse().getResults().length != 0
+				&& ttl.getResponse().getResults() != null) {
 			return ttl.getResponse().getResults()[0].getTravel_times();
 		} else {
 			return null;
@@ -1249,7 +1293,6 @@ public class JobSearchService {
 	}
 
 	public List<JobDetails> getAllJobsInCity(String location) {
-
 		return jobSearchDao.getJobetailsInCity(location);
 	}
 }
