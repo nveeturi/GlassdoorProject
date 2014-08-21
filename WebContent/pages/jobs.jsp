@@ -43,17 +43,16 @@
         <div class="header-bar">
             <div class="container">
                 <ul class="header-bar-nav nav nav-register">
-				    <li><a href="login.html">Login</a></li>
-				    <li><a href="register.html">Register</a></li>
-				    <li><a href="renew-password.html">Renew Password</a></li>
-				</ul>            
+				    <li><a href="index/login">Login</a></li>
+				    <li><a href="index/register">Register</a></li>
+				</ul>             
 			</div><!-- /.container -->
         </div><!-- /.header-bar -->
 
         <div class="header-top">
             <div class="container">
                 <div class="header-identity">
-                    <a href="index.html" class="header-identity-target">
+                    <a href="../" class="header-identity-target">
                         <span class="header-icon"><i class="fa fa-home"></i></span>
                         <span class="header-title">glassdoor</span><!-- /.header-title -->
                         <span class="header-slogan">Get Hired. <br> Love Your Job.</span><!-- /.header-slogan -->
@@ -78,8 +77,8 @@
             <div class="container">
                 <div class="row">
                     <ul class="header-nav nav nav-pills">
-					    <li><a href="#">Home</a></li>
-						<li><a href="search">Jobs</a></li>
+					    <li><a href="../">Home</a></li>
+						<li><a href="searchJob?keyword=Software Engineer&location=Pittsburgh">Jobs</a></li>
 						<li><a href="map">Local</a></li>
 						<li><a href="profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
@@ -122,7 +121,7 @@
                     <label>Sort By</label>
                     <div class="select-wrapper">
                     	<select id="sort-by" name="criteria" class="form-control">
-							<option value="Distance">Distance</option>
+							<option value="Distance" selected>Distance</option>
 							<option value="CommuteTime">Commute Time</option>
 						</select>
                     </div>
@@ -160,7 +159,7 @@
                     
                     <div class="select-wrapper">
                     	<select id="filter-time" name = "commuteTime" class="form-control">
-							<option value="&lt; 10 min">&lt; 10 min</option>
+							<option value="&lt; 15 min">&lt; 15 min</option>
 							<option value="&lt; 30 min">&lt; 30 min</option>
 							<option value="&lt; 60 min">&lt; 60 min</option>
 						</select>
@@ -196,23 +195,25 @@
 							<div id="popUpDiv" style="display:none;">
 							
 								<div id="popMap">
-							      <div style="height:40px">
-							        <strong>Start: </strong>
-							        <input type="text" id="start" value="5000 Forbes Ave, Pittsburgh, PA"></input>
-									<strong>End: </strong>
-							        <input type="text" id="end" value="Carnegie Mellon University"></input>
-							        <strong style="display:inline-block;">Mode of Travel: </strong>
-							        <div class = "select-wrapper" style="display:inline-block;">
-								        <select id="mode" onchange="calcRoute();" class="form-control" style="font-size:12px;width:120px;height:30px;display:inline-block;">
-									    	<option value="DRIVING">Driving</option>
-									        <option value="WALKING">Walking</option>
-									        <option value="BICYCLING">Bicycling</option>
-									        <option value="TRANSIT">Transit</option>
-									    </select>
-							        </div>
-							        <a href="#" onclick="popup('popUpDiv')" style="top:0px;right:0px;">Close</a>
-							      </div>
-							      <div id="map-canvas"></div>
+									<div>
+								      <div style="height:40px">
+								        <strong>Start: </strong>
+								        <input type="text" id="start" value="5000 Forbes Ave, Pittsburgh, PA"></input>
+										<strong>End: </strong>
+								        <input type="text" id="end" value="Carnegie Mellon University"></input>
+								        <strong style="display:inline-block;">Mode of Travel: </strong>
+								        <div class = "select-wrapper" style="display:inline-block;">
+									        <select id="mode" onchange="calcRoute();" class="form-control" style="font-size:12px;width:120px;height:30px;display:inline-block;">
+										    	<option value="DRIVING">Driving</option>
+										        <option value="WALKING">Walking</option>
+										        <option value="BICYCLING">Bicycling</option>
+										        <option value="TRANSIT">Transit</option>
+										    </select>
+								        </div>
+								        <a href="#" onclick="popup('popUpDiv')" style="top:0px;right:0px;">Close</a>
+								      </div>
+								      <div id="map-canvas"></div>
+								  </div>
 							      <div id="directionsPanel">
 							        <p>Total Distance: <span id="total"></span></p>
 							      </div>

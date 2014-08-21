@@ -3,16 +3,21 @@ package com.glassdoor.controller;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
+
 import com.glassdoor.databean.JobDetails;
 import com.glassdoor.jobsearch.JobSearchService;
 import com.glassdoor.jobsearch.UserService;
@@ -26,6 +31,7 @@ import com.glassdoor.jobsearch.UserService;
  *
  */
 @RestController
+@SessionAttributes({"usename"})
 public class HomeController {
 	@Autowired
 	private JobSearchService jobService;
@@ -131,9 +137,11 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("/jobs");
 	
 		try{
-		logger.info("Search is made with keyword "+keyword + " and city "+location);
-		jobs = jobService.getAllJobsInCity(location);
-		jobService.updateCommuteTimeAndDistanceGL(jobs);
+			logger.info("Search is made with keyword "+keyword + " and city "+location);
+			if(jobs == null) {
+				jobs = jobService.getAllJobsInCity(location);
+				jobService.updateCommuteTimeAndDistanceGL(jobs);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav = new ModelAndView("error");
@@ -150,11 +158,13 @@ public class HomeController {
 	@RequestMapping(value = "searchJob", method = RequestMethod.GET)
 	public ModelAndView searchJob(String keyword, String location) {
 		ModelAndView mav = new ModelAndView("/jobs");
-		List<JobDetails> jobs = null;
+		
 		try{
-		logger.info("Search is made with keyword "+keyword + " and city "+location);
-		jobs = jobService.getAllJobsInCity(location);
-
+			logger.info("Search is made with keyword "+keyword + " and city "+location);
+			if(jobs == null) {
+				jobs = jobService.getAllJobsInCity(location);
+				jobService.updateCommuteTimeAndDistanceGL(jobs);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav.addObject("message",e.getMessage());
@@ -184,7 +194,7 @@ public class HomeController {
 			
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,locationEncode,true,1,50);
 			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
-//			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
+			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -233,7 +243,7 @@ public class HomeController {
 		try{
 		String dis = distance.split(" ")[1];
 		String com = commuteTime.substring(2, 4);
-		List<JobDetails> newJobs = jobService.refineSearch(jobs, Integer.parseInt(dis), Integer.parseInt(com)*60, commuteType);//filter
+		List<JobDetails> newJobs = jobService.refineSearch(jobs, Integer.parseInt(dis), Integer.parseInt(com), commuteType);//filter
 		mav.addObject("joblist", newJobs);
 		}
 		catch(Exception e){
@@ -402,8 +412,14 @@ public class HomeController {
 	}
 	
 	@RequestMapping("profile")
-	public ModelAndView profile() {
+	public ModelAndView profile(@ModelAttribute("username") String username) {
+		if(username == null || username.equals("")) {
+			return login();
+		}
 		ModelAndView mav = new ModelAndView("profile");
+		username = "Jessica";
+		mav.addObject("username", username);
+		
 		return mav;
 	}
 	

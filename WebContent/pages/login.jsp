@@ -33,16 +33,16 @@
         <div class="header-bar">
             <div class="container">
                 <ul class="header-bar-nav nav nav-register">
-    <li><a href="login.html">Login</a></li>
-    <li><a href="register.html">Register</a></li>
-    <li><a href="renew-password.html">Renew Password</a></li>
-</ul>            </div><!-- /.container -->
+				    <li><a href="login">Login</a></li>
+				    <li><a href="register">Register</a></li>
+				</ul>     
+			</div><!-- /.container -->
         </div><!-- /.header-bar -->
 
         <div class="header-top">
             <div class="container">
                 <div class="header-identity">
-                    <a href="index.html" class="header-identity-target">
+                    <a href="../" class="header-identity-target">
                         <span class="header-icon"><i class="fa fa-home"></i></span>
                         <span class="header-title">glassdoor</span><!-- /.header-title -->
                         <span class="header-slogan">Get Hired. <br> Love Your Job.</span><!-- /.header-slogan -->
@@ -68,10 +68,10 @@
                 <div class="row">
                 	<!-- menu -->
                     <ul class="header-nav nav nav-pills">
-					    <li><a href="#">Home</a></li>
-						<li><a href="#">Jobs</a></li>
-						<li><a href="index/map">Local</a></li>
-						<li><a href="index/map">Profile</a></li>
+					    <li><a href="../">Home</a></li>
+						<li><a href="searchJob?keyword=Software Engineer&location=Pittsburgh">Jobs</a></li>
+						<li><a href="map">Local</a></li>
+						<li><a href="profile">Profile</a></li>
 					</ul><!-- /.header-nav -->
 					
 					<!-- search bar -->
