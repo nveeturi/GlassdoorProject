@@ -105,7 +105,6 @@ public class HomeController {
 			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mav = new ModelAndView("error");
 			mav.addObject("message",e.getMessage());
@@ -262,22 +261,19 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/updateLocation", method = RequestMethod.GET)
 	public ModelAndView updateLocation() {
-		ModelAndView mav = new ModelAndView("/batch");
+		ModelAndView mav = new ModelAndView("/batchservice");
 		try {
 			logger.info("Initiating updateLocation batch");
 			jobService.updateLocationInfo();
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mav = new ModelAndView("error");
 			mav.addObject("message", e.getMessage());
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mav = new ModelAndView("error");
 			mav.addObject("message", e.getMessage());
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mav = new ModelAndView("error");
 			mav.addObject("message", e.getMessage());
@@ -290,11 +286,11 @@ public class HomeController {
 	}
 	
 	/**
-	 * This action exposes the rest webservice that makes search in Glassdoor database
-	 * using the search API and then uploads it in the local database.
-	 * This can be used as a batch service to dump the data in the local database with
-	 * job details and the city / location.
-	 * from the keyword and location 
+	 * This action exposes the rest webservice that makes search in Glassdoor
+	 * database using the search API and then uploads it in the local database.
+	 * This can be used as a batch service to dump the data in the local database
+	 * with job details and the city / location.
+	 * 
 	 * @param keyword
 	 * @param location
 	 * @return
@@ -302,7 +298,7 @@ public class HomeController {
 	@RequestMapping(value = "/updateJobData/{keyword}/{location}", method = RequestMethod.GET)
 	public ModelAndView updateJobData(@PathVariable String keyword,
 			@PathVariable String location) {
-		ModelAndView mav = new ModelAndView("/batch");
+		ModelAndView mav = new ModelAndView("/batchservice");
 		List<JobDetails> jobdetails = null;
 		try {
 			String locationEncode = (location == null || location.trim()
@@ -315,7 +311,6 @@ public class HomeController {
 		
 		jobService.saveJobDetails(jobdetails);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mav = new ModelAndView("error");
 			mav.addObject("message", e.getMessage());
