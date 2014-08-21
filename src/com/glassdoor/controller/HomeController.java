@@ -138,9 +138,11 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("/jobs");
 	
 		try{
-		logger.info("Search is made with keyword "+keyword + " and city "+location);
-		jobs = jobService.getAllJobsInCity(location);
-		jobService.updateCommuteTimeAndDistanceGL(jobs);
+			logger.info("Search is made with keyword "+keyword + " and city "+location);
+			if(jobs == null) {
+				jobs = jobService.getAllJobsInCity(location);
+				jobService.updateCommuteTimeAndDistanceGL(jobs);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav = new ModelAndView("error");
@@ -159,10 +161,11 @@ public class HomeController {
 		ModelAndView mav = new ModelAndView("/jobs");
 		
 		try{
-		logger.info("Search is made with keyword "+keyword + " and city "+location);
-		jobs = jobService.getAllJobsInCity(location);
-		jobService.updateCommuteTimeAndDistanceGL(jobs);
-
+			logger.info("Search is made with keyword "+keyword + " and city "+location);
+			if(jobs == null) {
+				jobs = jobService.getAllJobsInCity(location);
+				jobService.updateCommuteTimeAndDistanceGL(jobs);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			mav.addObject("message",e.getMessage());
@@ -192,7 +195,7 @@ public class HomeController {
 			
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,locationEncode,true,1,50);
 			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
-//			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
+			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -415,6 +418,9 @@ public class HomeController {
 	
 	@RequestMapping("profile")
 	public ModelAndView profile(@ModelAttribute("username") String username) {
+		if(username == null || username.equals("")) {
+			return login();
+		}
 		ModelAndView mav = new ModelAndView("profile");
 		username = "Jessica";
 		mav.addObject("username", username);

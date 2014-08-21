@@ -43,17 +43,16 @@
         <div class="header-bar">
             <div class="container">
                 <ul class="header-bar-nav nav nav-register">
-				    <li><a href="login.html">Login</a></li>
-				    <li><a href="register.html">Register</a></li>
-				    <li><a href="renew-password.html">Renew Password</a></li>
-				</ul>            
+				    <li><a href="index/login">Login</a></li>
+				    <li><a href="index/register">Register</a></li>
+				</ul>             
 			</div><!-- /.container -->
         </div><!-- /.header-bar -->
 
         <div class="header-top">
             <div class="container">
                 <div class="header-identity">
-                    <a href="index.html" class="header-identity-target">
+                    <a href="../" class="header-identity-target">
                         <span class="header-icon"><i class="fa fa-home"></i></span>
                         <span class="header-title">glassdoor</span><!-- /.header-title -->
                         <span class="header-slogan">Get Hired. <br> Love Your Job.</span><!-- /.header-slogan -->
@@ -122,7 +121,7 @@
                     <label>Sort By</label>
                     <div class="select-wrapper">
                     	<select id="sort-by" name="criteria" class="form-control">
-							<option value="Distance">Distance</option>
+							<option value="Distance" selected>Distance</option>
 							<option value="CommuteTime">Commute Time</option>
 						</select>
                     </div>

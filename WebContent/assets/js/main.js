@@ -2686,7 +2686,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 						newPositions[index] = newPositions[index] || {};
 						newPositions[index][searchFor[i]] = parseFloat(params[key])
 					}
-					break
+					break;
 				}
 			}
 		}
@@ -2768,7 +2768,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	    
 	    jobResult.marker = marker;
 	    jobResult.infowindow = new google.maps.InfoWindow({
-	    	content:jobResult.jobTitle+'<br/>'+jobResult.companyName
+	    	content:'<div style="background:#4cae4c;color:#FFF">jobResult.jobTitle<br/>jobResult.companyName</div>'
 	    });
 	    
 	    var xy = mapnificent.getCanvasXY({

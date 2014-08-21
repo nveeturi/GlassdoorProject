@@ -817,9 +817,13 @@ public class JobSearchService {
 
 	public void sortJobList(List<JobDetails> jobdetails, String criteria) {
 		if (criteria.equals("Distance")) {
-			Collections.sort(jobdetails, DistanceComparator);
+			if(jobdetails != null) {
+				Collections.sort(jobdetails, DistanceComparator);
+			}
 		} else if (criteria.equals("CommuteTime")) {
-			Collections.sort(jobdetails, CommuteTimecomparator);
+			if(jobdetails != null) {
+				Collections.sort(jobdetails, CommuteTimecomparator);
+			}
 		}
 
 	}

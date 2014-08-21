@@ -31,16 +31,16 @@
         <div class="header-bar">
             <div class="container">
                 <ul class="header-bar-nav nav nav-register">
-    <li><a href="index/login">Login</a></li>
-    <li><a href="register.html">Register</a></li>
-    <li><a href="renew-password.html">Renew Password</a></li>
-</ul>            </div><!-- /.container -->
+				    <li><a href="login">Login</a></li>
+				    <li><a href="register">Register</a></li>
+				</ul>              
+			</div><!-- /.container -->
         </div><!-- /.header-bar -->
 
         <div class="header-top">
             <div class="container">
                 <div class="header-identity">
-                    <a href="index.html" class="header-identity-target">
+                    <a href="../" class="header-identity-target">
                         <span class="header-icon"><i class="fa fa-home"></i></span>
                         <span class="header-title">glassdoor</span><!-- /.header-title -->
                         <span class="header-slogan">Get Hired. <br> Love Your Job.</span><!-- /.header-slogan -->
@@ -95,7 +95,6 @@
     <div class="container">
     <div class="block-content block-content-small-padding">
     <div class="block-content-inner">
-    <div class="row">
     <div class="col-sm-12">
     <h2 class="center">${username}'s Profile</h2>
 
@@ -107,16 +106,14 @@
     <!-- /.property-filter -->
 
     <div class="properties-items">
-    <div class="row">
-    <div class="property-item property-job col-sm-6 col-md-6">
+    
+	<div class="property-item property-job col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
                 <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
-                <h4 class="property-box-subtitle"><a href="#">PNC</a></h4>
-
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">5000 Forbes Ave</a></h4>            </div>
+				<h4><a href="#">PNC</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -127,11 +124,9 @@
         <div class="property-box">
             <div class="property-box-inner">
                 <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
-                <h4 class="property-box-subtitle"><a href="#">PNC</a></h4>
-
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">5000 Forbes Ave</a></h4>            </div>
+				<h4><a href="#">PNC</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -142,11 +137,9 @@
         <div class="property-box">
             <div class="property-box-inner">
                 <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
-                <h4 class="property-box-subtitle"><a href="#">PNC</a></h4>
-
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">5000 Forbes Ave</a></h4>            </div>
+				<h4><a href="#">PNC</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -157,11 +150,9 @@
         <div class="property-box">
             <div class="property-box-inner">
                 <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
-                <h4 class="property-box-subtitle"><a href="#">PNC</a></h4>
-
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">5000 Forbes Ave</a></h4>            </div>
+				<h4><a href="#">PNC</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -171,7 +162,7 @@
     <div class="property-item property-place col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Home</a></h3>
+                <h3 class="property-box-title"><a href="#">Jessica</a></h3>
                 <div class="property-box-label property-box-label-primary">Place</div>
                 <!-- /.property-box-label -->
 				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
@@ -180,86 +171,26 @@
         <!-- /.property-box -->
     </div>
     <!-- /.property-item -->
-    </div>
-    <!-- /.row -->
-
-    <div class="row">
-    <div class="property-item property-company col-sm-6 col-md-6">
-        <div class="property-box">
-            <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
-                <div class="property-box-label property-box-label-primary">Company</div>
-                <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
-            <!-- /.property-box-inner -->
-        </div>
-        <!-- /.property-box -->
-    </div>
-    <!-- /.property-item -->
-
-    <div class="property-item property-company col-sm-6 col-md-6">
-        <div class="property-box">
-            <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
-                <div class="property-box-label property-box-label-primary">Company</div>
-                <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
-            <!-- /.property-box-inner -->
-        </div>
-        <!-- /.property-box -->
-    </div>
-    <!-- /.property-item -->
-
-    <div class="property-item property-company col-sm-6 col-md-6">
-        <div class="property-box">
-            <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
-                <div class="property-box-label property-box-label-primary">Company</div>
-                <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
-            <!-- /.property-box-inner -->
-        </div>
-        <!-- /.property-box -->
-    </div>
-    <!-- /.property-item -->
-    </div>
-    <!-- /.row -->
-
-    <div class="row">
-        
-		<div class="property-item property-place col-sm-6 col-md-6">
+    <div class="property-item property-place col-sm-6 col-md-6">
 	        <div class="property-box">
 	            <div class="property-box-inner">
-	                <h3 class="property-box-title"><a href="#">Home</a></h3>
+	                <h3 class="property-box-title"><a href="#">Yeega</a></h3>
 	                <div class="property-box-label property-box-label-primary">Place</div>
 	                <!-- /.property-box-label -->
-					<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+					<h4><a href="#">2312 Murray Ave, Pittsburgh, PA</a></h4>            </div>
 	            <!-- /.property-box-inner -->
 	        </div>
 	        <!-- /.property-box -->
 	    </div>
 	    <!-- /.property-item -->
-		
-        <div class="property-item property-company col-sm-6 col-md-6">
-        <div class="property-box">
-            <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
-                <div class="property-box-label property-box-label-primary">Company</div>
-                <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
-            <!-- /.property-box-inner -->
-        </div>
-        <!-- /.property-box -->
-    </div>
-    <!-- /.property-item -->
 
         <div class="property-item property-place col-sm-6 col-md-6">
 	        <div class="property-box">
 	            <div class="property-box-inner">
-	                <h3 class="property-box-title"><a href="#">Home</a></h3>
+	                <h3 class="property-box-title"><a href="#">CMU</a></h3>
 	                <div class="property-box-label property-box-label-primary">Place</div>
 	                <!-- /.property-box-label -->
-					<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+					<h4><a href="#">5000 Forbes Ave, Pittsburgh, PA</a></h4>            </div>
 	            <!-- /.property-box-inner -->
 	        </div>
 	        <!-- /.property-box -->
@@ -268,30 +199,72 @@
 	    <div class="property-item property-place col-sm-6 col-md-6">
 	        <div class="property-box">
 	            <div class="property-box-inner">
-	                <h3 class="property-box-title"><a href="#">Home</a></h3>
+	                <h3 class="property-box-title"><a href="#">PNC</a></h3>
 	                <div class="property-box-label property-box-label-primary">Place</div>
 	                <!-- /.property-box-label -->
-					<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+					<h4><a href="#">4600 Fifth Ave, Pittsburgh, PA</a></h4>            </div>
 	            <!-- /.property-box-inner -->
 	        </div>
 	        <!-- /.property-box -->
 	    </div>
 	    <!-- /.property-item -->
+	    
+	    <div class="property-item property-company col-sm-6 col-md-6">
+        <div class="property-box">
+            <div class="property-box-inner">
+                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <div class="property-box-label property-box-label-primary">Company</div>
+                <!-- /.property-box-label -->
+				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+            <!-- /.property-box-inner -->
+        </div>
+        <!-- /.property-box -->
     </div>
-    <!-- /.row -->
+    <!-- /.property-item -->
 
-    <div class="row">
-        
+    <div class="property-item property-company col-sm-6 col-md-6">
+        <div class="property-box">
+            <div class="property-box-inner">
+                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <div class="property-box-label property-box-label-primary">Company</div>
+                <!-- /.property-box-label -->
+				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+            <!-- /.property-box-inner -->
+        </div>
+        <!-- /.property-box -->
+    </div>
+    <!-- /.property-item -->
 
-        
+    <div class="property-item property-company col-sm-6 col-md-6">
+        <div class="property-box">
+            <div class="property-box-inner">
+                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <div class="property-box-label property-box-label-primary">Company</div>
+                <!-- /.property-box-label -->
+				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+            <!-- /.property-box-inner -->
+        </div>
+        <!-- /.property-box -->
     </div>
-    <!-- /.row -->
+    <!-- /.property-item -->
+    
+    <div class="property-item property-company col-sm-6 col-md-6">
+        <div class="property-box">
+            <div class="property-box-inner">
+                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <div class="property-box-label property-box-label-primary">Company</div>
+                <!-- /.property-box-label -->
+				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+            <!-- /.property-box-inner -->
+        </div>
+        <!-- /.property-box -->
     </div>
+    <!-- /.property-item -->
+    
+     </div>
     <!-- /.properties-items -->
 
     </div>
-    </div>
-    <!-- /.row -->
     </div>
     <!-- /.block-content-inner -->
     </div>

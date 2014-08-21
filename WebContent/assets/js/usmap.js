@@ -245,7 +245,7 @@
             	content:city.name
             });
             google.maps.event.addListener(city.marker, 'click', function(){
-                document.location.href = '../pages/'+city.cityid+'.jsp'; 
+                document.location.href = '../pages/pittsburgh.jsp'; 
             });
             google.maps.event.addListener(city.marker, 'mouseover', function(){
                 city.infowindow.open(map,city.marker);
