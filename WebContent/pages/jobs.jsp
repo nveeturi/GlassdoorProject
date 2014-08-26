@@ -22,6 +22,7 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/pagination.css" />
     
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../assets/js/jquery.js"></script>
     
     <script src="http://www.google.com/jsapi?key=AIzaSyA0APLVAS_phz0CE0stfzyy5yq0e25qdi0;sensor=false" type="text/javascript"></script>
 	<script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" type="text/javascript"></script>
@@ -85,9 +86,15 @@
                     <div class="form-search-wrapper col-sm-3">
                         <form method="post" action="search" class="form-horizontal form-search">
                             <div class="form-group has-feedback no-margin">
-                                <input type="text" class="form-control" placeholder="Search" >
-                                
-
+                                <input id="quick-search" name="keyword" type="text" class="form-control" placeholder="Quick Search">
+                                <input type="hidden" name="location" value="Pittsburgh"/>
+                                <script>
+                                $("#quick-search").keydown(function(e) { 
+                        			if (e.keyCode === 13) {
+                        				$("#search-form").submit();
+                        			} 
+                        		});
+                                </script>
                                 <span class="form-control-feedback">
                                     <i class="fa fa-search"></i>
                                 </span><!-- /.form-control-feedback -->
@@ -106,7 +113,7 @@
                         <div class="block-content-inner">
                         	<div class="row">
                             	<div class="col-lg-4 col-sm-4" id="show">
-                            		<div id="jobmap" data-style="2" style="height:500px"></div>
+                            		<div id="jobmap" data-style="2" style="height:560px"></div>
                             		<div id="show"></div>
                             	</div>
                             	
@@ -114,6 +121,7 @@
                                     <div id="refinesearch" class="sidebar">
                                         <div class="sidebar-inner">
                                             <div class="widget">
+                                            <h3 class="widget-title">Sort</h3>
         <div class="widget-content">
         <form method="post" action="sort">
             <div class="row">
@@ -228,7 +236,18 @@
 	                                            <div class="row">
 	                                            	<div class="property-row-content col-sm-12 col-md-12 col-lg-12" style="padding-left:20px">
 	                                                    <h3 class="property-row-title">
-	                                                        <a href='${job.jobLink}'>${job.jobTitle}</a>
+	                                                        <a href='${job.jobLink}'>${job.jobTitle}</a>&nbsp;<a href="#"><i id="hi${status.index}" class="fa fa-heart heart" onClick="hello(${status.index})" style="color:#39b54a;font-size:14px"></i></a>
+	                                                    	<script>
+	                                                    		function hello(i) {
+	                                                    			
+	                                                    			if($("#hi"+i).css("color")=="rgb(225, 107, 117)") {
+	                                                    				$("#hi"+i).css("color","#39b54a");
+	                                                    			} else {
+	                                                    				$("#hi"+i).css("color","#e16b75");
+	                                                    			}
+	                                                    			
+	                                                    		}
+	                                                    	</script>
 	                                                    </h3><!-- /.property-row-title -->
 	
 	                                                    <h4 class="property-row-subtitle">
@@ -300,7 +319,6 @@
         </div><!-- /#footer -->
     </div><!-- /#footer-wrapper -->
 </div><!-- /#wrapper -->
-<script type="text/javascript" src="../assets/js/jquery.js"></script>
 <script type="text/javascript" src="../assets/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="../assets/js/jquery.geocomplete.js"></script>
 <script type="text/javascript" src="../assets/libraries/isotope/jquery.isotope.min.js"></script>

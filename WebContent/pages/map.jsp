@@ -76,10 +76,17 @@
 					
 					<!-- search bar -->
                     <div class="form-search-wrapper col-sm-3">
-                        <form method="post" action="?" class="form-horizontal form-search">
+                        <form method="post" action="search" class="form-horizontal form-search">
                             <div class="form-group has-feedback no-margin">
-                                <input type="text" class="form-control" placeholder="Quick Search">
-
+                                <input id="quick-search" name="keyword" type="text" class="form-control" placeholder="Quick Search">
+                                <input type="hidden" name="location" value="Pittsburgh"/>
+                                <script>
+                                $("#quick-search").keydown(function(e) { 
+                        			if (e.keyCode === 13) {
+                        				$("#search-form").submit();
+                        			} 
+                        		});
+                                </script>
                                 <span class="form-control-feedback">
                                     <i class="fa fa-search"></i>
                                 </span><!-- /.form-control-feedback -->

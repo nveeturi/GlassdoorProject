@@ -2,6 +2,7 @@ package com.glassdoor.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -188,19 +189,34 @@ public class HomeController {
 		try {
 			String locationEncode = (location == null || 
 					location.trim().equals("")) ? "Pittsburgh" : URLEncoder.encode(location,"UTF-8");
-
-			String keywordEncode = (keyword == null || 
-					keyword.trim().equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
+			String keywordEncode = (keyword == null || keyword.trim().equals("")) ? "" : URLEncoder.encode(keyword, "UTF-8");
 			
 			jobdetails = jobService.getJobDataFromGlassdoor(keywordEncode,locationEncode,true,1,50);
 			jobdetails=jobService.matchLatLongFromJobList(jobdetails);
 			jobService.updateCommuteTimeAndDistanceGL(jobdetails);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+			
+			
+		return jobdetails;
+	}
+	
+	
+	@RequestMapping(value = "searchmap", method = RequestMethod.GET)
+	public List<JobDetails> searchmap(String keyword, String location) {
+		try {
+			if(jobs == null) {
+				jobs = jobService.getAllJobsInCity(location);
+				jobService.updateCommuteTimeAndDistanceGL(jobs);
+			}
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			
 		}
-		return jobdetails;
+		return jobs;
 	}
 	
 	/**
@@ -213,8 +229,9 @@ public class HomeController {
 	public ModelAndView sort(String criteria) { 
 		ModelAndView mav = new ModelAndView("/jobs");
 		try{
-		jobService.sortJobList(jobs,criteria);//distance or commute time
-		mav.addObject("joblist", jobs);
+			List<JobDetails> tmpJobs = new ArrayList<JobDetails>(jobs);
+			jobService.sortJobList(tmpJobs,criteria);//distance or commute time
+			mav.addObject("joblist", tmpJobs);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -413,9 +430,6 @@ public class HomeController {
 	
 	@RequestMapping("profile")
 	public ModelAndView profile(@ModelAttribute("username") String username) {
-		if(username == null || username.equals("")) {
-			return login();
-		}
 		ModelAndView mav = new ModelAndView("profile");
 		username = "Jessica";
 		mav.addObject("username", username);

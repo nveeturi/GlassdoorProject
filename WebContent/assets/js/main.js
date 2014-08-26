@@ -2750,7 +2750,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	};
 	
 	var showElements = function(json_obj) {
-		for (var i = 0; i < json_obj.length; i++) {
+		for (var i = 0; i < 80; i++) {
 			addMarker(json_obj[i]);
         }
 	};
@@ -2763,12 +2763,10 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 	    markerOptions.map = mapnificent.map;
 	    
 	    var marker = new google.maps.Marker(markerOptions); 
-	    marker.setAnimation(google.maps.Animation.BOUNCE);
-	    setTimeout(function(){marker.setAnimation(null);}, 1000);
-	    
+	    var a = jobResult.jobTitle;
 	    jobResult.marker = marker;
 	    jobResult.infowindow = new google.maps.InfoWindow({
-	    	content:'<div style="background:#4cae4c;color:#FFF">jobResult.jobTitle<br/>jobResult.companyName</div>'
+	    	content: '<div style="background:#39b54a;color:white">' + jobResult.jobTitle + '<br/>'+jobResult.companyName+'</div>'
 	    });
 	    
 	    var xy = mapnificent.getCanvasXY({
@@ -2822,7 +2820,7 @@ var UrbanDistanceUI = function(mapnificent, that, $, window, undefined) {
 		}
 		currentSearch = query;
 		$.address.parameter("jobsearch", currentSearch);
-		var txtUrl = "http://localhost:8080/GlassdoorWeb/index/searchws?keyword="+query+"&location=pittsburgh";
+		var txtUrl = "http://128.237.180.132:8080/GlassdoorWeb/index/searchmap?keyword="+query+"&location=pittsburgh";
 		$.ajax({
 		    url: txtUrl, 
 			type: "GET",

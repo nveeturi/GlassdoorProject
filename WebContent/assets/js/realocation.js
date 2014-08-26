@@ -89,7 +89,7 @@ $(document).ready(function() {
     for (var i=0; i < 50; i++) {
         var icon_name = icons[Math.floor(Math.random()*icons.length)];
         locations.push(get_gps_ranges(40.67, -73.94, 0.08, 0.60));
-        contents.push('<div class="infobox"><div class="infobox-header"><h3 class="infobox-title"><a href="#">30 Miller Pl Apt 3</a></h3><h4 class="infobox-subtitle"><a href="#">San Francisco, CA</a></h4></div><div class="infobox-picture"><a href="#"><img src="assets/img/tmp/properties/medium/'+Math.floor((Math.random()*10)+1) +'.jpg" alt=""></a><div class="infobox-price">$ 13,000</div></div></div>');
+        contents.push('');
         types.push('apartment');
         images.push('<img src="assets/img/icons/' + icon_name + '.png" alt="">');
     }

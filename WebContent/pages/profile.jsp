@@ -16,13 +16,22 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/realocation.css" media="screen, projection" id="css-main">
 
     <link href="http://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet" type="text/css">
-
+	<script type="text/javascript" src="../assets/js/jquery.js"></script>
+    
     <title>
         Glassdoor | Get Hired. Love Your Job
     </title>
 </head>
 
 <body class="header-light map-navigation-light footer-light">
+<script>
+	$(document).ready(function() {
+		
+		
+		
+	});
+	
+</script>
 
 <div id="wrapper">
     <div id="header-wrapper">
@@ -74,10 +83,17 @@
 					
 					<!-- search bar -->
                     <div class="form-search-wrapper col-sm-3">
-                        <form method="post" action="?" class="form-horizontal form-search">
+                        <form method="post" action="search" class="form-horizontal form-search">
                             <div class="form-group has-feedback no-margin">
-                                <input type="text" class="form-control" placeholder="Quick Search">
-
+                                <input id="quick-search" name="keyword" type="text" class="form-control" placeholder="Quick Search">
+                                <input type="hidden" name="location" value="Pittsburgh"/>
+                                <script>
+                                $("#quick-search").keydown(function(e) { 
+                        			if (e.keyCode === 13) {
+                        				$("#search-form").submit();
+                        			} 
+                        		});
+                                </script>
                                 <span class="form-control-feedback">
                                     <i class="fa fa-search"></i>
                                 </span><!-- /.form-control-feedback -->
@@ -110,10 +126,23 @@
 	<div class="property-item property-job col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
+                <h3 class="property-box-title"><a href="#">Software Engineer File Systems</a></h3>
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">PNC</a></h4>            </div>
+				<h4><a href="#">Panasas</a></h4>            </div>
+            <!-- /.property-box-inner -->
+        </div>
+        <!-- /.property-box -->
+    </div>
+    <!-- /.property-item -->
+    
+    <div class="property-item property-job col-sm-6 col-md-6">
+        <div class="property-box">
+            <div class="property-box-inner">
+                <h3 class="property-box-title"><a href="#">Lead Software Engineer (Capital Markets) </a></h3>
+                <div class="property-box-label property-box-label-primary">Job</div>
+                <!-- /.property-box-label -->
+				<h4><a href="#">PNC Financial Services Group</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -123,10 +152,10 @@
      <div class="property-item property-job col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
+                <h3 class="property-box-title"><a href="#">Personal Care Assistant (CNA)</a></h3>
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">PNC</a></h4>            </div>
+				<h4><a href="#">LIFE Pittsburgh</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -136,29 +165,18 @@
     <div class="property-item property-job col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
+                <h3 class="property-box-title"><a href="#">Software Development Engineer</a></h3>
                 <div class="property-box-label property-box-label-primary">Job</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">PNC</a></h4>            </div>
+				<h4><a href="#">Blue Belt Technologies</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
     </div>
     <!-- /.property-item -->
     
-    <div class="property-item property-job col-sm-6 col-md-6">
-        <div class="property-box">
-            <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Software Engineer</a></h3>
-                <div class="property-box-label property-box-label-primary">Job</div>
-                <!-- /.property-box-label -->
-				<h4><a href="#">PNC</a></h4>            </div>
-            <!-- /.property-box-inner -->
-        </div>
-        <!-- /.property-box -->
-    </div>
-    <!-- /.property-item -->
-
+    
+    
     <div class="property-item property-place col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
@@ -212,10 +230,10 @@
 	    <div class="property-item property-company col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <h3 class="property-box-title"><a href="#">Panasas</a></h3>
                 <div class="property-box-label property-box-label-primary">Company</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+				<h4><a href="#">1501 Reedsdale St, Pittsburgh, PA</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -225,10 +243,10 @@
     <div class="property-item property-company col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <h3 class="property-box-title"><a href="#">PNC Financial Services Group</a></h3>
                 <div class="property-box-label property-box-label-primary">Company</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+				<h4><a href="#">249 5th Ave, Pittsburgh, PA</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
@@ -238,10 +256,10 @@
     <div class="property-item property-company col-sm-6 col-md-6">
         <div class="property-box">
             <div class="property-box-inner">
-                <h3 class="property-box-title"><a href="#">Google</a></h3>
+                <h3 class="property-box-title"><a href="#">Blue Belt Technologies</a></h3>
                 <div class="property-box-label property-box-label-primary">Company</div>
                 <!-- /.property-box-label -->
-				<h4><a href="#">222 Melwood Ave, Pittsburgh, PA</a></h4>            </div>
+				<h4><a href="#">2828 Liberty Ave #100, Pittsburgh, PA</a></h4>            </div>
             <!-- /.property-box-inner -->
         </div>
         <!-- /.property-box -->
